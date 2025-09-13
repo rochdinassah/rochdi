@@ -6,9 +6,9 @@ const helpers = require('../../lib/helpers');
 const { format } = require('node:util');
 
 const HttpClient = require('../../lib/http-client');
-const { fetchIpAddress, awaitInternet } = helpers;
+const { awaitInternet } = helpers;
 
-const httpClient = new HttpClient({ retryOnErro: false });
+const httpClient = new HttpClient({ retryOnError: true });
 
 const username = encodeURIComponent(process.env.WIFI_ROUTER_USERNAME);
 const password = encodeURIComponent(btoa(process.env.WIFI_ROUTER_PASSWORD));
@@ -19,39 +19,51 @@ const endpoints = {
   token: {
     url: makeUrl('/asp/GetRandCount.asp'),
     headers: {
-      'Content-Length': '0',
-      'Accept-Encoding': 'gzip, deflate, br',
+      'content-length': '0',
+      'accept-encoding': 'gzip, deflate, br',
     }
   },
   login: {
     url: makeUrl('/login.cgi'),
     headers: {
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Cookie': 'Cookie=body:Language:english:id=-1',
+      'content-type': 'application/x-www-form-urlencoded',
+      'accept-encoding': 'gzip, deflate, br',
+      'cookie': 'Cookie=body:Language:english:id=-1',
     }
   },
   token2: {
     url: makeUrl('/html/ssmp/accoutcfg/ontmngt.asp'),
     headers: {
-      'Accept-Encoding': 'gzip, deflate, br'
+      'accept-encoding': 'gzip, deflate, br'
     }
   },
   restart: {
-    url: makeUrl('/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp'),
+    url: makeUrl(
+      '/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.X_HW_DEB\
+UG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp'
+    ),
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Accept-Encoding': 'gzip, deflate, br',
+      'content-type': 'application/x-www-form-urlencoded',
+      'accept-encoding': 'gzip, deflate, br',
     }
   }
 };
+
+function fetchIpAddress() {
+  return httpClient.get('https://checkip.amazonaws.com').then(res => {
+    const { statusCode, data } = res;
+    if (200 !== statusCode)
+      exit('fetchIpAddress: request error, http('+statusCode+')');
+    return data.trim();
+  });
+}
 
 function getToken() {
   const { url, headers } = endpoints.token;
   return httpClient.post(url, { headers }).then(res => {
     const { statusCode, data } = res;
     if (200 !== statusCode)
-      exit('request error, http('+statusCode+')');
+      exit('getToken: request error, http('+statusCode+')');
     return data.trim();
   });
 }
@@ -63,7 +75,7 @@ function login(username, password, token) {
     const { statusCode, data, headers } = res;
     const cookieArray = headers['set-cookie'];
     if (!cookieArray || !cookieArray.length)
-      throw new Error('login: did not receive sid cookie');
+      exit('login: did not receive sid cookie');
     const match = /(CookieHttp\=sid\=[a-zA-Z0-9]+)/.exec(cookieArray[0]);
     const cookie = match[0];
     return cookie+':Language:english:id=1';
@@ -94,7 +106,7 @@ fetchIpAddress().then(currIp => {
         const { url, headers } = endpoints.restart;
         headers['Cookie'] = cookie;
         const body = 'x.X_HW_Token='+token2;
-        httpClient.post(url, { headers, body });
+        httpClient.post(url, { headers, body, retryOnError: false });
         log('reboot command sent, awaiting for internet...');
         new Promise(resolve => setTimeout(resolve, 11e3)).then(awaitInternet).then(fetchIpAddress).then(ip => {
           log('reboot complete, %s', currIp === ip ? 'ip not changed!' : 'new IP: '+ip);

@@ -1,3 +1,4 @@
+// this file is extracted from original hcaptcha assets
 /* { "version": "v1", "hash": "sha256-MEYCIQDC2gHBo2xManJaadPmS7A0Ee4rMALAbbPSIo+RQQDzywIhAOxq+QbtNhAJNQSUaUPL+ylE6VCplRRWvJlDDVLmVs7B" } */
 !function XCYoD() {
     "use strict";
