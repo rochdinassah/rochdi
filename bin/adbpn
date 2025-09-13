@@ -1,0 +1,11 @@
+#!/bin/bash
+
+package=$(adb shell pm list packages|grep $1)
+parts=(${package//:/ })
+
+if [ 0 ==  ${#parts[1]} ]
+then
+  echo 'package not found'
+else
+  echo ${parts[1]}
+fi

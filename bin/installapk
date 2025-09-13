@@ -1,0 +1,31 @@
+#!/bin/bash
+
+path=~/Desktop/apk/$1
+pathExistence=$(ls $path 2>&1)
+if [[ $pathExistence == "ls: cannot access"* ]]
+then
+  echo "cannot find package dir for \"$1\""
+  exit
+fi
+
+printf "123456\n123456\n\r\r\r\r\r\ryes" > /tmp/arglist
+
+key_file_path=/tmp/key
+rm -rf $key_file_path
+keytool -genkey -v -keystore $key_file_path -alias patched-apk -keyalg RSA -keysize 512 -validity 1 &> /dev/null < /tmp/arglist
+
+for file in $path/*; do
+  if [[ $file == *apk ]]
+  then
+    echo 123456|apksigner sign --ks $key_file_path --ks-key-alias patched-apk $file
+  fi
+done
+
+packageName=$(adbpn $1)
+if [[ $packageName == com* ]]
+then
+  adb uninstall $packageName &> /dev/null
+  echo uninstall ok
+fi
+
+adb install-multiple $path/*.apk

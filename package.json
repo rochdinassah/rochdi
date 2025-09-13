@@ -1,0 +1,20 @@
+{
+  "name": "rochdi",
+  "version": "1.0.0",
+  "main": "./lib/index.js",
+  "scripts": {
+    "rw": "node --env-file=.env ./wifi/LG8245X6-50/index.js",
+    "discord": "node ./discord/index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rochdinassah/rochdi.git"
+  },
+  "author": "Rochdi Nassah <rochdinassah1998@gmail.com>",
+  "homepage": "https://github.com/rochdinassah/rochdi",
+  "dependencies": {
+    "casual": ">0",
+    "primus": ">0",
+    "ws": ">0"
+  }
+}

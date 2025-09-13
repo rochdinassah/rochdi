@@ -1,0 +1,4 @@
+#!/bin/bash
+rm -rf ./exe
+gcc $1.cc -o ./exe -lm
+./exe

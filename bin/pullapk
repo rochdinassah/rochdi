@@ -1,0 +1,21 @@
+#!/bin/bash
+
+packageName=$(adbpn $1)
+path=$(adb shell pm path $packageName 2> /dev/null)
+
+if [ 0 == ${#path} ]
+then
+  echo 'package not found'
+  exit
+fi
+
+apkDir=~/Desktop/apk/$1
+rm -rf $apkDir
+mkdir $apkDir
+cd $apkDir
+
+paths=(${path// /})
+for path in ${paths[@]}; do
+  pathParts=(${path//:/ })
+  adb pull ${pathParts[1]}
+done
