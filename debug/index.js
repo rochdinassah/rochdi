@@ -13,7 +13,7 @@ const crypto = require('node:crypto');
 const openai = require('../lib/openai');
 
 const { toQueryString, startTimer, getTimer, endTimer } = helpers;
-const { formatDuration, wait, benchmark } = helpers;
+const { arrayRand, formatDuration, wait, benchmark } = helpers;
 
 void async function () {
   const http2Client = new Http2Client();
@@ -23,7 +23,7 @@ void async function () {
     openai.sendMessage(args.join(' ')).then(log);
   });
 
-  command.on('ping', () => openai.sendMessage('ping').then(log));
+  command.on('ping', () => openai.sendMessage(arrayRand(['ping', 'syn', 'echo', 'foo'])).then(log));
 
   command.start();
 }();
