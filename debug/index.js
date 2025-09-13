@@ -20,9 +20,7 @@ void async function () {
   const command = new Command();
 
   command.on('send', (...args) => {
-    openai.sendMessage(args.join(' ')).then(reply => {
-      log(reply.content, '|', reply.took);
-    });
+    openai.sendMessage(args.join(' ')).then(log);
   });
 
   command.start();

@@ -165,13 +165,13 @@ pZW50X2FwcF9zdGF0ZSI6ImZvY3VzZWQifQ==';
           const { users } = d;
           users.forEach(u => usersMap[u.id] = { username: u.username, global_name: u.global_name, display_name: u.display_name });
 
-          log('ready: %s | %s', global_name ?? username, id);
+          log('ready: %s, %s', global_name ?? username, id);
         } else if ('PRESENCE_UPDATE' === t) {
           // log(d);
         } else if ('GUILD_MEMBERS_CHUNK' === t) {
           const { presences, members, guild_id, chunk_index, chunk_count } = d;
 
-          log('recv guild members chunk(%d) | cIndex: %d, cCount: %d', members.length, chunk_index, chunk_count);
+          log('recv guild members chunk(%d), cIndex: %d, cCount: %d', members.length, chunk_index, chunk_count);
 
           const names = [];
           members.forEach(member => {
@@ -232,7 +232,7 @@ pZW50X2FwcF9zdGF0ZSI6ImZvY3VzZWQifQ==';
           return (log('delete ok'), resolve(data));
         if (429 === statusCode)
           return (
-            log('delete ratelimit error | retrying...'),
+            log('delete ratelimit error, retrying...'),
             setTimeout(() => resolve(deleteMessage(token, channelId, messageId)), rand(1e3, 4e3))
           );
 
@@ -248,7 +248,7 @@ pZW50X2FwcF9zdGF0ZSI6ImZvY3VzZWQifQ==';
       http2Client.put('https://discord.com/api/v9/channels/'+channelId+'/messages/'+messageId+'/reactions/'+reaction+'/%40me', { headers }).then(res => {
         const { statusCode, data } = res;
         if (204 !== statusCode)
-          return resolve(!! void log('reaction add error | http('+statusCode+')'));
+          return resolve(!! void log('react: request error, http('+statusCode+')'));
         resolve(!void log('reaction add ok'))
       });
     });
@@ -308,14 +308,14 @@ pZW50X2FwcF9zdGF0ZSI6ImZvY3VzZWQifQ==';
 
       delete headers['Content-Type'];
 
-      if (200 !== statusCode) throw new Error('getUserInfo error, req#1 | http('+statusCode+')');
+      if (200 !== statusCode) throw new Error('getUserInfo error, req#1, http('+statusCode+')');
 
       const totalMessages = data.tabs.messages.total_results;
 
       headers['Authorization'] = token;
       http2Client.get('https://discord.com/api/v9/users/'+userId+'/profile?guild_id='+guildId, { headers }).then(res => {
         const { statusCode, data } = res;
-        if (200 !== statusCode) throw new Error('getInfo error, req#2 | http('+statusCode+')');
+        if (200 !== statusCode) throw new Error('getInfo error, req#2, http('+statusCode+')');
         const { communication_disabled_until, nick, mute, deaf } = data.guild_member;
         const name = nick ?? data.user.global_name ?? data.user.username;
         let timeout = null === communication_disabled_until ? 'none' : void 0;
@@ -341,7 +341,7 @@ pZW50X2FwcF9zdGF0ZSI6ImZvY3VzZWQifQ==';
       headers['Authorization'] = mainToken;
       headers['Content-Type'] = 'application/json';
 
-      log('retreiving message list...');
+      log('retreiving messages list...');
       const offset = Math.max(1, (total_results-25));
       const url = 'https://discord.com/api/v9/guilds/'+guild.id+'/messages/search?author_id='+author_id+'&offset='+offset;
       http2Client.get(url, { headers }).then(async res => {
@@ -349,7 +349,7 @@ pZW50X2FwcF9zdGF0ZSI6ImZvY3VzZWQifQ==';
         if (200 !== statusCode)
           throw new Error('api error for /messages/search, http('+statusCode+')');
         const messages = data.messages.map(m => m[0]);
-        log('message list ok (%d) | clearing...', messages.length);
+        log('messages list ok (%d), clearing...', messages.length);
         
         total_results = data.total_results;
         log('current total:', total_results);
@@ -390,14 +390,14 @@ pZW50X2FwcF9zdGF0ZSI6ImZvY3VzZWQifQ==';
         track_exact_total_hits: true
       });
 
-      log('retreiving DM message list...');
+      log('retreiving DM messages list...');
       http2Client.post('https://discord.com/api/v9/users/@me/messages/search/tabs', { headers, body }).then(async res => {
         const { statusCode, data } = res;
         if (200 !== statusCode)
           throw new Error('api error for /users/@me/messages/search/tabs, http('+statusCode+')');
         const messages = data.tabs.messages.messages.map(m => m[0]).filter(m => channel_ids.includes(m.channel_id));
 
-        log('message list ok (%d) | clearing...', messages.length);
+        log('messages list ok (%d), clearing...', messages.length);
 
         if (!messages.length)
           return resolve(void log('no DM messages were found for the given channel_ids!'));
