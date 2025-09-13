@@ -23,5 +23,7 @@ void async function () {
     openai.sendMessage(args.join(' ')).then(log);
   });
 
+  command.on('ping', () => openai.sendMessage('ping').then(log));
+
   command.start();
 }();
