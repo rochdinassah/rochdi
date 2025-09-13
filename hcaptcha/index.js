@@ -5,7 +5,7 @@ const log = console.log.bind(console);
 const Http2Client = require('../lib/http2-client');
 const helpers = require('../lib/helpers');
 const hsl = require('./hsl');
-const openai = require('../openai');
+const openai = require('../lib/openai');
 
 const { formatDuration, rand, toQueryString } = helpers;
 

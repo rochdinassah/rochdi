@@ -10,7 +10,7 @@ const helpers = require('../lib/helpers');
 const Command = require('../lib/command');
 const http2 = require('node:http2');
 const crypto = require('node:crypto');
-const openai = require('../openai');
+const openai = require('../lib/openai');
 
 const { toQueryString, startTimer, getTimer, endTimer } = helpers;
 const { formatDuration, wait, benchmark } = helpers;
