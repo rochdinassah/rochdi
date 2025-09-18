@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+// created: 2025/09/18
+
+'use strict';
+
+const log = console.log;
+
+const rochdi = require('../');
+
+const { HttpClient } = rochdi
+
+log(HttpClient);
