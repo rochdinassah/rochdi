@@ -15,7 +15,8 @@ const endpoint = {
   url: 'https://openai.com',
   headers: {
     'accept-encoding': 'gzip, deflate, br, zstd',
-    qux: 16
+    qux: 16,
+    'user-agent': ''
   }
 };
 
@@ -25,7 +26,8 @@ void async function () {
 
   const http2Client = new Http2Client();
 
-  http2Client.get('https://echo.free.beeceptor.com', { headers }).then(res => {
+  // http2Client.get('https://echo.free.beeceptor.com', { headers }).then(res => {
+  http2Client.get('https://foo', { headers }).then(res => {
     exit(res.data);
   });
 
