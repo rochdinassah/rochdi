@@ -13,6 +13,17 @@ const { HttpClient, rand } = rochdi
 
 const httpClient = new HttpClient();
 
-httpClient.get('https://jsonplaceholder.typicode.com/todos/1', { headers: { 'user-agent': 'curl/1', 'accept-encoding': 'zstd' } }).then(res => {
-  log(res);
+const endpoint = {
+  url: 'https://echo.free.beeceptor.com',
+  headers: {
+    'user-agent': 'foo',
+    'accept-encoding': 'gzip, deflate, br, zstd',
+    qux: 16
+  }
+};
+
+const { url, headers } = endpoint;
+
+httpClient.get(url, { headers }).then(res => {
+  log(res.data.headers);
 });
