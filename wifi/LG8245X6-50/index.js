@@ -5,7 +5,7 @@
 
 'use strict';
 
-const rochdi = require('../');
+const rochdi = require('../../');
 
 const { HttpClient } = rochdi;
 
