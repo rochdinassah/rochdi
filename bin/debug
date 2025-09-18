@@ -8,7 +8,3 @@ const tls = require('node:tls');
 
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client } = rochdi;
-
-const http2Client = new Http2Client();
-
-log(http2Client.createSession('https://nodejs.org/', { keepalive: true }));

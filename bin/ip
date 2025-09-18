@@ -2,8 +2,11 @@
 
 const rochdi = require('../');
 
-const { HttpClient } = rochdi;
+const { Http2Client } = rochdi;
 
-(new HttpClient()).get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
-  log(res.data);
+const http2Client = new Http2Client();
+
+http2Client.get('https://ifconfig.co', { headers: { 'user-agent': 'curl' } }).then(res => {
+  log(res.data.trim());
+  http2Client.destroy();
 });
