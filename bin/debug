@@ -13,4 +13,6 @@ const { HttpClient } = rochdi
 
 const httpClient = new HttpClient();
 
-httpClient.get('http://ifconfig.me');
+httpClient.get('http://iffconfig.me').then(res => {
+  // log(res);
+});
