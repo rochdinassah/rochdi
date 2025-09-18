@@ -12,10 +12,10 @@ const { Http2Client } = rochdi;
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
 const endpoint = {
-  url: 'https://openai.com',
+  url: 'https://grok.com',
   headers: {
     'accept-encoding': 'gzip, deflate, br, zstd',
-    'user-agent': ''
+    // 'user-agent': ''
   }
 };
 
