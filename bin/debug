@@ -20,17 +20,3 @@ const endpoint = {
 };
 
 const { url, headers } = endpoint;
-
-const m = new Map();
-
-m.remember('foo', 1, 300);
-
-log(m.get('foo'));
-
-setTimeout(() => {
-  log(m.get('foo'));
-  
-  setTimeout(() => {
-    log(m.get('foo'));
-  }, 200);
-}, 100);
