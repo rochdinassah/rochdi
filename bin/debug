@@ -21,4 +21,4 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit('foo'.shuffle());
+exit('foo'.shuffle())
