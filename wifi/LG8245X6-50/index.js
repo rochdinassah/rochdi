@@ -42,12 +42,14 @@ function login(user, pass) {
       const cookie = headers['set-cookie'];
       if (!cookie || !cookie.length)
         exit('login: did not receive set-cookie header');
-      
       const match = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1);path\=\/;HttpOnly/.exec(cookie[0]);
-
-      exit(match);
+      if (!match[1])
+        exit('login: did not receive CookieHttp');
+      return match[1]
     });
   }); 
 }
 
-login(user, pass);
+login(user, pass).then(cookie => {
+  exit('login ok', cookie);
+});
