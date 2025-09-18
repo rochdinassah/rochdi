@@ -12,10 +12,14 @@ const httpClient = new HttpClient();
 const user = process.env.WIFI_ROUTER_USER;
 const pass = process.env.WIFI_ROUTER_PASS;
 
-exit(user, pass);
+function getRandCount() {
+  const url = 'http://192.168.1.1/asp/GetRandCount.asp';
+  return httpClient.post(url, { headers: { 'content-length': 0 } }).then(res => {
+    const { statusCode, data } = res;
+    if (200 !== statusCode)
+      exit('getRandCount: request error, http(%d)', statusCode);
+    return data.trim() === data;
+  });
+}
 
-const endpoints = {
-
-};
-
-log(16)
+getRandCount().then(log);
