@@ -64,9 +64,14 @@ function getToken2(cookie) {
 
 return login(user, pass).then(cookie => {
   getToken2(cookie).then(token => {
-    const url = '/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
+    const url = 'http://192.168.1.1/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
 X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
-    exit(url);
+    const headers = {
+      cookie,
+      'content-type': 'application/x-www-form-urlencoded'
+    };
+    httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false });
+    log('reboot command sent');
   });
 });
 
