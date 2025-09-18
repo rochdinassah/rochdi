@@ -12,12 +12,6 @@ const httpClient = new HttpClient();
 const user = process.env.WIFI_ROUTER_USER;
 const pass = process.env.WIFI_ROUTER_PASS;
 
-return awaitInternet().then(() => {
-  log('internet ok');
-});
-
-return hasInternetAccess().then(log);
-
 function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
   return httpClient.post(url, { headers: { 'content-length': 0 } }).then(res => {
@@ -68,7 +62,11 @@ function getToken2(cookie) {
   })
 }
 
-return login(user, pass).then(cookie => {
+httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
+  const currIP = res.data;
+  log('rebooting... curr IP:', currIP);
+
+  login(user, pass).then(cookie => {
   getToken2(cookie).then(token => {
     const url = 'http://192.168.1.1/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
 X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
@@ -76,13 +74,19 @@ X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
       cookie,
       'content-type': 'application/x-www-form-urlencoded'
     };
-    httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).then(res => {
-      exit(res);
-    }).catch(() => {
+    // httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).then(res => {
+    //   exit(res);
+    // }).catch(() => {
       log('reboot command sent, awaiting for internet');
-
-    });
+      awaitInternet().then(() => {
+        httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
+          log('reboot %s, currIP:', res.data);
+          if (currIP !== res.data)
+            return log('reboot ok, new IP:', res.data);
+          log('reboot complete, IP not changed!');
+        });
+      });
+    // });
   });
 });
-
-getToken2('CookieHttp=sid=7897fb0e704ab2d98003b0327d436063b76a58e7cdb056473dbcc469951360d7:Language:english:id=1');
+});
