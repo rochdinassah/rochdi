@@ -50,6 +50,18 @@ function login(user, pass) {
   });
 }
 
+function getToken2(cookie) {
+  const url = 'https://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp';
+  const headers = {
+    'accept-encoding': 'gzip, deflate, br',
+    cookie
+  };
+  return httpClient.get(url, headers).then(res => {
+    const { statusCode, data } = res;
+    exit(res);
+  })
+}
+
 login(user, pass).then(cookie => {
   
 });
