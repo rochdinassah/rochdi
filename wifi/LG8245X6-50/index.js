@@ -5,7 +5,7 @@
 
 const rochdi = require('../../');
 
-const { HttpClient, hasInternetAccess, awaitInternet } = rochdi;
+const { HttpClient, awaitInternet } = rochdi;
 
 const httpClient = new HttpClient();
 
@@ -74,10 +74,9 @@ X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
       cookie,
       'content-type': 'application/x-www-form-urlencoded'
     };
-    // httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).then(res => {
-    //   exit(res);
-    // }).catch(() => {
-      log('reboot command sent, awaiting for internet');
+    httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).catch(noop);
+    log('reboot command sent, awaiting for internet');
+    setTimeout(() => {
       awaitInternet().then(() => {
         httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
           log('reboot %s, currIP:', res.data);
@@ -86,7 +85,7 @@ X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
           log('reboot complete, IP not changed!');
         });
       });
-    // });
+    }, 8e3);4e3
   });
 });
 });
