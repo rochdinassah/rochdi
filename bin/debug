@@ -20,4 +20,6 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit(getTime());
+httpClient.get('https://openai.com').then(res => {
+  log(res.statusCode);
+});
