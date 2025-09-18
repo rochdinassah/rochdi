@@ -75,7 +75,7 @@ X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
       'content-type': 'application/x-www-form-urlencoded'
     };
     httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).catch(noop);
-    log('reboot command sent, awaiting for internet');
+    log('reboot command sent, awaiting for internet...');
     setTimeout(() => {
       awaitInternet().then(() => {
         httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
