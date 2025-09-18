@@ -25,23 +25,18 @@ void async function () {
 
   const http2Client = new Http2Client();
 
-  http2Client.get(url, { headers }).then(res => {
-    exit(res.statusCode);
+  http2Client.tryJAFingerprintBypass(url, { headers }, res => {
+    const { statusCode } = res;
+    if (403 === statusCode)
+      return log('nope', statusCode), false;
+    return true;
+  }).then(result => {
+    const { success, cipher, userAgent } = result;
+
+    if (!success)
+      exit('bypass error');
+
+    exit('bypass ok, cipher: %s, userAgent:', cipher, userAgent);
   });
-
-  return;
-  // httpClient.tryJAFingerprintBypass(url, { headers }, res => {
-  //   const { statusCode } = res;
-  //   if (403 === statusCode)
-  //     return log('nope', statusCode), false;
-  //   return true;
-  // }).then(result => {
-  //   const { success, cipher, userAgent } = result;
-
-  //   if (!success)
-  //     exit('bypass error');
-
-  //   exit('bypass ok, cipher: %s, userAgent:', cipher, userAgent);
-  // });
 
 }();
