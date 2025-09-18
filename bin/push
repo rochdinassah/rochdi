@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# author: rochdi nassah
+# created: 2025/09/18
+
+commit=$@
+
+if [ 0 == ${#commit} ]
+then
+  commit='noop, sync with remote'
+fi
+
+git add -A
+git commit -m "$commit"
+git push
