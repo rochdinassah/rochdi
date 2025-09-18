@@ -21,4 +21,4 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit(/\d/i.test(randomString(1024, { useNumbers: false })));
+exit(randomString(16, { extra: '!=?.!_+(){}/\\[]' }).toBase64());
