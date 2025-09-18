@@ -1,6 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env node
 
-# author: rochdi nassah
-# created: 2025/09/18
+// author: rochdi nassah
+// created: 2025/09/18
 
-const log = console.log;
+'use strict';
+
+const rochdi = require('../');
+
+log(16)
