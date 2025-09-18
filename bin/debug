@@ -26,8 +26,7 @@ void async function () {
 
   const http2Client = new Http2Client();
 
-  // http2Client.get('https://echo.free.beeceptor.com', { headers }).then(res => {
-  http2Client.get('https://foo', { headers }).then(res => {
+  http2Client.get('https://echo.free.beeceptor.com', { headers }).then(res => {
     exit(res.data);
   });
 
