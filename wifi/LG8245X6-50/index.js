@@ -5,16 +5,18 @@
 
 const rochdi = require('../../');
 
-const { HttpClient, awaitInternet } = rochdi;
+const { HttpClient, hasInternetAccess, awaitInternet } = rochdi;
 
 const httpClient = new HttpClient();
 
 const user = process.env.WIFI_ROUTER_USER;
 const pass = process.env.WIFI_ROUTER_PASS;
 
-return awaitInternet().then(() => {
-  log('internet ok');
-});
+// return awaitInternet().then(() => {
+//   log('internet ok');
+// });
+
+return hasInternetAccess().then(log);
 
 function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
