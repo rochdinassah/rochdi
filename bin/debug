@@ -13,8 +13,6 @@ const { HttpClient, rand } = rochdi
 
 const httpClient = new HttpClient();
 
-exit(rand(-1, 1));
-
 httpClient.get('http://iffconfig.me').then(res => {
   // log(res);
 });
