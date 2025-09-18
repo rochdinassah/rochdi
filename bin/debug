@@ -9,14 +9,10 @@ const tls = require('node:tls');
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client } = rochdi;
 
-const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
+// const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
 const endpoint = {
-  url: 'https://grok.com',
-  headers: {
-    'accept-encoding': 'gzip, deflate, br, zstd',
-    // 'user-agent': ''
-  }
+  url: 'https://grok.com'
 };
 
 const { url, headers } = endpoint;
@@ -25,7 +21,7 @@ void async function () {
 
   const http2Client = new Http2Client();
 
-  http2Client.tryJAFingerprintBypass(url, { headers }, res => {
+  http2Client.tryJAFingerprintBypass(url, {}, res => {
     const { statusCode } = res;
     if (403 === statusCode)
       return log('nope', statusCode), false;
