@@ -1,0 +1,16 @@
+{
+  "name": "rochdi",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rochdinassah/rochdi.git"
+  },
+  "author": "Rochdi Nassah <rochdinassah1998@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rochdinassah/rochdi/issues"
+  },
+  "homepage": "https://github.com/rochdinassah/rochdi#readme"
+}
