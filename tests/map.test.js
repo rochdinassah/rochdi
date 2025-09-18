@@ -27,5 +27,21 @@ test('Map.prototype.remember test', () => {
     }, 128);
   }, 32);
 
-  expect(1).toBe(1);
+  map.remember('bar', 'ok');
+  
+  Promise.resolve(() => {
+    expect(map.has('bar')).toBe(false);
+  });
+
+  map.remember('baz', 'ok', 128);
+
+  setTimeout(() => {
+    map.set('baz', 'ok');
+
+    expect(map.get('baz')).toBe('ok');
+
+    setTimeout(() => {
+      expect(map.get('baz')).toBe('ok');
+    }, 256);
+  }, 64);
 });
