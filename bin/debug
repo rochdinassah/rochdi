@@ -5,7 +5,7 @@
 const rochdi = require('../');
 const crypto = require('node:crypto');
 
-const { HttpClient, formatDuration, rand, randomString } = rochdi;
+const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
@@ -20,4 +20,4 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit('>??>??>>>>'.toBase64Url());
+exit(getTime());
