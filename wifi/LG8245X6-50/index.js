@@ -51,19 +51,19 @@ function login(user, pass) {
 }
 
 function getToken2(cookie) {
-  const url = 'http://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp';
-  const headers = {
-    'accept-encoding': 'gzip, deflate, br',
-    cookie
-  };
-  return httpClient.get(url, { headers }).then(res => {
+  return httpClient.get('http://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp', { headers: { cookie } }).then(res => {
     const { statusCode, data } = res;
-    exit(res);
+    if (200 !== statusCode)
+      exit('getToken2: request error, http(%d)', statusCode);
+    const match = /[a-z0-9]{64}/.exec(data);
+    if (!match[0])
+      exec('getToken2: token extraction error');
+    return log('token2 ok'), match[1];
   })
 }
 
-// login(user, pass).then(cookie => {
-//   getToken2(cookie);
-// });
+return login(user, pass).then(cookie => {
+  getToken2(cookie);
+});
 
 getToken2('CookieHttp=sid=7897fb0e704ab2d98003b0327d436063b76a58e7cdb056473dbcc469951360d7:Language:english:id=1');
