@@ -12,9 +12,9 @@ const httpClient = new HttpClient();
 const user = process.env.WIFI_ROUTER_USER;
 const pass = process.env.WIFI_ROUTER_PASS;
 
-// return awaitInternet().then(() => {
-//   log('internet ok');
-// });
+return awaitInternet().then(() => {
+  log('internet ok');
+});
 
 return hasInternetAccess().then(log);
 
