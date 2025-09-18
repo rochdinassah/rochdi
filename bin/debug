@@ -6,7 +6,7 @@ const log = console.log;
 
 const rochdi = require('../');
 
-const { HttpClient, formatDuration, rand } = rochdi;
+const { HttpClient, formatDuration, rand, randomString } = rochdi;
 
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
@@ -21,4 +21,4 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit('abc'.rand())
+exit(randomString(16));
