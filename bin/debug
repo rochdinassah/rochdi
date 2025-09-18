@@ -23,7 +23,12 @@ const { url, headers } = endpoint;
 
 void async function () {
 
-  httpClient.tryJAFingerprintBypass(url, { headers }).then(result => {
+  httpClient.tryJAFingerprintBypass(url, { headers }, res => {
+    const { statusCode } = res;
+    if (403 === statusCode)
+      return false;
+    return true;
+  }).then(result => {
     const { success, cipher } = result;
 
     if (!success)
