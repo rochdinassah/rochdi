@@ -11,4 +11,6 @@ const rochdi = require('../');
 
 const { HttpClient } = rochdi
 
-log(HttpClient);
+const httpClient = new HttpClient();
+
+log(httpClient.get(1));
