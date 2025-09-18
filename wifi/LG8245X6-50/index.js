@@ -43,7 +43,7 @@ function login(user, pass) {
       if (!cookie || !cookie.length)
         exit('login: did not receive set-cookie header');
       
-      const match = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1;path\=\/;HttpOnly)/.exec(cookie[0]);
+      const match = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1);path\=\/;HttpOnly/.exec(cookie[0]);
 
       exit(match);
     });
