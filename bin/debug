@@ -24,8 +24,8 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit(formatDuration(4e3+64));
 
+exit();
 httpClient.get(url, { headers, retryOnError: false }).then(res => {
   log(res.data.headers);
 }).catch(err => {
