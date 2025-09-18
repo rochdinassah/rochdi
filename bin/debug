@@ -13,4 +13,4 @@ const { HttpClient } = rochdi
 
 const httpClient = new HttpClient();
 
-log(httpClient.get(1));
+log(httpClient.get('url', 'opts'));
