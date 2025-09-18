@@ -31,4 +31,8 @@ void async function () {
     log(s);
   }
 
+  httpClient.tryTlsFingerprintingBypass(url, { headers }).then(result => {
+    const { success, cipher } = result;
+  });
+
 }();
