@@ -9,7 +9,7 @@ const log = console.log;
 
 const rochdi = require('../');
 
-const { HttpClient, rand } = rochdi;
+const { HttpClient, formatDuration, rand } = rochdi;
 
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
@@ -23,6 +23,8 @@ const endpoint = {
 };
 
 const { url, headers } = endpoint;
+
+exit(formatDuration(4e3+64));
 
 httpClient.get(url, { headers, retryOnError: false }).then(res => {
   log(res.data.headers);
