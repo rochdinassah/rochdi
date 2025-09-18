@@ -5,5 +5,5 @@ const rochdi = require('../');
 const { HttpClient } = rochdi;
 
 (new HttpClient()).get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
-  console.log(res.data);
+  log(res.data);
 });
