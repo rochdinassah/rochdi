@@ -16,7 +16,7 @@ const httpClient = new HttpClient();
 const endpoint = {
   url: 'https://echo.free.beeceptor.com',
   headers: {
-    'user-agent': 'foo',
+    'user-agent': 'a',
     'accept-encoding': 'gzip, deflate, br, zstd',
     qux: 16
   }
