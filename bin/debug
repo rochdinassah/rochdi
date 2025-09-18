@@ -14,5 +14,5 @@ const { HttpClient, rand } = rochdi
 const httpClient = new HttpClient();
 
 httpClient.get('http://ifconfig.me').then(res => {
-  log(res);
+  // log(res);
 });
