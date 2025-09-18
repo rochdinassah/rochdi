@@ -70,8 +70,9 @@ X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
       cookie,
       'content-type': 'application/x-www-form-urlencoded'
     };
-    httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false });
-    log('reboot command sent');
+    httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).then(res => {
+      exit(res);
+    }).catch(() => log('reboot command sent'));
   });
 });
 
