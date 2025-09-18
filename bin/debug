@@ -24,8 +24,7 @@ const { url, headers } = endpoint;
 void async function () {
 
   for (const cipher of tls.getCiphers().map(c => c.toUpperCase())) {
-    tls.DEFAULT_CIPHERS = cipher;
-    const s = await httpClient.get(url, { headers }).then(res => {
+    const s = await httpClient.get(url, { headers, cipher }).then(res => {
       return res.statusCode;
     });
 
