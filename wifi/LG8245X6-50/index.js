@@ -5,12 +5,16 @@
 
 const rochdi = require('../../');
 
-const { HttpClient } = rochdi;
+const { HttpClient, awaitInternet } = rochdi;
 
 const httpClient = new HttpClient();
 
 const user = process.env.WIFI_ROUTER_USER;
 const pass = process.env.WIFI_ROUTER_PASS;
+
+return awaitInternet().then(() => {
+  log('internet ok');
+});
 
 function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
@@ -72,7 +76,10 @@ X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
     };
     httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).then(res => {
       exit(res);
-    }).catch(() => log('reboot command sent'));
+    }).catch(() => {
+      log('reboot command sent, awaiting for internet');
+
+    });
   });
 });
 
