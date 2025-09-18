@@ -58,7 +58,7 @@ function getToken2(cookie) {
     const match = /[a-z0-9]{64}/.exec(data);
     if (!match[0])
       exec('getToken2: token extraction error');
-    return log('token2 ok'), match[1];
+    return log('token2 ok'), match[0];
   })
 }
 
