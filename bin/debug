@@ -9,12 +9,12 @@ const log = console.log;
 
 const rochdi = require('../');
 
-const { HttpClient, rand } = rochdi
+const { HttpClient, rand } = rochdi;
 
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
 const endpoint = {
-  url: 'https://echo.free.sbeeceptor.com',
+  url: 'https://echo.free.beeceptor.com',
   headers: {
     'accept-encoding': 'gzip, deflate, br, zstd',
     'user-agent': 'hello',

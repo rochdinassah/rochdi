@@ -3,7 +3,8 @@
 
 'use strict';
 
-global.exit = (...args) => console.log(...args) || process.exit();
+// apply patches
+require('./lib/_patches');
 
 module.exports = {
   HttpClient: require('./lib/http-client'),
