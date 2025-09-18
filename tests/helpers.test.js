@@ -14,3 +14,7 @@ test('returns random string', () => {
   expect(randomString(size, { useNumbers: false })).not.toMatch(/[.*\\/.]/i);
   expect(randomString(size, { useNumbers: false, extra: '.*\\/.' })).toMatch(/[.*\\/.]/i);
 });
+
+test('returns url safe base64', () => {
+  expect('>??>??>>>>'.toBase64()).toBe('Pj8/Pj8/Pj4+Pg==');
+});

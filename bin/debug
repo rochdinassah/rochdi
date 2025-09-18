@@ -2,9 +2,8 @@
 
 'use strict';
 
-const log = console.log;
-
 const rochdi = require('../');
+const crypto = require('node:crypto');
 
 const { HttpClient, formatDuration, rand, randomString } = rochdi;
 
@@ -21,4 +20,3 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit('foo+/'.toBase64Url())
