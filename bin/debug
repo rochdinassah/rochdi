@@ -21,4 +21,4 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit(randomString(16, { useNumbers: false, extra: '-+/.' }));
+exit(/\d/i.test(randomString(1024, { useNumbers: false })));
