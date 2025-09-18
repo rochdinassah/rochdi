@@ -23,16 +23,13 @@ const { url, headers } = endpoint;
 
 void async function () {
 
-  for (const cipher of tls.getCiphers().map(c => c.toUpperCase())) {
-    const s = await httpClient.get(url, { headers, cipher }).then(res => {
-      return res.statusCode;
-    });
-
-    log(s);
-  }
-
-  httpClient.tryTlsFingerprintingBypass(url, { headers }).then(result => {
+  httpClient.tryJAFingerprintBypass(url, { headers }).then(result => {
     const { success, cipher } = result;
+
+    if (!success)
+      exit('bypass error');
+
+    exit('bypass ok, cipher:', cipher);
   });
 
 }();
