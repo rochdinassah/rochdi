@@ -13,6 +13,6 @@ const { HttpClient, rand } = rochdi
 
 const httpClient = new HttpClient();
 
-httpClient.get('http://ifconfig.me').then(res => {
-  // log(res);
+httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl/1' } }).then(res => {
+  log(res);
 });
