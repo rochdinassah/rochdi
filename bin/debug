@@ -7,6 +7,7 @@ const crypto = require('node:crypto');
 const tls = require('node:tls');
 
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
+const { Http2Client } = rochdi;
 
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
@@ -22,18 +23,22 @@ const { url, headers } = endpoint;
 
 void async function () {
 
-  httpClient.tryJAFingerprintBypass(url, { headers }, res => {
-    const { statusCode } = res;
-    if (403 === statusCode)
-      return log('nope', statusCode), false;
-    return true;
-  }).then(result => {
-    const { success, cipher, userAgent } = result;
+  const http2Client = new Http2Client();
 
-    if (!success)
-      exit('bypass error');
+  exit(http2Client);
 
-    exit('bypass ok, cipher: %s, userAgent:', cipher, userAgent);
-  });
+  // httpClient.tryJAFingerprintBypass(url, { headers }, res => {
+  //   const { statusCode } = res;
+  //   if (403 === statusCode)
+  //     return log('nope', statusCode), false;
+  //   return true;
+  // }).then(result => {
+  //   const { success, cipher, userAgent } = result;
+
+  //   if (!success)
+  //     exit('bypass error');
+
+  //   exit('bypass ok, cipher: %s, userAgent:', cipher, userAgent);
+  // });
 
 }();
