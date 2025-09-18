@@ -35,7 +35,17 @@ function login(user, pass) {
       'content-type': 'application/x-www-form-urlencoded'
     };
 
+    const regexp = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1;path\=\/;HttpOnly)/;
+    const cookie = 'CookieHttp=sid=9a8b8618ae442532feaa85c2f76f07b36eb896d2abb460aa47a5d1a6dd170df0:Language:english:id=1;path=/;HttpOnly';
+
+    exit(regexp.exec(cookie));
+
+    return;
+
     return httpClient.post(url, { headers, body }).then(res => {
+      const { statusCode, headers, data } = res;
+      if (200 !== statusCode)
+        exit('login: request error, http(%d)', statusCode);
       exit(res);
     });
   }); 
