@@ -14,7 +14,7 @@ const { HttpClient, formatDuration, rand } = rochdi;
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
 const endpoint = {
-  url: 'https://echo.free.beeceptor.com',
+  url: 'https://echo.free.be1eceptor.com',
   headers: {
     'accept-encoding': 'gzip, deflate, br, zstd',
     'user-agent': 'hello',
@@ -24,9 +24,7 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-exit(formatDuration(7*24*6e4*60+4e4+4e3+400+1+.1));
-
-httpClient.get(url, { headers, retryOnError: false }).then(res => {
+httpClient.get(url, { headers, retryOnError: true }).then(res => {
   log(res.data.headers);
 }).catch(err => {
   log(err);
