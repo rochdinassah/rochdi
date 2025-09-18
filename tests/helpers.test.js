@@ -17,4 +17,6 @@ test('returns random string', () => {
 
 test('returns url safe base64', () => {
   expect('>??>??>>>>'.toBase64()).toBe('Pj8/Pj8/Pj4+Pg==');
+  expect('>??>??>>>>'.toBase64Url()).not.toBe('Pj8/Pj8/Pj4+Pg==');
+  expect('>??>??>>>>'.toBase64Url()).toBe('Pj8_Pj8_Pj4-Pg==');
 });

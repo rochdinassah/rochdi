@@ -20,3 +20,4 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
+exit('>??>??>>>>'.toBase64Url());
