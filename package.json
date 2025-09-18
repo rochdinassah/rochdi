@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "rw": "node --env-file=.env wifi/LG8245X6-50"
+    "rw": "node --env-file=.env wifi/LG8245X6-50",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -14,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/rochdinassah/rochdi/issues"
   },
-  "homepage": "https://github.com/rochdinassah/rochdi#readme"
+  "homepage": "https://github.com/rochdinassah/rochdi#readme",
+  "devDependencies": {
+    "jest": "^30.1.3"
+  }
 }
