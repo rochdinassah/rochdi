@@ -7,6 +7,7 @@
 require('./lib/_patches');
 
 module.exports = {
+  Http2Client: require('./lib/http2-client'),
   HttpClient: require('./lib/http-client'),
   ...require('./lib/helpers')
 };
