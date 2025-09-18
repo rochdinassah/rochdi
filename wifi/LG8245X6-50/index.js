@@ -12,18 +12,18 @@ const httpClient = new HttpClient();
 const user = process.env.WIFI_ROUTER_USER;
 const pass = process.env.WIFI_ROUTER_PASS;
 
-function getRandCount() {
+function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
   return httpClient.post(url, { headers: { 'content-length': 0 } }).then(res => {
     const { statusCode, data } = res;
     if (200 !== statusCode)
-      exit('getRandCount: request error, http(%d)', statusCode);
-    return data.trim()
+      exit('getToken: request error, http(%d)', statusCode);
+    return log('token ok'), data.trim();
   });
 }
 
 function login(user, pass) {
-  return getRandCount().then(token => {
+  return getToken().then(token => {
     user = encodeURIComponent(user);
     pass = encodeURIComponent(btoa(pass));
 
@@ -45,11 +45,11 @@ function login(user, pass) {
       const match = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1);path\=\/;HttpOnly/.exec(cookie[0]);
       if (!match[1])
         exit('login: did not receive CookieHttp');
-      return match[1]
+      return log('login ok'), match[1]
     });
-  }); 
+  });
 }
 
 login(user, pass).then(cookie => {
-  exit('login ok', cookie);
+  
 });
