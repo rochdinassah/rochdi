@@ -2,7 +2,9 @@
   "name": "rochdi",
   "version": "1.0.0",
   "main": "main.js",
-  "scripts": {},
+  "scripts": {
+    "rw": ""
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rochdinassah/rochdi.git"
