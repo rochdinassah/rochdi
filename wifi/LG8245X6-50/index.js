@@ -63,7 +63,11 @@ function getToken2(cookie) {
 }
 
 return login(user, pass).then(cookie => {
-  getToken2(cookie);
+  getToken2(cookie).then(token => {
+    const url = '/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
+X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
+    exit(url);
+  });
 });
 
 getToken2('CookieHttp=sid=7897fb0e704ab2d98003b0327d436063b76a58e7cdb056473dbcc469951360d7:Language:english:id=1');
