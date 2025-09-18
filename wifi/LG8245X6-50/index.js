@@ -23,7 +23,7 @@ function getRandCount() {
 }
 
 function login(user, pass) {
-  getRandCount().then(token => {
+  return getRandCount().then(token => {
     user = encodeURIComponent(user);
     pass = encodeURIComponent(btoa(pass));
 
