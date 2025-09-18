@@ -9,30 +9,6 @@ const tls = require('node:tls');
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client } = rochdi;
 
-// const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
+const http2Client = new Http2Client()
 
-const endpoint = {
-  url: 'https://grok.com'
-};
-
-const { url, headers } = endpoint;
-
-void async function () {
-
-  const http2Client = new Http2Client();
-
-  http2Client.tryJAFingerprintBypass(url, {}, res => {
-    const { statusCode } = res;
-    if (403 === statusCode)
-      return log('nope', statusCode), false;
-    return true;
-  }).then(result => {
-    const { success, cipher, userAgent } = result;
-
-    if (!success)
-      exit('bypass error');
-
-    exit('bypass ok, cipher: %s, userAgent:', cipher, userAgent);
-  });
-
-}();
+log(http2Client.createSession('https://google.com', { keepalive: true }));
