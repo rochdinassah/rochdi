@@ -4,13 +4,14 @@
 
 const rochdi = require('../');
 const crypto = require('node:crypto');
+const tls = require('node:tls');
 
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 
 const httpClient = new HttpClient({ xuserAgent: 'c', retryOnError: true });
 
 const endpoint = {
-  url: 'https://echo.free.beeceptor.com',
+  url: 'https://openai.com',
   headers: {
     'accept-encoding': 'gzip, deflate, br, zstd',
     'user-agent': 'hello',
@@ -20,6 +21,15 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-httpClient.get('https://openai.com').then(res => {
-  log(res.statusCode);
-});
+void async function () {
+
+  for (const cipher of tls.getCiphers().map(c => c.toUpperCase())) {
+    tls.DEFAULT_CIPHERS = cipher;
+    const s = await httpClient.get(url, { headers }).then(res => {
+      return res.statusCode;
+    });
+
+    log(s);
+  }
+
+}();
