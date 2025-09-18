@@ -5,4 +5,6 @@
 
 global.exit = (...args) => console.log(...args) || process.exit();
 
-exit('ok', 1);
+module.exports = {
+  HttpClient: require('./lib/http-client')
+};
