@@ -3,24 +3,21 @@
 # author: rochdi nassah
 # created: 2025/09/19
 
-declare -A aliases
-
-# aliases[desktop]='cd ~/Desktop'
-aliases[c]='clear'
+found=0
 
 while read line
 do
-  for alias in ${!aliases[@]}
-  do
-    if [[ $line =~ "alias $alias=" ]]
-    then
-      unset aliases[$alias]
-      break
-    fi
-  done
+  if [[ $line == 'source ~/Desktop/rochdi/bin/bashrc' ]]
+  then
+    found=1
+    break
+  fi
 done < ~/.bashrc
 
-for alias in ${!aliases[@]}
-do
-  sed -i "1s/^/alias $alias=\'${aliases[$alias]}\'\n/" ~/.bashrc
-done
+if [ 0 == $found ]
+then
+  sed -i '1s/^/source ~\/Desktop\/rochdi\/bin\/bashrc\n\n/' ~/.bashrc
+  echo injection ok
+else
+  echo noop
+fi

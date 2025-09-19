@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# author: rochdi nassah
+# created: 2025/09/19
+
+alias desktop='cd ~/Desktop'
+alias c='clear'
+alias cleartmp='sudo rm -rf /tmp/* /tmp/.*'
+alias rochdi='desktop; cd rochdi; code .'
+alias syn='echo ack'
