@@ -5,7 +5,7 @@
 
 declare -A aliases
 
-aliases[desktop]='cd ~/Desktop'
+# aliases[desktop]='cd ~/Desktop'
 aliases[c]='clear'
 
 while read line
@@ -15,12 +15,12 @@ do
     if [[ $line =~ "alias $alias=" ]]
     then
       unset aliases[$alias]
-      break 2
+      break
     fi
   done
 done < ~/.bashrc
 
 for alias in ${!aliases[@]}
 do
-  echo $alias
+  sed -i "1s/^/alias $alias=\'${aliases[$alias]}\'\n/" ~/.bashrc
 done
