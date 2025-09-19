@@ -11,10 +11,10 @@ while read line
 do
   for alias in ${!aliases[@]}
   do
-    if [ "$line" == 1 ]
+    if [[ $line =~ "alias $alias=" ]]
     then
       echo found
-      # break
+      break 2
     fi
   done
 done < ~/.bashrc
