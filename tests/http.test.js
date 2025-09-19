@@ -19,7 +19,7 @@ const endpoint = {
 
 const { url, headers } = endpoint;
 
-test('http/1.1 basic test', async () => {
+test('http clients basic test', async () => {
   expect(await httpClient.get(url, { headers }).then(res => res.statusCode)).toBe(200);
   expect(await http2Client.get(url, { headers, keepalive: false }).then(res => res.statusCode)).toBe(200);
 });
