@@ -6,6 +6,7 @@
 declare -A aliases
 
 aliases[desktop]='cd ~/Desktop'
+aliases[c]='clear'
 
 while read line
 do
@@ -13,8 +14,13 @@ do
   do
     if [[ $line =~ "alias $alias=" ]]
     then
-      echo found
+      unset aliases[$alias]
       break 2
     fi
   done
 done < ~/.bashrc
+
+for alias in ${!aliases[@]}
+do
+  echo $alias
+done
