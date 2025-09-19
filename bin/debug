@@ -9,3 +9,6 @@ const tls = require('node:tls');
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client, startTimer, endTimer, getTimer } = rochdi;
 
+const email = 'rochdinassah1998';
+
+log(email[Symbol.for('padEnd')]('@gmail.com'));
