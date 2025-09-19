@@ -8,3 +8,8 @@ alias c='clear'
 alias cleartmp='sudo rm -rf /tmp/* /tmp/.*'
 alias rochdi='desktop; cd rochdi; code .'
 alias syn='echo ack'
+
+if [ $(pwd) == $(echo ~) ]
+then
+  desktop
+fi
