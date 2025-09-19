@@ -10,7 +10,3 @@ const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client, startTimer, endTimer, getTimer } = rochdi;
 
 const http2Client = new Http2Client();
-
-http2Client.createSessionAsync('https://google.com').then(session => {
-  log(session);
-});

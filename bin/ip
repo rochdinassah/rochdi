@@ -6,7 +6,10 @@ const { Http2Client } = rochdi;
 
 const http2Client = new Http2Client();
 
-http2Client.get('https://ifconfig.co', { headers: { 'user-agent': 'curl' } }).then(res => {
+const headers = {
+  'user-agent': 'curl'
+};
+
+http2Client.get('https://ifconfig.co', { headers, keepalive: false }).then(res => {
   log(res.data.trim());
-  http2Client.destroy();
 });
