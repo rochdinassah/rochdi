@@ -7,4 +7,7 @@ const crypto = require('node:crypto');
 const tls = require('node:tls');
 
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
-const { Http2Client } = rochdi;
+const { Http2Client, startTimer } = rochdi;
+
+log(startTimer('foo'));
+log(startTimer('foo'));
