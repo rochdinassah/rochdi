@@ -9,5 +9,3 @@ const tls = require('node:tls');
 const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client, startTimer, endTimer, getTimer } = rochdi;
 
-log('syn'[Symbol.for('padEnd')]('ack'));
-log('syn'.padEnd(3, 'ack'));
