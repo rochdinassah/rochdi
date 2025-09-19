@@ -10,4 +10,5 @@ const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client, startTimer, endTimer } = rochdi;
 
 log(startTimer('foo'));
-setTimeout(() => log(endTimer('foo')), 1e3);
+setTimeout(() => log(endTimer('foo')), 32);
+setTimeout(() => log(endTimer('foo')), 64);
