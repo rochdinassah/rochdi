@@ -18,7 +18,7 @@ test('comparison test', () => {
 });
 
 test('returns a random character from self', () => {
-  expect(sample.rand()).toBeIncluded(sample.split(''));
+  expect(sample.rand()).toBeOneOf(sample.split(''));
 });
 
 test('returns shuffled string', () => {

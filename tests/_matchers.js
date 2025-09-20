@@ -1,7 +1,7 @@
 'use strict';
 
 expect.extend({
-  toBeIncluded: (val, arr) => {
+  toBeOneOf: (val, arr) => {
     return { pass: arr.includes(val) };
   }
 });
