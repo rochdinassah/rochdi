@@ -14,6 +14,19 @@ then
   desktop
 fi
 
+push() {
+  commit=$@
+
+  if [ 0 == ${#commit} ]
+  then
+    commit='noop, sync with remote'
+  fi
+
+  git add -A
+  git commit -m "$commit"
+  git push
+}
+
 extract() {
   tar --file $1 --extract &&
   rm -rf $1 &&
