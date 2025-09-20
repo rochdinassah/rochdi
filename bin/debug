@@ -11,4 +11,4 @@ const { Http2Client, startTimer, endTimer, getTimer } = rochdi;
 
 const http2Client = new Http2Client();
 
-log('foo'.cmp('FoO'));
+log('foo'.cmp('foo'));
