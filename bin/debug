@@ -11,6 +11,8 @@ const { Http2Client, startTimer, endTimer, getTimer } = rochdi;
 
 const http2Client = new Http2Client();
 
+exit(process.env.WIFI_ROUTER_USER, process.env.WIFI_ROUTER_PASS);
+
 Array.from({ length: 1e3 }).forEach(() => {
   if (!['a', 'b'].includes('ab'.rand())) {
     exit('error');

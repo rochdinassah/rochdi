@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "rw": "node --env-file=.env wifi/LG8245X6-50",
+    "rw": "node wifi/LG8245X6-50",
     "test": "jest"
   },
   "repository": {
