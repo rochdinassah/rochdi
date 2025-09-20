@@ -14,6 +14,11 @@ then
   desktop
 fi
 
+extract() {
+  # tar --file $1 --extract &&
+  echo $1 | sed 's/\.[a-z].*//i'
+}
+
 mkdir() {
   /usr/bin/mkdir $1 && cd $1
 }
