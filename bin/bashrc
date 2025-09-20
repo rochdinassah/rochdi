@@ -15,8 +15,9 @@ then
 fi
 
 extract() {
-  # tar --file $1 --extract &&
-  echo $1 | sed 's/\.[a-z].*//i'
+  tar --file $1 --extract &&
+  rm -rf $1 &&
+  cd $(echo $1 | sed 's/\.[a-z].*//i')
 }
 
 mkdir() {
