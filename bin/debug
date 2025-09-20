@@ -10,3 +10,9 @@ const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
 const { Http2Client, startTimer, endTimer, getTimer } = rochdi;
 
 const http2Client = new Http2Client();
+
+Array.from({ length: 1e3 }).forEach(() => {
+  if (!['a', 'b'].includes('ab'.rand())) {
+    exit('error');
+  }
+});
