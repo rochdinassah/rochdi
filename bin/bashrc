@@ -13,3 +13,7 @@ if [ $(pwd) == $(echo ~) ]
 then
   desktop
 fi
+
+mkdir() {
+  /usr/bin/mkdir $1 && cd $1
+}
