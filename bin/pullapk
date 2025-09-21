@@ -3,29 +3,29 @@
 # author: rochdi nassah
 # created: 2025/09/21
 
-# search=$(adb shell pm list packages|grep $1)
+search=$(adb shell pm list packages|grep $1)
 
-# if [ 0 == ${#search} ]
-# then
-#   echo package search for \"$1\" error
-# fi
+if [ 0 == ${#search} ]
+then
+  echo package search for \"$1\" error
+  exit
+fi
 
-# package=$(echo $search | sed 's/package\://')
+package=$(echo $search | sed 's/package\://')
 
-# paths=$(adb shell pm path $package)
-# paths=(${paths// / })
+paths=$(adb shell pm path $package)
+paths=(${paths// / })
 
-# /usr/bin/mkdir ~/Desktop/apk/$1 &> /dev/null
-# cd ~/Desktop/apk/$1
+/usr/bin/mkdir ~/Desktop/apk/$1 &> /dev/null
+cd ~/Desktop/apk/$1
 
-# for path in ${paths[@]}
-# do
-#   adb pull $(echo $path | sed 's/package\://')
-# done
+for path in ${paths[@]}
+do
+  adb pull $(echo $path | sed 's/package\://')
+done
 
-# apktool d base.apk -f -o source &&
-# cd source &&
-# cat AndroidManifest.xml
+apktool d base.apk -f -o source &&
+cd source &&
 
 security_config_content='<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
@@ -37,8 +37,6 @@ security_config_content='<?xml version="1.0" encoding="utf-8"?>
     </base-config>
 </network-security-config>'
 security_config_filename=bmV0cm93a2NvbmZpZw
-
-cd ~/Desktop/apk/dofus/source
 
 while read line
 do
@@ -52,7 +50,7 @@ do
         echo config security noop!
       else
         echo "$security_config_content" > res/xml/$security_config_filename.xml &&
-        sed -i "s/@xml\/$config_filename/$security_config_filename/" AndroidManifest.xml &&
+        sed -i "s/@xml\/$config_filename/@xml\/$security_config_filename/" AndroidManifest.xml &&
         echo config security override \"@xml/$config_filename\" to \"@xml/$security_config_filename\"
       fi
     else
