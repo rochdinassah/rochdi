@@ -29,9 +29,12 @@ push() {
 }
 
 extract() {
-  tar --file $1 --extract &&
+  outdir=/tmp/$(echo $1 | sed 's/\.[a-z].*//i')
+
+  /usr/bin/mkdir $outdir &&
+  tar --file $1 --extract --directory $outdir &&
   rm -rf $1 &&
-  cd $(echo $1 | sed 's/\.[a-z].*//i')
+  cd $outdir
 }
 
 mkdir() {
