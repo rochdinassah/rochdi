@@ -26,4 +26,10 @@ do
   fi
 done
 
+search=$(adb shell pm list packages|grep $1)
+if [ 0 != ${#search} ]
+then
+  adb uninstall $(echo $search | sed 's/package\://')
+fi
+
 adb install-multiple *.apk
