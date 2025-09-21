@@ -8,7 +8,7 @@ alias c='clear'
 alias cleartmp='sudo rm -rf /tmp/* /tmp/.*'
 alias rochdi='desktop; cd rochdi; code .'
 alias syn='echo ack'
-alias rw='rochdi; npm run rw'
+alias rw='desktop; cd rochdi; npm run rw'
 
 if [ $(pwd) == $(echo ~) ]
 then

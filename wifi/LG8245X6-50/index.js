@@ -9,8 +9,8 @@ const { HttpClient, awaitInternet } = rochdi;
 
 const httpClient = new HttpClient();
 
-const user = process.env.WIFI_ROUTER_USER;
-const pass = process.env.WIFI_ROUTER_PASS;
+const user = process.env.WIFI_ROUTER_USER || exit('rw: WIFI_ROUTER_USER env is missing');
+const pass = process.env.WIFI_ROUTER_PASS || exit('rw: WIFI_ROUTER_PASS env is missing');
 
 function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
