@@ -9,7 +9,13 @@ cd ~/Desktop/apk/$1
 # zipalign 4 source/dist/base.apk base.apk -f
 
 rm -rf /tmp/keystore
-echo "\r\n" > /tmp/keystoregenargs
+echo "
+
+
+
+
+
+yes" > /tmp/keystoregenargs
 keytool -genkey -alias patched-apk -keyalg rsa -keysize 512 -validity 1 -keystore /tmp/keystore -keypass 123456 -storepass 123456 < /tmp/keystoregenargs
 
 # adb install-multiple *.apk
