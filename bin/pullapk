@@ -47,10 +47,11 @@ do
     if [[ $line =~ android\:networkSecurityConfig=\"@xml\/([a-zA-Z0-9_-]+)\" ]]
     then
       config_filename=${BASH_REMATCH[1]}
-
       if [ $security_config_filename == $config_filename ]
       then
         echo noop
+      else
+        echo "$security_config_content" > res/xml/$security_config_filename.xml
       fi
     fi
     break
