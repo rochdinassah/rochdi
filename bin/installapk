@@ -3,3 +3,5 @@
 # author: rochdi nassah
 # created: 2025/09/21
 
+cd ~/Desktop/apk/$1
+
