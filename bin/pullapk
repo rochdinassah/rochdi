@@ -3,3 +3,22 @@
 # author: rochdi nassah
 # created: 2025/09/21
 
+search=$(adb shell pm list packages|grep $1)
+
+if [ 0 == ${#search} ]
+then
+  echo package search for \"$1\" error
+fi
+
+package=$(echo $search | sed 's/package\://')
+
+paths=$(adb shell pm path $package)
+paths=(${paths// / })
+
+/usr/bin/mkdir ~/Desktop/apk/$1 &> /dev/null
+cd ~/Desktop/apk/$1
+
+for path in ${paths[@]}
+do
+  adb pull $(echo $path | sed 's/package\://')
+done
