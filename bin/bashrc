@@ -39,11 +39,18 @@ mkdir() {
 # functions end
 
 # redis start
-cleartmp
-wget https://github.com/redis/redis/archive/refs/tags/8.0.0.tar.gz -O /tmp/redis.tar.gz &&
-cd /tmp &&
-tar --extract --file redis.tar.gz &&
-rm -rf redis.tar.gz &&
-cd redis-8.0.0 &&
-make -j 8
+redisExist=$(which redis-server)
+if [ 0 == ${#redisExist} ]
+then
+  wget https://github.com/redis/redis/archive/refs/tags/8.0.0.tar.gz -O /tmp/redis.tar.gz &&
+  cd /tmp &&
+  tar --extract --file redis.tar.gz &&
+  rm -rf redis.tar.gz &&
+  cd redis-8.0.0 &&
+  make -j 8 &&
+  sudo make install &&
+  echo redis installation complete!
+  echo server: $(which redis-server)
+  echo cli: $(which redis-cli)
+fi
 # redis end
