@@ -52,12 +52,13 @@ do
         echo config security noop!
       else
         echo "$security_config_content" > res/xml/$security_config_filename.xml &&
-        sed -i "s/$config_filename/$security_config_filename/" AndroidManifest.xml &&
+        sed -i "s/@xml\/$config_filename/$security_config_filename/" AndroidManifest.xml &&
         echo config security override \"@xml/$config_filename\" to \"@xml/$security_config_filename\"
       fi
     else
       echo "$security_config_content" > res/xml/$security_config_filename.xml &&
-      sed -i "s/<application/<application android:networkSecurityConfig=\"@xml\/$security_config_filename\"/" AndroidManifest.xml
+      sed -i "s/<application/<application android:networkSecurityConfig=\"@xml\/$security_config_filename\"/" AndroidManifest.xml &&
+      echo config security created \"@xml/$security_config_filename\"
     fi
     break
   fi
