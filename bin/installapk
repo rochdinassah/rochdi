@@ -5,8 +5,8 @@
 
 cd ~/Desktop/apk/$1
 
-# apktool b source
-# zipalign 4 source/dist/base.apk base.apk -f
+apktool b source
+zipalign 4 source/dist/base.apk base.apk -f
 
 rm -rf /tmp/keystore
 echo "
@@ -18,4 +18,12 @@ echo "
 yes" > /tmp/keystoregenargs
 keytool -genkey -alias patched-apk -keyalg rsa -keysize 512 -validity 1 -keystore /tmp/keystore -keypass 123456 -storepass 123456 < /tmp/keystoregenargs
 
-# adb install-multiple *.apk
+for file in ./*
+do
+  if [[ $file =~ \.apk$ ]]
+  then
+    apksigner sign --key-pass pass:123456 -ks-pass pass:123456 -ks-key-alias patched-apk -ks /tmp/keystore $file
+  fi
+done
+
+adb install-multiple *.apk
