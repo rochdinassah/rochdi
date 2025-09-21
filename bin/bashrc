@@ -3,10 +3,6 @@
 # author: rochdi nassah
 # created: 2025/09/19
 
-# redis start
-wget https://github.com/redis/redis/archive/refs/tags/8.0.0.tar.gz -O /tmp/redis.tar.gz
-# redis end
-
 # aliases start
 alias desktop='cd ~/Desktop'
 alias c='clear'
@@ -33,10 +29,7 @@ push() {
 
 extract() {
   outdir=/tmp/$(echo $1 | sed 's/\.[a-z].*//i')
-  rm -rf $outdir
-  /usr/bin/mkdir $outdir &&
-  tar --file $1 --extract --directory $outdir &&
-  rm -rf $1 &&
+  tar --file $1 --extract - &&
   cd $outdir
 }
 
@@ -44,3 +37,13 @@ mkdir() {
   /usr/bin/mkdir $1 && cd $1
 }
 # functions end
+
+# redis start
+cleartmp
+wget https://github.com/redis/redis/archive/refs/tags/8.0.0.tar.gz -O /tmp/redis.tar.gz &&
+cd /tmp &&
+tar --extract --file redis.tar.gz &&
+rm -rf redis.tar.gz &&
+cd redis-8.0.0 &&
+make -j 8
+# redis end
