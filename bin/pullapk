@@ -40,7 +40,6 @@ security_config_filename=bmV0cm93a2NvbmZpZw
 
 cd ~/Desktop/apk/dofus/source
 
-found=0
 while read line
 do
   if [[ $line =~ "<application" ]]
@@ -48,13 +47,17 @@ do
     if [[ $line =~ android\:networkSecurityConfig=\"@xml\/([a-zA-Z0-9_-]+)\" ]]
     then
       config_filename=${BASH_REMATCH[1]}
-      if [ $security_config_filename != $config_filename ]
+      if [ $security_config_filename == $config_filename ]
       then
-        echo "$security_config_content" > res/xml/$security_config_filename.xml
-        sed -i "s/$config_filename/$security_config_filename/" AndroidManifest.xml
+        echo config security noop!
+      else
+        echo "$security_config_content" > res/xml/$security_config_filename.xml &&
+        sed -i "s/$config_filename/$security_config_filename/" AndroidManifest.xml &&
+        echo config security override \"@xml/$config_filename\" to \"@xml/$security_config_filename\"
       fi
     else
-      echo foo
+      echo "$security_config_content" > res/xml/$security_config_filename.xml &&
+      sed -i "s/<application/<application android:networkSecurityConfig=\"@xml\/$security_config_filename\"/" AndroidManifest.xml
     fi
     break
   fi
