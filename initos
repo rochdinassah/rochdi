@@ -18,6 +18,10 @@ if [ 0 == $found ]
 then
   sed -i '1s/^/source ~\/Desktop\/rochdi\/bin\/bashrc\n\n/' ~/.bashrc
   echo injection ok
-else
-  echo noop
+fi
+
+if [ ! -d ~/Desktop/apk ]
+then
+echo foo
+  /usr/bin/mkdir ~/Desktop/apk
 fi
