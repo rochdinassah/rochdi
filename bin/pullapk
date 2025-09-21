@@ -27,7 +27,7 @@
 # cd source &&
 # cat AndroidManifest.xml
 
-security_config='<?xml version="1.0" encoding="utf-8"?>
+security_config_content='<?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
@@ -36,6 +36,7 @@ security_config='<?xml version="1.0" encoding="utf-8"?>
         </trust-anchors>
     </base-config>
 </network-security-config>'
+security_config_filename=bmV0cm93a2NvbmZpZw
 
 cd ~/Desktop/apk/dofus/source
 
@@ -47,7 +48,10 @@ do
     then
       config_filename=${BASH_REMATCH[1]}
 
-      echo $config_filename
+      if [ $security_config_filename == $config_filename ]
+      then
+        echo noop
+      fi
     fi
     break
   fi
