@@ -13,12 +13,21 @@ const { Server, HttpClient, Http2Client } = rochdi;
 
 const httpClient = new HttpClient();
 
-const port = 65535;
+const port = 2048;
 const server = new Server({ port });
 
 server.run();
 
-server.get('/token/{token}', (req, res) => {
+server.get('/nekot/{token}', (req, res) => {
   const { token } = req.params;
   log('recv token:', token);
+  res.writeHead(200).end();
+});
+
+server.get('/foo', () => {
+  log('/foo hit')
+});
+
+server.get('/foo/{id}/bar/{id2}', () => {
+  log('/foo/{id}/bar/{id2}');
 });
