@@ -18,8 +18,16 @@ const server = new Server({ port });
 
 server.run();
 
-server.get('/num/{num}/foo', (num, req, res) => {
-  log('recv request', num);
+server.get('/a/{key}/b/{key2}/c/{key3}', (req, res) => {
+  return log('/a/{key}/b/{key2}/c/{key3}');
 });
 
-require('child_process').exec('curl 127.1:'+port+'/num/'+rand(2, 2**16));
+server.get('/tokens', (req, res) => {
+  return log('/tokens');
+});
+
+server.get('/tokens/{id}', (req, res) => {
+  return log('/tokens/{id}');
+});
+
+require('child_process').exec('curl 127.1:'+port+'/a/16/b/32/c/64');
