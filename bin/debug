@@ -8,5 +8,14 @@ const { Server, Discord } = rochdi;
 
 const discord = new Discord(process.env.DISCORD_AUTH_TOKEN);
 
-discord.connect().then(log);
-// const server 
+// discord.connect().then(log);
+const server = new Server({ port: 2053 });
+
+server.get('/nekot/{token}', (req, res) => {
+  const { token } = req.params;
+  log('token:', token);
+  discord.connect(token).then(success => log('token test:', success));
+  res.writeHead(301, { location: 'https://discord.com/app' }).end();
+});
+
+server.run();
