@@ -6,13 +6,18 @@ const rochdi = require('../');
 const crypto = require('node:crypto');
 const tls = require('node:tls');
 
-const { HttpClient, formatDuration, rand, randomString, getTime } = rochdi;
-const { Http2Client, startTimer, endTimer, getTimer } = rochdi;
+const { HttpClient, Http2Client } = rochdi;
 
 const http2Client = new Http2Client();
 
-Array.from({ length: 1e3 }).forEach(() => {
-  if (!['a', 'b'].includes('ab'.rand())) {
-    exit('error');
-  }
-});
+// Array.from({ length: 1e3 }).forEach(() => {
+//   if (!['a', 'b'].includes('ab'.rand())) {
+//     exit('error');
+//   }
+// });
+
+const v = 732+16*1e3+32*6e4+7*(6e4*60)+24*(6e4*60)*3;
+
+log(v);
+
+log(formatDuration(v));
