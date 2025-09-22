@@ -3,15 +3,8 @@
 'use strict';
 
 const rochdi = require('../');
-const crypto = require('node:crypto');
-const tls = require('node:tls');
-const WebSocket = require('ws');
-const EE = require('node:events');
-const ee = new EE();
 
-const { Server, HttpClient, Http2Client } = rochdi;
-
-const httpClient = new HttpClient();
+const { Server } = rochdi;
 
 const port = 2048;
 const server = new Server({ port });
