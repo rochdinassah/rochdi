@@ -22,6 +22,7 @@ fi
 
 if [ ! -d ~/Desktop/apk ]
 then
-echo foo
   /usr/bin/mkdir ~/Desktop/apk
 fi
+
+sudo apt install sox libsox-fmt-mp3
