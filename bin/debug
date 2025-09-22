@@ -15,9 +15,3 @@ const http2Client = new Http2Client();
 //     exit('error');
 //   }
 // });
-
-const v = 732+16*1e3+32*6e4+7*(6e4*60)+24*(6e4*60)*3;
-
-log(v);
-
-log(formatDuration(v));
