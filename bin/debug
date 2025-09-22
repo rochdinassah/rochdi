@@ -9,3 +9,4 @@ const { Server, Discord } = rochdi;
 const discord = new Discord(process.env.DISCORD_AUTH_TOKEN);
 
 discord.connect().then(log);
+// const server 
