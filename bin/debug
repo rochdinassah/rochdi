@@ -8,4 +8,4 @@ const { Discord } = rochdi;
 
 const discord = new Discord(process.env.DISCORD_AUTH_TOKEN);
 
-discord.testToken();
+discord.testToken().then(log);
