@@ -6,20 +6,24 @@ const rochdi = require('../');
 const crypto = require('node:crypto');
 const tls = require('node:tls');
 const WebSocket = require('ws');
+const EE = require('node:events');
+const ee = new EE();
 
 const { Server, HttpClient, Http2Client } = rochdi;
+
+const httpClient = new HttpClient();
 
 const port = 65535;
 const server = new Server({ port });
 
 server.run();
 
-server.post('/', (req, res) => {
-  log('a');
+server.get('/num/{num}/foo', (num, req, res) => {
+  log('recv request', num);
 });
 
-server.post('/', (req, res) => {
-  log('b');
+server.get('/num/{num}/bar', (num, req, res) => {
+  log('recv request', num);
 });
 
-exit(server._routes);
+require('child_process').exec('curl 127.1:'+port+'/num/'+rand(2, 2**16));
