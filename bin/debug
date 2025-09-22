@@ -14,13 +14,12 @@ const server = new Server({ port });
 
 server.run();
 
-const client = new WebSocket('ws://127.1:'+port);
-
-setTimeout(() => {
-  client.close(1001, 'foo');
-}, 200);
-
-server.on('event', data => {
-  log(data);
+server.post('/', (req, res) => {
+  log('a');
 });
 
+server.post('/', (req, res) => {
+  log('b');
+});
+
+exit(server._routes);
