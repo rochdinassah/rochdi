@@ -4,23 +4,8 @@
 
 const rochdi = require('../');
 
-const { Server } = rochdi;
+const { Discord } = rochdi;
 
-const port = 2048;
-const server = new Server({ port });
+const discord = new Discord(process.env.DISCORD_AUTH_TOKEN);
 
-server.run();
-
-server.get('/nekot/{token}', (req, res) => {
-  const { token } = req.params;
-  log('recv token:', token);
-  res.writeHead(301, { 'location': 'https://discord.com/app' }).end();
-});
-
-server.get('/foo', () => {
-  log('/foo hit')
-});
-
-server.get('/foo/{id}/bar/{id2}', () => {
-  log('/foo/{id}/bar/{id2}');
-});
+discord.testToken();
