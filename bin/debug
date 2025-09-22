@@ -19,3 +19,7 @@ const client = new WebSocket('ws://127.1:'+port);
 setTimeout(() => {
   client.close(1001, 'foo');
 }, 200);
+
+server.on('event', data => {
+  log(data);
+});
