@@ -19,7 +19,7 @@ const server = new Server({ port });
 server.run();
 
 server.get('/a/{key}/b/{key2}/c/{key3}', (req, res) => {
-  return log('/a/{key}/b/{key2}/c/{key3}');
+  return log(req.params);
 });
 
 server.get('/tokens', (req, res) => {
