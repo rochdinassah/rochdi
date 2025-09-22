@@ -9,3 +9,5 @@ const tls = require('node:tls');
 const { Server, HttpClient, Http2Client } = rochdi;
 
 const server = new Server();
+
+server.run(rand(1e3, 4e3));
