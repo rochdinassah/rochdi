@@ -23,11 +23,12 @@ server.get('/a/{key}/b/{key2}/c/{key3}', (req, res) => {
 });
 
 server.get('/tokens', (req, res) => {
-  return log('/tokens');
+  return log(req.params);
 });
 
 server.get('/tokens/{id}', (req, res) => {
-  return log('/tokens/{id}');
+  return log(req.params);
 });
 
-require('child_process').exec('curl 127.1:'+port+'/a/16/b/32/c/64');
+require('child_process').exec('curl 127.1:'+port+'/tokens/18');
+require('child_process').exec('curl 127.1:'+port+'/tokens');
