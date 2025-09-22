@@ -6,6 +6,6 @@ const rochdi = require('../');
 const crypto = require('node:crypto');
 const tls = require('node:tls');
 
-const { HttpClient, Http2Client } = rochdi;
+const { Server, HttpClient, Http2Client } = rochdi;
 
-const http2Client = new Http2Client();
+const server = new Server();

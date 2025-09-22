@@ -10,6 +10,7 @@ require('./lib/_patches');
 require('./lib/_globals');
 
 module.exports = {
+  Server: require('./lib/app/server'),
   Http2Client: require('./lib/http2-client'),
   HttpClient: require('./lib/http-client')
 };
