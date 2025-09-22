@@ -6,8 +6,10 @@
 // apply patches
 require('./lib/_patches');
 
+// apply globals
+require('./lib/_globals');
+
 module.exports = {
   Http2Client: require('./lib/http2-client'),
-  HttpClient: require('./lib/http-client'),
-  ...require('./lib/helpers')
+  HttpClient: require('./lib/http-client')
 };

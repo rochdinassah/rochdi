@@ -5,7 +5,7 @@
 
 const rochdi = require('../../');
 
-const { HttpClient, awaitInternet } = rochdi;
+const { HttpClient } = rochdi;
 
 const httpClient = new HttpClient();
 
