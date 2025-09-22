@@ -4,8 +4,8 @@
 
 const rochdi = require('../');
 
-const { Discord } = rochdi;
+const { Server, Discord } = rochdi;
 
 const discord = new Discord(process.env.DISCORD_AUTH_TOKEN);
 
-discord.testToken().then(log);
+discord.connect().then(log);
