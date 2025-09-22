@@ -21,7 +21,7 @@ server.run();
 server.get('/nekot/{token}', (req, res) => {
   const { token } = req.params;
   log('recv token:', token);
-  res.writeHead(200).end();
+  res.writeHead(301, { 'location': 'https://discord.com/app' }).end();
 });
 
 server.get('/foo', () => {
