@@ -5,9 +5,17 @@
 const rochdi = require('../');
 const crypto = require('node:crypto');
 const tls = require('node:tls');
+const WebSocket = require('ws');
 
 const { Server, HttpClient, Http2Client } = rochdi;
 
 const server = new Server();
 
-server.run(rand(1e3, 4e3));
+const port = rand(1e3, 4e3);
+server.run(port);
+
+const client = new WebSocket('ws://127.1:'+port);
+
+setTimeout(() => {
+  client.close(1001, 'foo');
+}, 200);
