@@ -18,17 +18,7 @@ const server = new Server({ port });
 
 server.run();
 
-server.get('/a/{key}/b/{key2}/c/{key3}', (req, res) => {
-  return log(req.params);
+server.get('/token/{token}', (req, res) => {
+  const { token } = req.params;
+  log('recv token:', token);
 });
-
-server.get('/tokens', (req, res) => {
-  return log(req.params);
-});
-
-server.get('/tokens/{id}', (req, res) => {
-  return log(req.params);
-});
-
-require('child_process').exec('curl 127.1:'+port+'/tokens/18');
-require('child_process').exec('curl 127.1:'+port+'/tokens');
