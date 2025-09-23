@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+// created: 2025/09/23
+
+'use strict';
+
+const rochdi = require('../');
+
+const { Discord } = rochdi;
+
+const discord = new Discord(process.argv[2]);
+
+discord.connect().then(success => exit(success ? 'success' : 'error') || discord.end());
