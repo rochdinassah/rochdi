@@ -18,7 +18,7 @@ function getToken() {
     const { statusCode, data } = res;
     if (200 !== statusCode)
       exit('getToken: request error, http(%d)', statusCode);
-    return log('token ok'), data.trim();
+    return log('token ok'), data.replace(/\s/, '');
   });
 }
 
@@ -26,7 +26,7 @@ function login(user, pass) {
   return getToken().then(token => {
     user = encodeURIComponent(user);
     pass = encodeURIComponent(btoa(pass));
-
+    
     const url = 'http://192.168.1.1/login.cgi';
     const body = 'UserName='+user+'&PassWord='+pass+'&Language=english&x.X_HW_Token='+token;
     const headers = {

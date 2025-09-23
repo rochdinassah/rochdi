@@ -37,4 +37,12 @@ extract() {
 mkdir() {
   /usr/bin/mkdir $1 && cd $1
 }
+
+btoa() {
+  node -e "console.log(btoa('$1'))"
+}
+
+atob() {
+  node -e "console.log(atob('$1'))"
+}
 # functions end
