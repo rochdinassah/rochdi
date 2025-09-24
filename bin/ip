@@ -11,5 +11,5 @@ const headers = {
 };
 
 http2Client.get('https://ifconfig.co', { headers, keepalive: false }).then(res => {
-  log(res.data.trim());
+  log(res.data.replace(/[\s\n]/g, ''));
 });
