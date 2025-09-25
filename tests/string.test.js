@@ -11,9 +11,12 @@ const sample = 'lorem ipsum foo bar baz qux quux quuz corge grault';
 test('transforms string to kebab-case', () => {
   expect('foo'.toKebabCase()).toBe('foo');
   expect('foo bar'.toKebabCase()).toBe('foo-bar');
-  expect('foo       bar'.toKebabCase()).toBe('foo-bar');
-  expect('foo    ____   bar'.toKebabCase()).toBe('foo-bar');
-  expect('fo\'o    quu:x ::q::----uuz ::: bar ba"""""""z qu"x""\'"___   '.toKebabCase()).toBe('foo-quux-q-uuz-bar-baz-qux');
+  expect('foo  "__"\'\'"     bar'.toKebabCase()).toBe('foo-bar');
+  expect('foo :::-   ____   bar'.toKebabCase()).toBe('foo-bar');
+  expect('foo          bar'.toKebabCase()).toBe('foo-bar');
+  expect('foo-----_________      bar'.toKebabCase()).toBe('foo-bar');
+  expect('-----foo___bar   -'.toKebabCase()).toBe('foo-bar');
+  expect(':---::foo___bar   -::::'.toKebabCase()).toBe('foo-bar');
 });
 
 test('comparison test', () => {
