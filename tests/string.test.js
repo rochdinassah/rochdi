@@ -8,6 +8,11 @@ require('./_matchers');
 
 const sample = 'lorem ipsum foo bar baz qux quux quuz corge grault';
 
+test('transforms first letter to uppercase', () => {
+  expect('foo'.ucfirst()).toBe('Foo');
+  expect('1foo'.ucfirst()).toBe('1foo');
+});
+
 test('transforms string to kebab-case', () => {
   expect('foo'.toKebabCase()).toBe('foo');
   expect('foo bar'.toKebabCase()).toBe('foo-bar');

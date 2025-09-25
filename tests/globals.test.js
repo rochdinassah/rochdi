@@ -12,9 +12,9 @@ test('returns md5 hash', () => {
 test('encryption flow', () => {
   const plaintext = randomString(1e3);
   const ciphertext = encrypt(plaintext, encpass);
-
-  expect(ciphertext).not.toBe(plaintext);
   
+  expect(ciphertext).not.toBe(plaintext);
+
   expect(decrypt(ciphertext, ' ')).not.toBe(plaintext);
 
   function withEmptyPassword() {
