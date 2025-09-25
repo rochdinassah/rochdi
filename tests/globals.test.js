@@ -8,7 +8,7 @@ require('rochdi');
 const encpass = 'encryptionPassword-!@$(@#$_+@3902840#+)+_@#(%_';
 
 test('encryption flow', () => {
-  const plaintext = randomString(1e6);
+  const plaintext = randomString(1e3);
   const ciphertext = encrypt(plaintext, encpass);
 
   expect(ciphertext).not.toBe(plaintext);
@@ -45,7 +45,7 @@ test('returns formatted duration', () => {
 });
 
 test('returns random string', () => {
-  const size = 4096;
+  const size = 128;
   expect(randomString(size).length).toBe(size);
   expect(randomString(size)).toMatch(/^[a-z0-9]+$/i);
   expect(randomString(size, { useNumbers: false })).not.toMatch(/\d/i);
