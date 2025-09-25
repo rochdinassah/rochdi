@@ -8,10 +8,23 @@ require('rochdi');
 const encpass = 'encryptionPassword-!@$(@#$_+@3902840#+)+_@#(%_';
 
 test('encryption flow', () => {
-  const plaintext = randomString(1e4);
+  const plaintext = randomString(1e6);
   const ciphertext = encrypt(plaintext, encpass);
+
   expect(ciphertext).not.toBe(plaintext);
-  expect(decrypt(ciphertext)).not.toBe(plaintext);
+  
+  expect(decrypt(ciphertext, ' ')).not.toBe(plaintext);
+
+  function withEmptyPassword() {
+    decrypt(ciphertext, '');
+  }
+  function withNoPassword() {
+    decrypt(ciphertext);
+  }
+
+  expect(withEmptyPassword).toThrow();
+  expect(withNoPassword).toThrow();
+
   expect(decrypt(ciphertext, encpass+'a')).not.toBe(plaintext);
   expect(decrypt(ciphertext, encpass)).toBe(plaintext);
 });
