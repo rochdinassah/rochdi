@@ -7,6 +7,10 @@ require('rochdi');
 
 const encpass = 'encryptionPassword-!@$(@#$_+@3902840#+)+_@#(%_';
 
+test('returns md5 hash', () => {
+  expect(create_md5(encpass)).toBe('0247bfa180d050be869063a4bf56421f');
+});
+
 test('encryption flow', () => {
   const plaintext = randomString(1e3);
   const ciphertext = encrypt(plaintext, encpass);
