@@ -11,6 +11,7 @@ test('transforms string to kebab-case', () => {
   expect('1foo-b a r _ bazq ux quux qu      uz'.toKebabCase())
     .toBe('1foo-b-a-r-bazq-ux-quux-qu-uz');
   expect('fo\'o bar   __     "baz"'.toKebabCase()).toBe('foo-bar-baz');
+  expect('fo\'::::::o bar   __     "b:az"'.toKebabCase()).toBe('foo-bar-baz');
 });
 
 const encpass = 'encryptionPassword-!@$(@#$_+@3902840#+)+_@#(%_';
