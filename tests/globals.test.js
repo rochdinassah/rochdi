@@ -5,12 +5,18 @@
 require('./_matchers');
 require('rochdi');
 
-const encpass = 'encryptionPassword-!@$(@#$_+@3902840#+)+_@#(%_';
+test('transforms string to kebab-case', () => {
+  expect('foo'.toKebabCase()).toBe('foo');
+  expect('1foo-bar'.toKebabCase()).toBe('1foo-bar');
+  expect('1foo-b a r _ bazq ux quux qu      uz'.toKebabCase())
+    .toBe('1foo-b-a-r-bazq-ux-quux-qu-uz');
+  expect('fo\'o bar   __     "baz"'.toKebabCase()).toBe('foo-bar-baz');
+});
 
+const encpass = 'encryptionPassword-!@$(@#$_+@3902840#+)+_@#(%_';
 test('returns md5 hash', () => {
   expect(create_md5(encpass)).toBe('0247bfa180d050be869063a4bf56421f');
 });
-
 test('encryption flow', () => {
   const plaintext = randomString(1e3);
   const ciphertext = encrypt(plaintext, encpass);
