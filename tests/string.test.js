@@ -13,7 +13,7 @@ test('transforms string to kebab-case', () => {
   expect('foo bar'.toKebabCase()).toBe('foo-bar');
   expect('foo       bar'.toKebabCase()).toBe('foo-bar');
   expect('foo    ____   bar'.toKebabCase()).toBe('foo-bar');
-  expect('fo\'o   quu:x ::q::----uuz ::: bar ba"""""""z qu"x""\'"___   '.toKebabCase()).toBe('foo-quux-q-uuz-bar-baz-qux');
+  expect('fo\'o    quu:x ::q::----uuz ::: bar ba"""""""z qu"x""\'"___   '.toKebabCase()).toBe('foo-quux-q-uuz-bar-baz-qux');
 });
 
 test('comparison test', () => {
