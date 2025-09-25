@@ -9,6 +9,10 @@ require('./lib/_patches');
 // apply globals
 require('./lib/_globals');
 
+global.exit = (...args) => console.log(...args) || process.exit();
+global.log = console.log.bind(console);
+global.noop = Function.prototype;
+
 module.exports = {
   Discord: require('./lib/discord'),
   Server: require('./lib/app/server'),
