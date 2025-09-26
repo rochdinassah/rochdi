@@ -5,20 +5,25 @@
 
 const rochdi = require('../../');
 
-const { HttpClient } = rochdi;
+const { HttpClient, Logger } = rochdi;
 
 const httpClient = new HttpClient();
 
 const user = process.env.WIFI_ROUTER_USER || exit('rw: WIFI_ROUTER_USER env is missing');
 const pass = process.env.WIFI_ROUTER_PASS || exit('rw: WIFI_ROUTER_PASS env is missing');
 
+const logger = new Logger({ prefix: 'restart-wifi', errcb: (err) => {
+  process.exit(1);
+}})
+
 function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
   return httpClient.post(url, { headers: { 'content-length': 0 } }).then(res => {
     const { statusCode, data } = res;
     if (200 !== statusCode)
-      exit('getToken: request error, http(%d)', statusCode);
-    return log('token ok'), data.replace(/\s/, '');
+      throw new Error('getToken: request error, http('+statusCode+')');
+    logger.debug('token ok');
+    return data.replace(/\s/, '');
   });
 }
 
@@ -38,14 +43,15 @@ function login(user, pass) {
     return httpClient.post(url, { headers, body }).then(res => {
       const { statusCode, headers, data } = res;
       if (200 !== statusCode)
-        exit('login: request error, http(%d)', statusCode);
+        throw new Error('login: request error, http('+statusCode+')');
       const cookie = headers['set-cookie'];
       if (!cookie || !cookie.length)
-        exit('login: did not receive set-cookie header');
+        throw new Error('login: did not receive set-cookie header');
       const match = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1);path\=\/;HttpOnly/.exec(cookie[0]);
       if (!match[1])
-        exit('login: did not receive CookieHttp');
-      return log('login ok'), match[1];
+        throw new Error('login: did not receive CookieHttp');
+      logger.debug('login ok');
+      return match[1];
     });
   });
 }
@@ -54,17 +60,19 @@ function getToken2(cookie) {
   return httpClient.get('http://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp', { headers: { cookie } }).then(res => {
     const { statusCode, data } = res;
     if (200 !== statusCode)
-      exit('getToken2: request error, http(%d)', statusCode);
+      throw new Error('getToken2: request error, http('+statusCode+')');
     const match = /[a-z0-9]{64}/.exec(data);
     if (!match[0])
-      exec('getToken2: token extraction error');
-    return log('token2 ok'), match[0];
+      throw new Error('getToken2: token extraction error');
+    logger.debug('token2 ok');
+    return match[0];
   })
 }
 
 httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
   const currIP = res.data;
-  log('rebooting... curr IP:', currIP);
+
+  logger.info('rebooting... curr IP:', currIP);
 
   login(user, pass).then(cookie => {
   getToken2(cookie).then(token => {
@@ -75,17 +83,19 @@ X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
       'content-type': 'application/x-www-form-urlencoded'
     };
     httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).catch(noop);
-    log('reboot command sent, awaiting for internet...');
+
+    logger.info('reboot command sent, awaiting for internet...');
+
     setTimeout(() => {
       awaitInternet().then(() => {
         httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
           log('reboot %s, currIP:', res.data);
           if (currIP !== res.data)
-            return log('reboot ok, new IP:', res.data);
-          log('reboot complete, IP not changed!');
+            return logger.info('reboot ok, new IP:', res.data);
+          logger.info('reboot complete, IP not changed!');
         });
       });
-    }, 8e3);4e3
+    }, 8e3);
   });
 });
 });
