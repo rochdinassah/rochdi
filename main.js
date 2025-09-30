@@ -14,6 +14,7 @@ global.log = console.log.bind(console);
 global.noop = Function.prototype;
 
 module.exports = {
+  Command: require('./lib/command'),
   Logger: require('./lib/logger'),
   Discord: require('./lib/discord'),
   Server: require('./lib/app/server'),
