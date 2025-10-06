@@ -17,6 +17,7 @@ module.exports = {
   Command: require('./lib/command'),
   Logger: require('./lib/logger'),
   Discord: require('./lib/discord'),
+  Client: require('./lib/app/client'),
   Server: require('./lib/app/server'),
   Http2Client: require('./lib/http2-client'),
   HttpClient: require('./lib/http-client')
