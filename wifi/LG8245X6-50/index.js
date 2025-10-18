@@ -70,32 +70,32 @@ function getToken2(cookie) {
 }
 
 httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
-  const currIP = res.data;
+  const curr_ip = res.data;
 
-  logger.info('rebooting... curr IP:', currIP);
+  logger.info('rebooting... curr_ip:', curr_ip);
 
   login(user, pass).then(cookie => {
-  getToken2(cookie).then(token => {
-    const url = 'http://192.168.1.1/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
-X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
-    const headers = {
-      cookie,
-      'content-type': 'application/x-www-form-urlencoded'
-    };
-    httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).catch(noop);
+    getToken2(cookie).then(token => {
+      const url = 'http://192.168.1.1/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
+  X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
+      const headers = {
+        cookie,
+        'content-type': 'application/x-www-form-urlencoded'
+      };
+      httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).catch(noop);
 
-    logger.info('reboot command sent, awaiting for internet...');
+      logger.info('reboot command sent, awaiting for internet...');
 
-    setTimeout(() => {
-      awaitInternet().then(() => {
-        httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
-          log('reboot %s, currIP:', res.data);
-          if (currIP !== res.data)
-            return logger.info('reboot ok, new IP:', res.data);
-          logger.info('reboot complete, IP not changed!');
+      setTimeout(() => {
+        awaitInternet().then(() => {
+          httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
+            log('reboot %s, curr_ip:', res.data);
+            if (curr_ip !== res.data)
+              return logger.info('reboot ok, new IP:', res.data);
+            logger.info('reboot complete, IP not changed!');
+          });
         });
-      });
-    }, 8e3);
+      }, 8e3);
+    });
   });
-});
 });
