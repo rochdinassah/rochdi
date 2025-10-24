@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+
+'use strict';
+
+require('../');
+
+const [min, max] = process.argv.slice(2, 4);
+
+log(rand(min ?? 0, max ?? 10**20));
