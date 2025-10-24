@@ -8,4 +8,4 @@ require('../');
 
 const [min, max] = process.argv.slice(2, 4);
 
-log(rand(min ?? 0, max ?? 10**20));
+log(rand(parseInt(min ?? 0), parseInt(max ?? 10**20)));
