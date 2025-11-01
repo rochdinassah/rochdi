@@ -14,6 +14,7 @@ global.log = console.log.bind(console);
 global.noop = Function.prototype;
 
 module.exports = {
+  Openai: require('./lib/openai'),
   Command: require('./lib/command'),
   Logger: require('./lib/logger'),
   Discord: require('./lib/discord'),
