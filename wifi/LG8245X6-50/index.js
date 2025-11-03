@@ -19,9 +19,9 @@ const logger = new Logger({ prefix: 'restart-wifi', errcb: (err) => {
 function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
   return httpClient.post(url, { headers: { 'content-length': 0 } }).then(res => {
-    const { statusCode, data } = res;
-    if (200 !== statusCode)
-      throw new Error('getToken: request error, http('+statusCode+')');
+    const { status_code, data } = res;
+    if (200 !== status_code)
+      throw new Error('getToken: request error, http('+status_code+')');
     logger.debug('token ok');
     return data.replace(/\s/, '');
   });
@@ -41,9 +41,9 @@ function login(user, pass) {
     };
 
     return httpClient.post(url, { headers, body }).then(res => {
-      const { statusCode, headers, data } = res;
-      if (200 !== statusCode)
-        throw new Error('login: request error, http('+statusCode+')');
+      const { status_code, headers, data } = res;
+      if (200 !== status_code)
+        throw new Error('login: request error, http('+status_code+')');
       const cookie = headers['set-cookie'];
       if (!cookie || !cookie.length)
         throw new Error('login: did not receive set-cookie header');
@@ -58,9 +58,9 @@ function login(user, pass) {
 
 function getToken2(cookie) {
   return httpClient.get('http://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp', { headers: { cookie } }).then(res => {
-    const { statusCode, data } = res;
-    if (200 !== statusCode)
-      throw new Error('getToken2: request error, http('+statusCode+')');
+    const { status_code, data } = res;
+    if (200 !== status_code)
+      throw new Error('getToken2: request error, http('+status_code+')');
     const match = /[a-z0-9]{64}/.exec(data);
     if (!match[0])
       throw new Error('getToken2: token extraction error');
