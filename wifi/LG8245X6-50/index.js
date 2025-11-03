@@ -82,7 +82,7 @@ httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then
         cookie,
         'content-type': 'application/x-www-form-urlencoded'
       };
-      httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retryOnError: false }).catch(noop);
+      httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retry_on_error: false }).catch(noop);
 
       logger.info('reboot command sent, awaiting for internet...');
 
