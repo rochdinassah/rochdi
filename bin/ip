@@ -1,15 +1,10 @@
 #!/usr/bin/env node
 
-const rochdi = require('../');
-
-const { Http2Client } = rochdi;
-
-const http2Client = new Http2Client();
-
-const headers = {
-  'user-agent': 'curl'
-};
-
-http2Client.get('https://ifconfig.co', { headers, keepalive: false }).then(res => {
-  log(res.data.replace(/[\s\n]/g, ''));
+(new(require('../').Http2Client))
+.get('https://ifconfig.co', { headers: { 'user-agent': 'curl' }, keepalive: !1 })
+.then(res => {
+  const { status_code, data } = res;
+  if (200 !== status_code)
+    throw new Error('ip: request error, http('+status_code+')');
+  console.log(data.replace(/[\s\n]/g, ''));
 });
