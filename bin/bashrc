@@ -20,7 +20,7 @@ push() {
 
   if [ 0 == ${#commit} ]
   then
-    commit='noop, sync with remote'
+    commit='sync'
   fi
 
   git add -A
