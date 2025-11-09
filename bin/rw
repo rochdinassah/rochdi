@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 
 // author: rochdi nassah
 // created: 2025/09/18
@@ -9,7 +9,7 @@ const rochdi = require('../main');
 
 const { HttpClient, Logger } = rochdi;
 
-const httpClient = new HttpClient();
+const http_client = new HttpClient();
 
 const user = process.env.WIFI_ROUTER_USER || exit('rw: WIFI_ROUTER_USER env is missing');
 const pass = process.env.WIFI_ROUTER_PASS || exit('rw: WIFI_ROUTER_PASS env is missing');
@@ -20,10 +20,10 @@ const logger = new Logger({ prefix: 'restart-wifi', errcb: (err) => {
 
 function getToken() {
   const url = 'http://192.168.1.1/asp/GetRandCount.asp';
-  return httpClient.post(url, { headers: { 'content-length': 0 } }).then(res => {
+  return http_client.post(url, { headers: { 'content-length': 0 } }).then(res => {
     const { status_code, data } = res;
     if (200 !== status_code)
-      throw new Error('getToken: request error, http('+status_code+')');
+      return logger.error('getToken: request error, http(%d)', status_code), false;
     logger.debug('token ok');
     return data.replace(/\s/, '');
   });
@@ -31,6 +31,9 @@ function getToken() {
 
 function login(user, pass) {
   return getToken().then(token => {
+    if (!token)
+      return false;
+    
     user = encodeURIComponent(user);
     pass = encodeURIComponent(btoa(pass));
     
@@ -42,16 +45,16 @@ function login(user, pass) {
       'content-type': 'application/x-www-form-urlencoded'
     };
 
-    return httpClient.post(url, { headers, body }).then(res => {
+    return http_client.post(url, { headers, body }).then(res => {
       const { status_code, headers, data } = res;
       if (200 !== status_code)
-        throw new Error('login: request error, http('+status_code+')');
+        return logger.error('login: request error, http(%d)', status_code), false;
       const cookie = headers['set-cookie'];
       if (!cookie || !cookie.length)
-        throw new Error('login: did not receive set-cookie header');
+        return logger.error('login: did not receive set-cookie header'), false;
       const match = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1);path\=\/;HttpOnly/.exec(cookie[0]);
       if (!match[1])
-        throw new Error('login: did not receive CookieHttp');
+        return logger.error('getToken: did not receive CookieHttp'), false;
       logger.debug('login ok');
       return match[1];
     });
@@ -59,13 +62,13 @@ function login(user, pass) {
 }
 
 function getToken2(cookie) {
-  return httpClient.get('http://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp', { headers: { cookie } }).then(res => {
+  return http_client.get('http://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp', { headers: { cookie } }).then(res => {
     const { status_code, data } = res;
     if (200 !== status_code)
-      throw new Error('getToken2: request error, http('+status_code+')');
+      return logger.error('getToken2: request error, http(%d)', status_code), false;
     const match = /[a-z0-9]{64}/.exec(data);
     if (!match[0])
-      throw new Error('getToken2: token extraction error');
+      return logger.error('getToken2: token extraction error'), false;
     logger.debug('token2 ok');
     return match[0];
   })
@@ -74,18 +77,22 @@ function getToken2(cookie) {
 logger.info('rebooting');
 
 login(user, pass).then(cookie => {
+  if (!cookie)
+    return;
   getToken2(cookie).then(token => {
+    if (!token)
+      return;
     const url = 'http://192.168.1.1/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
 X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
     const headers = {
       cookie,
       'content-type': 'application/x-www-form-urlencoded'
     };
-    httpClient.post(url, { headers, body: 'x.X_HW_Token='+token, retry_on_error: false }).catch(noop);
+    http_client.post(url, { headers, body: 'x.X_HW_Token='+token, retry_on_error: false }).catch(noop);
     logger.info('reboot command sent, awaiting for internet...');
     setTimeout(() => {
       awaitInternet().then(() => {
-        httpClient.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
+        http_client.get('http://ifconfig.me', { headers: { 'user-agent': 'curl' } }).then(res => {
           logger.info('reboot complete, ip:', res.data);
         });
       });

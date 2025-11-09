@@ -7,8 +7,8 @@ const rochdi = require('rochdi');
 
 const { HttpClient, Http2Client } = rochdi;
 
-const http_client = new HttpClient();
-const http2_client = new Http2Client();
+const http_client = new HttpClient({ logger: false });
+const http2_client = new Http2Client({ logger: false });
 
 const endpoint = {
   url: 'https://ifconfig.co',

@@ -50,9 +50,9 @@ test('returns random string', () => {
   const size = 128;
   expect(randomString(size).length).toBe(size);
   expect(randomString(size)).toMatch(/^[a-z0-9]+$/i);
-  expect(randomString(size, { useNumbers: false })).not.toMatch(/\d/i);
-  expect(randomString(size, { useNumbers: false })).not.toMatch(/[.*\\/.]/i);
-  expect(randomString(size, { useNumbers: false, extra: '.*\\/.' })).toMatch(/[.*\\/.]/i);
+  expect(randomString(size, { use_numbers: false })).not.toMatch(/\d/i);
+  expect(randomString(size, { use_numbers: false })).not.toMatch(/[.*\\/.]/i);
+  expect(randomString(size, { use_numbers: false, extra: '.*\\/.' })).toMatch(/[.*\\/.]/i);
 });
 
 test('returns url safe base64', () => {
