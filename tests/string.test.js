@@ -16,12 +16,12 @@ test('transforms first letter to uppercase', () => {
 test('transforms string to kebab-case', () => {
   expect('foo'.toKebabCase()).toBe('foo');
   expect('foo bar'.toKebabCase()).toBe('foo-bar');
-  expect('foo  "__"\'\'"     bar'.toKebabCase()).toBe('foo-bar');
-  expect('foo :::-   ____   bar'.toKebabCase()).toBe('foo-bar');
-  expect('foo          bar'.toKebabCase()).toBe('foo-bar');
-  expect('foo-----_________      bar'.toKebabCase()).toBe('foo-bar');
-  expect('-----foo___bar   -'.toKebabCase()).toBe('foo-bar');
-  expect(':---::foo___bar   -::::'.toKebabCase()).toBe('foo-bar');
+  expect('foo  "__"\'\'"  .)\\((()(()   bar?!?.?!'.toKebabCase()).toBe('foo-bar');
+  expect('foo :::-   ____   bar!?'.toKebabCase()).toBe('foo-bar');
+  expect('foo          bar?'.toKebabCase()).toBe('foo-bar');
+  expect('foo-----_________      bar?!'.toKebabCase()).toBe('foo-bar');
+  expect('-----foo___bar   -.'.toKebabCase()).toBe('foo-bar');
+  expect(':---::foo___bar   -::::!'.toKebabCase()).toBe('foo-bar');
 });
 
 test('comparison test', () => {
