@@ -7,7 +7,7 @@
     "device": "app"
   },
   "presence": {
-    "status": "invisible",
+    "status": "idle",
     "since": 0,
     "activities": [],
     "afk": false
