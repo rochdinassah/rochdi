@@ -8,36 +8,37 @@ require('./_matchers');
 
 const sample = 'lorem ipsum foo bar baz qux quux quuz corge grault';
 
+test('returns a random character from self', () => {
+  for (let i = 0; 32 > i; ++i) {
+    expect(sample.rand()).toBeOneOf(sample.split(''));
+    expect('foo'.rand()).not.toMatch(/[a-eg-np-z]/);
+  }
+});
+
+test('returns shuffled string', () => {
+  for (let i = 0; 32 > i; ++i) {
+    expect(sample.shuffle()).not.toBe(sample);
+    expect(sample.shuffle().length).toBe(sample.length);
+  }
+});
+
 test('transforms first letter to uppercase', () => {
   expect('foo'.ucfirst()).toBe('Foo');
   expect('1foo'.ucfirst()).toBe('1foo');
+  expect('@foo'.ucfirst()).toBe('@foo');
+  expect(' foo'.ucfirst()).toBe(' foo');
 });
 
 test('transforms string to kebab-case', () => {
   expect('foo'.toKebabCase()).toBe('foo');
-  expect('foo bar'.toKebabCase()).toBe('foo-bar');
-  expect('foo  "__"\'\'"  .)\\((()(()   bar?!?.?!'.toKebabCase()).toBe('foo-bar');
-  expect('foo :::-   ____   bar!?'.toKebabCase()).toBe('foo-bar');
-  expect('foo          bar?'.toKebabCase()).toBe('foo-bar');
-  expect('foo-----_________      bar?!'.toKebabCase()).toBe('foo-bar');
-  expect('-----foo___bar   -.'.toKebabCase()).toBe('foo-bar');
+  expect('qu ux'.toKebabCase()).toBe('qu-ux');
+  expect('f "_____"\'\'\'\'" oo.)\\((()) ?@#bar     !'.toKebabCase()).toBe('f-oo-bar');
   expect(':---::foo___bar   -::::!'.toKebabCase()).toBe('foo-bar');
 });
 
 test('comparison test', () => {
-  expect('foo'.cmp('foo')).toBe(true);
-  expect('bar'.cmp('BAR')).toBe(true);
-  expect('baz'.cmp('BaZ')).toBe(true);
-  expect('bAz'.cmp('BaZ')).toBe(true);
-  expect('foo'.cmp('f1o')).toBe(false);
-  expect('bar'.cmp('Bxr')).toBe(false);
-});
-
-test('returns a random character from self', () => {
-  expect(sample.rand()).toBeOneOf(sample.split(''));
-});
-
-test('returns shuffled string', () => {
-  expect(sample.shuffle()).not.toBe(sample);
-  expect(sample.shuffle().length).toBe(sample.length);
+  expect('foobarbazquxquuxquuz'.cmp('fOoBARBAZQuxquuxQuuZ')).toBe(true);
+  expect('128FOOBARb$@!_~-@Az1024QuxqUUxqUUZ'.cmp('128FOOBARb$@!_~-@Az1024QuxqUUxqUUZ')).toBe(true);
+  expect('foobarbaz'.cmp('')).toBe(false);
+  expect('foobarbaz'.cmp('foobarbaz\r')).toBe(false);
 });
