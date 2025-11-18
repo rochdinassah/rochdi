@@ -3,8 +3,8 @@
   "intents": 513,
   "properties": {
     "os": "linux",
-    "browser": "app",
-    "device": "app"
+    "browser": "RochdiBot",
+    "device": "RochdiBot"
   },
   "presence": {
     "status": "idle",
