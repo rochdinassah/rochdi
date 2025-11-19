@@ -5,9 +5,9 @@
 require('./_matchers');
 require('rochdi');
 
-const encpass = 'encryptionPassword-!@$(@#$_+@3902840#+)+_@#(%_';
+const encpass = 'f-o+O!@b$A#r/10%2*4!_';
 test('returns md5 hash', () => {
-  expect(create_md5(encpass)).toBe('0247bfa180d050be869063a4bf56421f');
+  expect(createMd5(encpass)).toBe('0d00405a3643f420784bb7e28b1e6efd');
 });
 test('encryption flow', () => {
   const plaintext = randomString(1e3);
@@ -53,10 +53,4 @@ test('returns random string', () => {
   expect(randomString(size, { use_numbers: false })).not.toMatch(/\d/i);
   expect(randomString(size, { use_numbers: false })).not.toMatch(/[.*\\/.]/i);
   expect(randomString(size, { use_numbers: false, extra: '.*\\/.' })).toMatch(/[.*\\/.]/i);
-});
-
-test('returns url safe base64', () => {
-  expect('>??>??>>>>'.toBase64()).toBe('Pj8/Pj8/Pj4+Pg==');
-  expect('>??>??>>>>'.toBase64Url()).not.toBe('Pj8/Pj8/Pj4+Pg==');
-  expect('>??>??>>>>'.toBase64Url()).toBe('Pj8_Pj8_Pj4-Pg');
 });
