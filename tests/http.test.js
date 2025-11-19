@@ -14,12 +14,13 @@ const endpoint = {
   url: 'https://ifconfig.co',
   headers: {
     'user-agent': 'curl'
-  }
+  },
+  retry_on_error: 2**8
 };
 
-const { url, headers } = endpoint;
+const { url, headers, retry_on_error } = endpoint;
 
 test('http clients basic test', async () => {
-  expect(await http_client.get(url, { headers }).then(res => res.status_code)).toBe(200);
-  expect(await http2_client.get(url, { headers, keepalive: false }).then(res => res.status_code)).toBe(200);
+  expect(await http_client.get(url, { headers, retry_on_error }).then(res => res.status_code)).toBe(200);
+  expect(await http2_client.get(url, { headers, retry_on_error, keepalive: false }).then(res => res.status_code)).toBe(200);
 });
