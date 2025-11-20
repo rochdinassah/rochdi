@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-(new(require('../').Http2Client)({ logger: false }))
+(new(require('../').Http2Client)({ retry_on_error: 2**8 }))
 .get('https://ifconfig.co', { headers: { 'user-agent': 'curl' }, keepalive: !1 })
 .then(res => {
   const { status_code, data } = res;

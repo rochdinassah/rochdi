@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "server": "node debug/server.js",
-    "client": "node debug/client.js",
-    "rw": "node wifi/LG8245X6-50",
     "test": "jest"
   },
   "repository": {

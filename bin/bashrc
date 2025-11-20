@@ -27,12 +27,6 @@ push() {
   git push
 }
 
-extract() {
-  outdir=/tmp/$(echo $1 | sed 's/\.[a-z].*//i')
-  tar --file $1 --extract - &&
-  cd $outdir
-}
-
 mkdir() {
   /usr/bin/mkdir $1 && cd $1
 }
