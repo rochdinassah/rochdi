@@ -1,6 +1,6 @@
 {
   "token": "",
-  "intents": 513,
+  "intents": 67108863,
   "properties": {
     "os": "linux",
     "browser": "RochdiBot",

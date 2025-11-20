@@ -9,7 +9,7 @@ const rochdi = require('../');
 
 const { Discord } = rochdi;
 
-const discord = new Discord(process.argv[2]);
+const discord = new Discord(process.argv[2], { presence_status: 'invisible' });
 
 discord.connect().then(ok => {
   if (!ok)
