@@ -16,7 +16,7 @@ discord.connect().then(ok => {
     exit('error');
 
   const { user } = discord;
-
-  log('success(%s) | %s', user.bot ? 'BOT' : 'USER', user.global_name ?? user.username);
+  
+  log('success(%s) | %s', user.bot ? 'bot' : 'user', user.global_name ?? user.username);
   discord.disconnect();
 });
