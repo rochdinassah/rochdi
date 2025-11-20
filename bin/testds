@@ -11,4 +11,12 @@ const { Discord } = rochdi;
 
 const discord = new Discord(process.argv[2]);
 
-discord.connect().then(success => exit(success ? 'success' : 'error') || discord.end());
+discord.connect().then(ok => {
+  if (!ok)
+    exit('error');
+
+  const { user } = discord;
+
+  log('success(%s) | %s', user.bot ? 'BOT' : 'USER', user.global_name ?? user.username);
+  discord.disconnect();
+});
