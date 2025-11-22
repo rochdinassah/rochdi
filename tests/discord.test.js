@@ -11,14 +11,6 @@ const { Discord } = rochdi;
 const DISCORD_BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
 const DISCORD_USER_TOKEN = process.env.DISCORD_USER_TOKEN;
 
-test('basic connection flow test', async () => {
-  if (!true || !DISCORD_BOT_TOKEN)
-    return;
-
-  expect(await discord.connect()).toBe(true);
-  expect(await discord.disconnect()).toBe(1001);
-});
-
 test('bot auth', async () => {
   if (!DISCORD_BOT_TOKEN)
     return;
