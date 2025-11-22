@@ -9,14 +9,12 @@ const rochdi = require('../');
 
 const { Discord } = rochdi;
 
-const discord = new Discord(process.argv[2], { presence_status: 'invisible' });
+void async function () {
+  const discord = new Discord(process.argv[2], { presence_status: 'invisible' });
 
-discord.connect().then(ok => {
-  if (!ok)
-    exit('error');
+  await discord.connect() && !void discord.disconnect() || exit('error');
 
-  const { user } = discord;
-  
-  log('success(%s) | %s', user.bot ? 'bot' : 'user', user.global_name ?? user.username);
-  discord.disconnect();
-});
+  const { bot, global_name, username } = discord.user;
+
+  log('success(%s) | %s', bot ? 'bot' : 'user', global_name ?? username);
+}();
