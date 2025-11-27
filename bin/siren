@@ -1,2 +1,2 @@
 #!/bin/bash
-/usr/bin/play ~/Desktop/rochdi/sounds/$1.mp3 &> /dev/null
+/usr/bin/play /opt/rochdi/sounds/$1.mp3 &> /dev/null

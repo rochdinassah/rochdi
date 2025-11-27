@@ -16,8 +16,8 @@ package=$(echo $search | sed 's/package\://')
 paths=$(adb shell pm path $package)
 paths=(${paths// / })
 
-/usr/bin/mkdir ~/Desktop/apk/$1 &> /dev/null
-cd ~/Desktop/apk/$1
+/usr/bin/mkdir /opt/apk/$1 &> /dev/null
+cd /opt/apk/$1
 
 for path in ${paths[@]}
 do

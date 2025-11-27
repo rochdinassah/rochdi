@@ -3,7 +3,7 @@
 # author: rochdi nassah
 # created: 2025/09/21
 
-cd ~/Desktop/apk/$1
+cd /opt/apk/$1
 
 apktool b source
 zipalign 4 source/dist/base.apk base.apk -f
