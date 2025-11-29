@@ -4,10 +4,10 @@
 'use strict';
 
 // apply patches
-require('./lib/_patches');
+require('./lib/_patch');
 
 // apply globals
-require('./lib/_globals');
+require('./lib/_global');
 
 global.exit = (...args) => console.log(...args) || process.exit();
 global.log = console.log.bind(console);

@@ -2,7 +2,7 @@
 
 'use strict';
 
-require('./_matchers');
+require('./_matcher');
 require('rochdi');
 
 const encpass = 'f-o+O!@b$A#r/10%2*4!_';

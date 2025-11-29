@@ -4,7 +4,7 @@
 
 const rochdi = require('rochdi');
 
-require('./_matchers');
+require('./_matcher');
 
 const { Server, Client } = rochdi;
 

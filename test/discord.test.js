@@ -2,7 +2,7 @@
 
 'use strict';
 
-require('./_matchers');
+require('./_matcher');
 
 const rochdi = require('rochdi');
 
