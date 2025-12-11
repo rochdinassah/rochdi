@@ -6,5 +6,5 @@
   const { status_code, data } = res;
   if (200 !== status_code)
     throw new Error('ip: request error, http('+status_code+')');
-  console.log(data.replace(/[\s\n]/g, ''));
+  log(data.replace(/[\s\n]/g, ''));
 });
