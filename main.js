@@ -6,7 +6,7 @@
 require('./lib/_patch');
 require('./lib/_global');
 
-global.exit = (...args) => console.log(...args) || process.exit();
+global.exit = (...args) => void 0 !== args[0] && console.log(...args) || process.exit();
 global.log = console.log.bind(console);
 global.noop = Function.prototype;
 
