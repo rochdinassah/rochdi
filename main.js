@@ -3,10 +3,7 @@
 
 'use strict';
 
-// apply patches
 require('./lib/_patch');
-
-// apply globals
 require('./lib/_global');
 
 global.exit = (...args) => console.log(...args) || process.exit();

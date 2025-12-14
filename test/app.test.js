@@ -31,5 +31,6 @@ test('connection reply test', async () => {
       });
     }));
   }
-  Promise.all(p).then(server.close.bind(server));
+  await Promise.all(p);
+  server.close();
 });
