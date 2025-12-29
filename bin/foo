@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+const fs = require('node:fs');
+const exec = require('node:child_process').exec;
+
+function getState() {
+  return String(fs.readFileSync('/sys/class/power_supply/ADP1/online')).replace(/[\n\r\t]/, '');
+}
+
+if ('1' !== getState())
+  return;
+
+const interval_id = setInterval(async () => {
+  if ('0' === getState()) {
+    clearInterval(interval_id);
+    
+    for (let i = 0; 4 > i; ++i) {
+      exec('aplay /opt/rochdi/sound/warn.mp3');
+      await new Promise(resolve => setTimeout(resolve, 1e3));
+    }
+  }
+}, 1e3);
