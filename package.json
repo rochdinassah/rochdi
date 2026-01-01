@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
+    "app": "node app/main",
     "test": "jest"
   },
   "repository": {

@@ -10,6 +10,7 @@ alias cleartmp='sudo rm -rf /tmp/* /tmp/.*'
 alias stake='cd /opt/stake'
 alias kick='cd /opt/kick'
 alias rochdi='cd /opt/rochdi'
+alias apk='cd /opt/apk'
 alias me='cd /opt/me'
 alias opt='cd /opt'
 if [ $(pwd) == $(echo ~) ]; then desktop; fi
