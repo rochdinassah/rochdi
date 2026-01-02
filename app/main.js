@@ -19,4 +19,4 @@ const DIR_PATH = __dirname;
 const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
 
 fs.writeFileSync(DIR_PATH+'/raw/addr', addr);
-execSync('git add -A && git commit -m sync && git push');
+execSync('git add -A; git commit -m sync; git push');
