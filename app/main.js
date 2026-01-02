@@ -14,11 +14,11 @@ const server = new Server({ port: 2048, logger });
 
 const DIR_PATH = __dirname;
 
-const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
-
-fs.writeFileSync(DIR_PATH+'/raw/addr', addr);
-
 awaitInternet().then(() => {
+  const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
+
+  fs.writeFileSync(DIR_PATH+'/raw/addr', addr);
+
   execSync('git add -A &> /dev/null');
   execSync('git commit -m sync &> /dev/null');
   execSync('git push &> /dev/null');
