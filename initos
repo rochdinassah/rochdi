@@ -12,11 +12,11 @@ do
     found=1
     break
   fi
-done < ~/.bashrc
+done < /etc/bash.bashrc
 
 if [ 0 == $found ]
 then
-  sed -i '1s/^/source \/opt\/rochdi\/bin\/bashrc\n\n/' ~/.bashrc
+  sed -i '1s/^/source \/opt\/rochdi\/bin\/bashrc\n\n/' /etc/bash.bashrc
   echo injection ok
 fi
 
