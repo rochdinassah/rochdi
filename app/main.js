@@ -14,7 +14,7 @@ const server = new Server({ port: 2048, logger });
 
 const DIR_PATH = __dirname;
 
-;;;
+;;;;
 
 const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
 
