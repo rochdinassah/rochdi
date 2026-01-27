@@ -4,7 +4,7 @@
 # created: 2025/09/19
 
 # aliases start
-alias azar='echo "globalThis.jotaiAtomCache.get(/app/src/stores/match/atoms.ts/matchSwipeDisableDurationSecondsAtom).read = e => void 0;"'
+alias azar='echo "globalThis.jotaiAtomCache.get(\"/app/src/stores/match/atoms.ts/matchSwipeDisableDurationSecondsAtom\").read = e => void 0;"'
 alias desktop='cd ~/Desktop'
 alias c='clear'
 alias cleartmp='sudo rm -rf /tmp/* /tmp/.*'
