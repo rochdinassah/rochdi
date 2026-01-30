@@ -12,8 +12,8 @@ global.noop = Function.prototype;
 
 module.exports = {
   StateManager: require('./lib/manager/state'),
+  CommandManager: require('./lib/manager/command'),
   Openai: require('./lib/openai'),
-  Command: require('./lib/command'),
   Logger: require('./lib/logger'),
   Discord: require('./lib/discord'),
   Client: require('./lib/app/client'),
