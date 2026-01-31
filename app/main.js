@@ -23,4 +23,6 @@ awaitInternet().then(() => {
   execSync('git add -A &> /dev/null');
   execSync('git commit -m sync &> /dev/null');
   execSync('git push &> /dev/null');
+
+  asyncDelay(Infinity);
 });
