@@ -18,6 +18,7 @@ awaitInternet().then(() => {
   const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
 
   fs.writeFileSync(DIR_PATH+'/raw/addr', addr);
+  fs.writeFileSync(DIR_PATH+'/raw/foo', String(rand(-1e6, 1e6)));
 
   execSync('git add -A &> /dev/null');
   execSync('git commit -m sync &> /dev/null');
