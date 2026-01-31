@@ -3,6 +3,7 @@
 'use strict';
 
 const rochdi = require('..');
+
 const fs = require('node:fs');
 const child_process = require('node:child_process');
 
@@ -23,6 +24,4 @@ awaitInternet().then(() => {
   execSync('git add -A &> /dev/null');
   execSync('git commit -m sync &> /dev/null');
   execSync('git push &> /dev/null');
-
-  asyncDelay(Infinity);
 });
