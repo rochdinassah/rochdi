@@ -1,118 +1,93 @@
 #!/usr/bin/env node
 
 // author: rochdi nassah
-// created: 2025/09/18
 
 'use strict';
 
 const rochdi = require('../main');
 
 const { Http2Client, HttpClient, Logger } = rochdi;
+const { env } = process;
 
-const http_client = new HttpClient();
-const http2_client = new Http2Client();
+const logger = new Logger({ prefix: 'restart-wifi', errcb: (err) => process.exit(1)});
+const http_client = new HttpClient({ logger: void 0 });
+const http2_client = new Http2Client({ logger: void 0 });
 
-const user = process.env.WIFI_ROUTER_USER || exit('rw: WIFI_ROUTER_USER env is missing');
-const pass = process.env.WIFI_ROUTER_PASS || exit('rw: WIFI_ROUTER_PASS env is missing');
+env.WIFI_ROUTER_PASS = decrypt('CU/mg/XTvhF78O02wzFfzOYNwg1xVCY+A+CdLTiiQYwAHeQhYki76QO2RNRNGxZn', env.ENCRYPTION_PASSWORD);
 
-const logger = new Logger({ prefix: 'restart-wifi', errcb: (err) => {
-  process.exit(1);
-}});
+const user = env.WIFI_ROUTER_USER || exit('rw: WIFI_ROUTER_USER env is missing');
+const pass = env.WIFI_ROUTER_PASS || exit('rw: WIFI_ROUTER_PASS env is missing');
 
-function getToken() {
-  const url = 'http://192.168.1.1/asp/GetRandCount.asp';
-  return http_client.post(url, { headers: { 'content-length': 0 } }).then(res => {
-    const { status_code, data } = res;
-    if (200 !== status_code)
-      exit('getToken: request error, http(%d)', status_code);
-    logger.debug('token ok');
-    return data.replace(/\s/, '');
-  });
-}
+const gateway_url = 'http://192.168.1.2';
 
-function login(user, pass) {
-  return getToken().then(token => {
-    if (!token)
-      return false;
-    
-    user = encodeURIComponent(user);
-    pass = encodeURIComponent(btoa(pass));
-    
-    const url = 'http://192.168.1.1/login.cgi';
-    const body = 'UserName='+user+'&PassWord='+pass+'&Language=english&x.X_HW_Token='+token;
-    const headers = {
-      'cookie': 'Cookie=body:Language:english:id=-1',
-      'accept-encoding': 'gzip, deflate, br',
-      'content-type': 'application/x-www-form-urlencoded'
-    };
-
-    return http_client.post(url, { headers, body }).then(res => {
-      const { status_code, headers, data } = res;
-      if (200 !== status_code)
-        exit('login: request error, http(%d)', status_code);
-      const cookie = headers['set-cookie'];
-      if (!cookie || !cookie.length)
-        exit('login: did not receive set-cookie header');
-      const match = /(CookieHttp\=sid\=[a-z0-9]+\:Language\:english\:id\=1);path\=\/;HttpOnly/.exec(cookie[0]);
-      if (!match[1])
-        exit('getToken: did not receive CookieHttp');
-      logger.debug('login ok');
-      return match[1];
-    });
-  });
-}
-
-function getToken2(cookie) {
-  return http_client.get('http://192.168.1.1/html/ssmp/accoutcfg/ontmngt.asp', { headers: { cookie } }).then(res => {
-    const { status_code, data } = res;
-    if (200 !== status_code)
-      exit('getToken2: request error, http(%d)', status_code);
-    const match = /[a-z0-9]{64}/.exec(data);
-    if (!match[0])
-      exit('getToken2: token extraction error');
-    logger.debug('token2 ok');
-    return match[0];
-  })
-}
-
-function fetchIp() {
+function fetchIp(retry_on_error) {
   return http2_client.get('https://ifconfig.me', {
-    retry_on_error: false,
-    timeout: 4e3,
+    retry_on_error,
+    timeout: retry_on_error ? void 0 : 4e3,
     headers: {
       'user-agent': 'curl'
     }
   }).then(res => {
+    http2_client.destroy();
     const { status_code, data } = res;
     if (200 === status_code)
       return data.replace(/[\s\n]/g, '');
   }).catch(noop);
 }
 
-fetchIp().then(ip => logger.debug('curr ip: %s', ip));
+function getSessionId() {
+  return http_client.get(gateway_url+'/cgi-bin/ajax?ajaxmethod=get_refresh_sessionid').then(res => {
+    const { status_code, data } = res;
+    if (200 !== status_code)
+      exit('getSessionId: request error, http(%d)', status_code);
+    return logger.verbose('session_id ok'), data.sessionid;
+  });
+}
 
-logger.debug('rebooting');
+function login(user, pass, session_id) {
+  const headers = { 'content-type': 'application/x-www-form-urlencoded' };
+  const body = format('username=%s&loginpd=%s&port=0&sessionid=%s&ajaxmethod=do_login', user, pass, session_id);
+  return http_client.post(gateway_url+'/cgi-bin/ajax', { headers, body }).then(res => {
+    const { status_code, data } = res;
+    if (200 !== status_code)
+      exit('login: request error, http(%d)', status_code);
 
-login(user, pass).then(cookie => {
-  if (!cookie)
-    return;
-  getToken2(cookie).then(token => {
-    if (!token)
-      return;
-    const url = 'http://192.168.1.1/html/ssmp/accoutcfg/set.cgi?x=InternetGatewayDevice.\
-X_HW_DEBUG.SMP.DM.ResetBoard&RequestFile=html/ssmp/accoutcfg/ontmngt.asp';
-    const headers = {
-      cookie,
-      'content-type': 'application/x-www-form-urlencoded'
-    };
-    http_client.post(url, { headers, body: 'x.X_HW_Token='+token, retry_on_error: false }).catch(noop);
-    logger.debug('reboot command sent, awaiting for internet...');
-    setTimeout(() => {
-      awaitInternet().then(() => {
-        fetchIp().then(ip => {
-          logger.debug('reboot complete, ip: %s', ip);
+    const { session_valid, login_result } = data;
+
+    if (1 !== session_valid)
+      exit('login: login error, session_valid: %d', session_valid);
+
+    if (0 !== login_result)
+      exit('login: login error, login_result: %d', login_result);
+
+    return logger.verbose('login ok'), session_id;
+  });
+}
+
+void async function () {
+  logger.debug('rebooting');
+
+  const curr_ip = await fetchIp();
+
+  if (curr_ip)
+    logger.debug('curr ip: %s', curr_ip);
+
+  return getSessionId().then(session_id => {
+    return login(user, pass, session_id).then(async session_id => {
+      const options = {
+        retry_on_error: false,
+        timeout: 4e3,
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
+        },
+        body: format('sessionid=%s&ajaxmethod=set_onu_reboot', session_id)
+      };
+      return http_client.post(gateway_url+'/cgi-bin/ajax', options).catch(() => {
+        logger.debug('reboot command sent, awaiting for internet...');
+        return awaitInternet().then(() => {
+          fetchIp(true).then(ip => logger.debug('reboot complete, ip: %s', ip));
         });
       });
-    }, 8e3);
+    });
   });
-});
+}();
