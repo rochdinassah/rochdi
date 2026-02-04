@@ -76,16 +76,17 @@ void async function () {
     return login(user, pass, session_id).then(async session_id => {
       const options = {
         retry_on_error: false,
-        timeout: 4e3,
+        timeout: 2**11,
         headers: {
           'content-type': 'application/x-www-form-urlencoded'
         },
         body: format('sessionid=%s&ajaxmethod=set_onu_reboot', session_id)
       };
       return http_client.post(gateway_url+'/cgi-bin/ajax', options).catch(() => {
+        startTimer('Reboot');
         logger.debug('reboot command sent, awaiting for internet...');
         return awaitInternet().then(() => {
-          fetchIp(true).then(ip => logger.debug('reboot complete, ip: %s', ip));
+          fetchIp(true).then(ip => logger.debug('reboot complete, ip: %s (%s)', ip, endTimer('Reboot')));
         });
       });
     });
