@@ -2,23 +2,17 @@
 
 'use strict';
 
-const rochdi = require('..');
+require('..');
 
-const fs = require('node:fs');
-const child_process = require('node:child_process');
-
-const { Server, Logger } = rochdi;
-const { execSync } = child_process;
-
-const logger = new Logger({ prefix: 'app' });
-const server = new Server({ port: 2048, logger });
+const { writeFileSync } = require('node:fs');
+const { execSync } = require('node:child_process');
 
 const DIR_PATH = __dirname;
 
 awaitInternet().then(() => {
   const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
 
-  fs.writeFileSync(DIR_PATH+'/raw/addr', addr);
+  writeFileSync(DIR_PATH+'/raw/addr', addr);
     
   execSync('git add -A &> /dev/null');
   execSync('git commit -m sync &> /dev/null');
