@@ -1,20 +1,17 @@
 #!/usr/bin/env node
 
 // author: rochdi nassah
-// created: 2025/09/23
 
 'use strict';
 
-const rochdi = require('../');
+const manager = new (require('../').Discord)(process.argv[2], { presence_status: 'invisible' });
 
-const { Discord } = rochdi;
-
-void async function () {
-  const discord = new Discord(process.argv[2], { presence_status: 'invisible' });
-
-  await discord.connect() && !void discord.disconnect() || exit('error');
-
-  const { bot, global_name, username, id, email } = discord.user;
+manager.connect().then(ok => {
+  manager.disconnect();
   
-  log('success(%s) | %s(%s)', bot ? 'bot' : 'user', global_name ?? username, email ?? id);
-}();
+  if (!ok)
+    exit('error');
+
+  const { bot, global_name, username, id, email } = manager.user;
+  exit('success(%s), %s(%s)', bot ? 'bot' : 'user', global_name ?? username, email ?? id);
+});

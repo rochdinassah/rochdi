@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # author: rochdi nassah
-# created: 2025/09/19
 
 # aliases start
 alias azar='echo "globalThis.jotaiAtomCache.get(\"/app/src/stores/match/atoms.ts/matchSwipeDisableDurationSecondsAtom\").read = e => void 0;"'

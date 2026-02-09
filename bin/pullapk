@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # author: rochdi nassah
-# created: 2025/09/21
 
 search=$(adb shell pm list packages|grep $1)
 

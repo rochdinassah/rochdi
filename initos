@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # author: rochdi nassah
-# created: 2025/09/19
 
 found=0
 
@@ -28,15 +27,15 @@ fi
 node_which=$(which node)
 npm_which=$(which npm)
 
-if [ 0 == ${#node_which} ] || [ 0 == ${#npm_which} ]
+if [ 0 == ${#node_which} ] || [ 0 == ${#npm_which} ] || [ 1 == 1 ]
 then
   echo NodeJS or npm are missing, downloading...
   cd /tmp &&
-  wget https://nodejs.org/dist/v22.20.0/node-v22.20.0-linux-x64.tar.xz &&
-  tar --extract --file node-v22.20.0-linux-x64.tar.xz &&
-  sudo mv ./node-v22.20.0-linux-x64/bin/* /usr/bin &> /dev/null
-  sudo mv ./node-v22.20.0-linux-x64/include/* /usr/include &> /dev/null
-  sudo mv ./node-v22.20.0-linux-x64/lib/* /usr/lib &> /dev/null
+  wget https://nodejs.org/dist/v24.13.0/node-v24.13.0-linux-x64.tar.xz &&
+  tar --extract --file node-v24.13.0-linux-x64.tar.xz &&
+  sudo mv ./node-v24.13.0-linux-x64/bin/* /usr/bin &> /dev/null
+  sudo mv ./node-v24.13.0-linux-x64/include/* /usr/include &> /dev/null
+  sudo mv ./node-v24.13.0-linux-x64/lib/* /usr/lib &> /dev/null
   echo NodeJS: $(node -v)
   echo npm: $(npm -v)
 fi

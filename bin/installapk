@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # author: rochdi nassah
-# created: 2025/09/21
 
 cd /opt/apk/$1
 

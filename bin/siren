@@ -1,2 +1,0 @@
-#!/bin/bash
-/usr/bin/play /opt/rochdi/sound/$1.mp3 &> /dev/null
