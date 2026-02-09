@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+
+'use strict';
+
+require('../');
+siren(...process.argv.slice(2, 4));
