@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "app": "node app/main",
-    "test": "jest"
+    "test": "node test.js"
   },
   "repository": {
     "type": "git",
@@ -16,9 +16,6 @@
     "url": "https://github.com/rochdinassah/rochdi/issues"
   },
   "homepage": "https://github.com/rochdinassah/rochdi#readme",
-  "devDependencies": {
-    "jest": "30.1.3"
-  },
   "dependencies": {
     "ws": "8.18.3"
   }
