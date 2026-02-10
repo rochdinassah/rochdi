@@ -9,7 +9,7 @@ const { execSync } = require('node:child_process');
 
 const DIR_PATH = '/opt/rochdi';
 
-awaitInternet().then(() => {
+awaitInternet().then(asyncDelay.bind(void 0, 2**12)).then(() => {
   const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
 
   writeFileSync(DIR_PATH+'/raw/addr', addr);
