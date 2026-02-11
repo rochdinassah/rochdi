@@ -27,7 +27,7 @@ fi
 node_which=$(which node)
 npm_which=$(which npm)
 
-if [ 0 == ${#node_which} ] || [ 0 == ${#npm_which} ] || [ 1 == 1 ]
+if [ 0 == ${#node_which} ] || [ 0 == ${#npm_which} ]
 then
   echo NodeJS or npm are missing, downloading...
   cd /tmp &&

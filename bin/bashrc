@@ -2,6 +2,8 @@
 
 # author: rochdi nassah
 
+export PATH=/opt/rochdi/bin:$PATH
+
 # aliases start
 alias azar='echo "globalThis.jotaiAtomCache.get(\"/app/src/stores/match/atoms.ts/matchSwipeDisableDurationSecondsAtom\").read = e => void 0;"'
 alias desktop='cd ~/Desktop'
