@@ -13,7 +13,7 @@ awaitInternet().then(asyncDelay.bind(void 0, 2**12)).then(() => {
   const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
 
   writeFileSync(DIR_PATH+'/raw/addr', addr);
-  writeFileSync(DIR_PATH+'/raw/rand', String(rand(2, 999)));
+  // writeFileSync(DIR_PATH+'/raw/rand', String(rand(2, 999)));
     
   execSync('git add -A &> /dev/null');
   execSync('git commit -m sync &> /dev/null');
