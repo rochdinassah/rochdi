@@ -22,8 +22,8 @@ const gateway_url = 'http://192.168.1.2';
 
 function fetchIp(retry_on_error) {
   return http2_client.get('https://ifconfig.me', {
-    retry_on_error,
-    timeout: retry_on_error ? void 0 : 4e3,
+    retry_on_error: false,
+    timeout: 2**12,
     headers: {
       'user-agent': 'curl'
     }
@@ -67,7 +67,7 @@ function login(user, pass, session_id) {
 void async function () {
   logger.debug('rebooting');
   
-  const curr_ip = await fetchIp(false);
+  const curr_ip = await fetchIp();
 
   if (curr_ip)
     logger.debug('curr ip: %s', curr_ip);
