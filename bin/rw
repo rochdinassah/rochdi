@@ -66,8 +66,8 @@ function login(user, pass, session_id) {
 
 void async function () {
   logger.debug('rebooting');
-
-  const curr_ip = await fetchIp();
+  
+  const curr_ip = await fetchIp(false);
 
   if (curr_ip)
     logger.debug('curr ip: %s', curr_ip);
