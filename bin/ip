@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
-(new(require('../').Http2Client)({ retry_on_error: 2**8 }))
-.get('https://ifconfig.co', { headers: { 'user-agent': 'curl' }, keepalive: !1 })
+const http2_client = (new(require('../').Http2Client)({ retry_on_error: 2**8, keepalive: false }));
+
+http2_client.get('https://ifconfig.co', { headers: { 'user-agent': 'curl' } })
 .then(res => {
   const { status_code, data } = res;
   if (200 !== status_code)
     throw new Error('ip: request error, http('+status_code+')');
   log(data.replace(/[\s\n]/g, ''));
+  http2_client.destroy();
 });
