@@ -51,7 +51,7 @@ function login(user, pass, session_id) {
     const { status_code, data } = res;
     if (200 !== status_code)
       exit('login: request error, http(%d)', status_code);
-
+    
     const { session_valid, login_result } = data;
 
     if (1 !== session_valid)
