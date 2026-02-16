@@ -2,21 +2,21 @@
 
 'use strict';
 
-require('./lib/_patch');
-require('./lib/_global');
+require('./src/_patch');
+require('./src/_global');
 
 global.exit = (...args) => void 0 !== args[0] && console.log(...args) || process.exit();
 global.log = console.log.bind(console);
 global.noop = Function.prototype;
 
 module.exports = {
-  StateManager: require('./lib/manager/state'),
-  CommandManager: require('./lib/manager/command'),
-  Openai: require('./lib/openai'),
-  Logger: require('./lib/logger'),
-  Discord: require('./lib/discord'),
-  Client: require('./lib/app/client'),
-  Server: require('./lib/app/server'),
-  Http2Client: require('./lib/http2-client'),
-  HttpClient: require('./lib/http-client')
+  StateManager: require('./src/manager/state'),
+  CommandManager: require('./src/manager/command'),
+  Openai: require('./src/openai'),
+  Logger: require('./src/logger'),
+  Discord: require('./src/discord'),
+  Client: require('./src/app/client'),
+  Server: require('./src/app/server'),
+  Http2Client: require('./src/http2-client'),
+  HttpClient: require('./src/http-client')
 };
