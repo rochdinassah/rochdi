@@ -60,7 +60,7 @@ class ConnectionManager extends EventEmitter {
   }
 
   heartbeat() {
-    // this.send({ op: 1, d: { s: this.seq }});
+    this.send({ op: 1, d: { s: this.seq }});
   }
 
   onError() {
