@@ -43,8 +43,8 @@ class ApiManager extends EventEmitter {
     this.manager = manager;
 
     if (!http2_client)
-      http2_client = new Http2Client({ logger });
-
+      http2_client = new Http2Client({ logger, ping_interval: 59e3 });
+    
     this.compileHeaders();
   }
 

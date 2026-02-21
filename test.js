@@ -9,7 +9,7 @@ startTimer('Test');
 
 void async function () {
   const logger = new Logger({ prefix: 'test' });
-
+  
   logger.info('test in progress...');
   logger.info('test complete ok | %s', endTimer('Test'));
 }();

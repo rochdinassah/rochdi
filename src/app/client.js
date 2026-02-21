@@ -85,11 +85,15 @@ class Client extends EventEmitter {
     this.connection.sendMessage('Pong');
   }
 
-  sendMessage(type, data = {}, cb) {    
-    const seq = data.seq = this.seq++;
-    if (cb)
-      this.once('Reply::'+seq, cb);
-    this.connection.send(JSON.stringify({ t: type, d: data }));
+  sendMessage(type, data = {}, cb) {
+    const { connection } = this;
+    const { readyState } = connection;
+    if (1 === readyState) {
+      const seq = data.seq = this.seq++;
+      if (cb)
+        this.once('Reply::'+seq, cb);
+      connection.send(JSON.stringify({ t: type, d: data }));
+    }
   };
 
   reply(seq, data) {

@@ -168,10 +168,13 @@ module.exports = Server;
 WebSocket.prototype.seq = 0;
 
 WebSocket.prototype.sendMessage = function (type, data = {}, cb) {
-  const seq = data.seq = this.seq++;
-  if (cb)
-    this.once('Reply::'+seq, cb);
-  this.send(JSON.stringify({ t: type, d: data }));
+  const { readyState } = this;
+  if (1 === readyState) {
+    const seq = data.seq = this.seq++;
+    if (cb)
+      this.once('Reply::'+seq, cb);
+    this.send(JSON.stringify({ t: type, d: data }));
+  }
 };
 
 WebSocket.prototype.ping = function () {
