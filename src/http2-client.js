@@ -148,9 +148,11 @@ class Http2Client extends Base {
 
   onSessionConnect(session) {
     const { authority } = session;
-    const { logger } = this;
+    const { logger, ping_interval } = this;
 
-    session.ping_interval_id = setInterval(this.pingSession.bind(this, session), this.ping_interval);
+    if (ping_interval)
+      session.ping_interval_id = setInterval(this.pingSession.bind(this, session), ping_interval);
+
     session.ctime = new Date();
     session.ready = true;
 
@@ -160,7 +162,6 @@ class Http2Client extends Base {
 
   pingSession(session) {
     const { logger } = this;
-    // logger.debug('ping sent!');
     session.ping(PING_BUFF, clearTimeout.bind(void 0, setTimeout(session.destroy.bind(session), 2**10)));
   }
 }
