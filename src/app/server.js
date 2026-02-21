@@ -171,7 +171,9 @@ WebSocket.prototype.sendMessage = function (type, data = {}, cb) {
   const seq = data.seq = this.seq++;
   if (cb)
     this.once('Reply::'+seq, cb);
-  this.send(JSON.stringify({ t: type, d: data }));
+  try {
+    this.send(JSON.stringify({ t: type, d: data }));
+  } catch {}
 };
 
 WebSocket.prototype.ping = function () {

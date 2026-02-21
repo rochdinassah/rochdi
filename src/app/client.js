@@ -89,7 +89,9 @@ class Client extends EventEmitter {
     const seq = data.seq = this.seq++;
     if (cb)
       this.once('Reply::'+seq, cb);
-    this.connection.send(JSON.stringify({ t: type, d: data }));
+    try {
+      this.connection.send(JSON.stringify({ t: type, d: data }));
+    } catch {}
   };
 
   reply(seq, data) {
