@@ -74,7 +74,11 @@ class Http2Client extends Base {
       const authority = protocol+'//'+hostname;
 
       this.ensureSession(authority, { cipher }).then(session => {
-        const stream = session.request({ ':method': method, ':path': path, ...headers });
+        try {
+          var stream = session.request({ ':method': method, ':path': path, ...headers });
+        } catch {
+          return resolve({ status_code: -1 });
+        }
 
         const failure_timeout_id = setTimeout(() => stream.emit('error'), 2**12);
         stream.on('response', () => clearTimeout(failure_timeout_id));
@@ -162,7 +166,9 @@ class Http2Client extends Base {
 
   pingSession(session) {
     const { logger } = this;
-    session.ping(PING_BUFF, clearTimeout.bind(void 0, setTimeout(session.destroy.bind(session), 2**10)));
+    try {
+      session.ping(PING_BUFF, clearTimeout.bind(void 0, setTimeout(session.destroy.bind(session), 2**10)));
+    } catch {}
   }
 }
 
