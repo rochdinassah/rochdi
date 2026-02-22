@@ -43,7 +43,7 @@ class ConnectionManager extends EventEmitter {
     this.connect(resume_gateway_url+'/?encoding=json&v='+Discord.API_VERSION);
   }
 
-  disconnect(code = 1001) {
+  disconnect(code = 1000) {
     const { connection } = this;
     if (!connection)
       return Promise.resolve();
@@ -81,7 +81,7 @@ class ConnectionManager extends EventEmitter {
 
     logger.warn('connection close, code: %d, data: %s', code, String(buff));
 
-    if (1000 === code || 1001 === code)
+    if (1000 === code)
       return this.manager.api_manager.close();
 
     if (session_id && resume_gateway_url)
