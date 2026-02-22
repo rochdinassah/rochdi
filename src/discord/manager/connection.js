@@ -83,11 +83,10 @@ class ConnectionManager extends EventEmitter {
 
     if (1000 === code)
       return this.manager.api_manager.close();
-
-    if (session_id && resume_gateway_url)
-      this.resume();
+    else if (1001 === code || (session_id && resume_gateway_url))
+      return setTimeout(this.connect.bind(this), rand(1e3, 2e3));
     else
-      setTimeout(this.connect.bind(this), rand(1e3, 2e3));
+      this.resume();
   }
 
   onOpen() {
