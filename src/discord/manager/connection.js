@@ -81,12 +81,7 @@ class ConnectionManager extends EventEmitter {
 
     logger.warn('connection close, code: %d, data: %s', code, String(buff));
 
-    if (1000 === code)
-      return this.manager.api_manager.close();
-    else if (1001 === code || (session_id && resume_gateway_url))
-      return setTimeout(this.connect.bind(this), rand(1e3, 2e3));
-    else
-      this.resume();
+    return setTimeout(this.connect.bind(this), rand(1e3, 2e3));
   }
 
   onOpen() {
