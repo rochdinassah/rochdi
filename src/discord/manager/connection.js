@@ -81,7 +81,7 @@ class ConnectionManager extends EventEmitter {
 
     logger.warn('connection close, code: %d, data: %s', code, String(buff));
 
-    return setTimeout(this.connect.bind(this), rand(1e3, 2e3));
+    return setTimeout(this.manager.connect.bind(this.manager), rand(1e3, 2e3));
   }
 
   onOpen() {
