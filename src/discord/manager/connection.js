@@ -78,7 +78,7 @@ class ConnectionManager extends EventEmitter {
     this.state = 'CLOSED';
     this.heartbeat_interval_id = void 0;
     this.last_seq = seq;
-
+    
     logger.warn('connection close, code: %d, data: %s', code, String(buff));
 
     return setTimeout(this.manager.connect.bind(this.manager), rand(1e3, 2e3));
