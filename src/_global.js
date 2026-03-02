@@ -77,7 +77,7 @@ global.parseHeaders = function (raw) {
       continue;
     headers[marker+key+marker] = marker+(/cookie/i.test(key) ? '' : val)+marker;
   }
-  return JSON.stringify(headers, null, 2).replaceAll('"'+marker, '\'').replaceAll(marker+'"', '\'');
+  exit(JSON.stringify(headers, null, 2).replaceAll('"'+marker, '\'').replaceAll(marker+'"', '\''));
 };
 
 const timer_map = new Map();
