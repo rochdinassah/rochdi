@@ -77,7 +77,7 @@ class GuildManager extends EventEmitter {
   }
 
   _fetchMessages(guild_id, search = '', offset = 0) {
-    const endpoint = '/guilds/'+guild_id+'/messages/search?'+search+'&sort_by=timestamp&sort_order=desc&offset='+offset;
+    const endpoint = '/guilds/'+guild_id+'/messages/search?'+search+'&sort_by=timestamp&sort_order=asc&offset='+offset;
     return this.api_manager.get(endpoint).then(res => {
       const { status_code, data } = res;
 
