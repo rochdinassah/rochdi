@@ -93,27 +93,26 @@ class GuildManager extends EventEmitter {
     });
   }
 
-  async clearMessages(guild_id) {
+  async clearMessages(guild_id, user_id) {
     const { api_manager, manager } = this;
-    const { user_id, message_manager } = manager;
+    const { message_manager } = manager;
 
     const messages = [];
 
     let fetched_messages, offset = 0;
 
-    // fetched_messages = await this.fetchMessages(guild_id, user_id, offset)
-
     while (fetched_messages = await this.fetchMessages(guild_id, user_id, offset)) {
       offset += 25;
-
       messages.push(...fetched_messages.map(m => new Object({ id: m[0].id, channel_id: m[0].channel_id })));
     }
 
     log(messages.length);
     for (const message of messages) {
       await message_manager.deleteMessage(message.channel_id, message.id);
-      await asyncDelay(rand(600, 1200));
+      await asyncDelay(rand(2**11, 2**12));
     }
+
+    return asyncDelay(2**13).then(() => this.clearMessages(guild_id, user_id));
   }
 
   onGuildCreateMessage(infos) {
