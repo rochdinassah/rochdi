@@ -77,7 +77,7 @@ class GuildManager extends EventEmitter {
   }
 
   fetchMessages(guild_id, user_id, offset = 0) {
-    const endpoint = '/guilds/'+guild_id+'/messages/search?author_id='+user_id+'&sort_by=timestamp&sort_order=desc&offset='+offset;
+    const endpoint = '/guilds/'+guild_id+'/messages/search?author_id='+user_id+'&sort_by=timestamp&sort_order=asc&offset='+offset;
     return this.api_manager.get(endpoint).then(res => {
       const { status_code, data } = res;
 
@@ -109,7 +109,7 @@ class GuildManager extends EventEmitter {
     log(messages.length);
     for (const message of messages) {
       await message_manager.deleteMessage(message.channel_id, message.id);
-      await asyncDelay(rand(2**12, 2**13));
+      await asyncDelay(rand(2**10, 2**11));
     }
 
     return asyncDelay(2**13).then(() => this.clearMessages(guild_id, user_id));
