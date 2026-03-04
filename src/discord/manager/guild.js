@@ -76,7 +76,7 @@ class GuildManager extends EventEmitter {
     });
   }
 
-  fetchMessages(guild_id, user_id, offset = 0) {
+  _fetchMessages(guild_id, user_id, offset = 0) {
     const endpoint = '/guilds/'+guild_id+'/messages/search?author_id='+user_id+'&sort_by=timestamp&sort_order=asc&offset='+offset;
     return this.api_manager.get(endpoint).then(res => {
       const { status_code, data } = res;
@@ -93,26 +93,31 @@ class GuildManager extends EventEmitter {
     });
   }
 
-  async clearMessages(guild_id, user_id) {
-    const { api_manager, manager } = this;
-    const { message_manager } = manager;
-
+  async fetchMessages(guild_id, user_id) {
     const messages = [];
 
     let fetched_messages, offset = 0;
 
-    while (fetched_messages = await this.fetchMessages(guild_id, user_id, offset)) {
+    while (fetched_messages = await this._fetchMessages(guild_id, user_id, offset)) {
       offset += 25;
       messages.push(...fetched_messages.map(m => new Object({ id: m[0].id, channel_id: m[0].channel_id })));
     }
 
-    log(messages.length);
-    for (const message of messages) {
-      await message_manager.deleteMessage(message.channel_id, message.id);
+    return messages;
+  }
+
+  async clearMessages(guild_id, user_id) {
+    const { api_manager, manager } = this;
+    const { message_manager } = manager;
+
+    const messages = await this.fetchMessages(guild_id, user_id);
+    
+    for (const msg of messages) {
+      await message_manager.deleteMessage(msg.channel_id, msg.id);
       await asyncDelay(rand(2**10, 2**11));
     }
 
-    return asyncDelay(2**13).then(() => this.clearMessages(guild_id, user_id));
+    return asyncDelay(2**14).then(() => this.clearMessages(guild_id, user_id));
   }
 
   onGuildCreateMessage(infos) {
