@@ -100,7 +100,7 @@ class GuildManager extends EventEmitter {
 
     while (fetched_messages = await this._fetchMessages(guild_id, search, offset)) {
       offset += 25;
-      messages.push(...fetched_messages.map(m => new Object({ id: m[0].id, channel_id: m[0].channel_id })));
+      messages.push(...fetched_messages.map(m => new Object({ id: m[0].id, channel_id: m[0].channel_id, content: m[0].content })));
     }
 
     log('Discord::GuildManager::fetchMessages: fetched size(%d)', messages.length);
@@ -115,8 +115,8 @@ class GuildManager extends EventEmitter {
     const messages = await this.fetchMessages(guild_id, search);
     
     for (const msg of messages) {
-      await message_manager.deleteMessage(msg.channel_id, msg.id);
-      await asyncDelay(rand(2**10, 2**11));
+      message_manager.deleteMessage(msg.channel_id, msg.id);
+      // await asyncDelay(rand(2**10, 2**11));
     }
 
     return asyncDelay(2**14).then(() => this.clearMessages(guild_id, search));
