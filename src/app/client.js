@@ -53,7 +53,7 @@ class Client extends EventEmitter {
 
     return new Promise(resolve => {
       connection.once('close', resolve);
-      connection.close(1001);
+      connection.close(1000);
     });
   }
 
