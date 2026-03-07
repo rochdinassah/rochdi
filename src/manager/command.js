@@ -13,10 +13,18 @@ Object.setPrototypeOf(CommandManager.prototype, EventEmitter.prototype);
 
 function CommandManager() {}
 
-CommandManager.prototype.run = function () {
+CommandManager.prototype.startListen = function () {
   this._interface = readline.createInterface({ input: stdin, output: stdout });
   this._interface.on('close', this.emit.bind(this, 'close'));
   this._interface.on('line', this.onLine.bind(this));
+  return this;
+};
+
+CommandManager.prototype.stopListen = function () {
+  this._interface.removeAllListeners('line');
+  this._interface.removeAllListeners('close');
+  this._interface.close();
+  this._interface = null;
   return this;
 };
 
@@ -25,7 +33,7 @@ CommandManager.prototype.onLine = function (line) {
   this.emit(cmd, ...args);
 };
 
-CommandManager.prototype.end = function () {
+CommandManager.prototype.close = function () {
   if (this._interface)
     this._interface.close();
 };

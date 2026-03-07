@@ -191,7 +191,13 @@ const signals = ['INT', 'HUP', 'TERM', 'QUIT', 'USR1', 'USR2'];
 signals.forEach(sig => process.on('SIG'+sig, onProcessExit));
 
 global.onExit = exit_cb.push.bind(exit_cb);
-process.exit = () => child_process.execSync('kill -9 '+process.pid);
+
+const exitProcess = process.exit;
+process.exit = code => {
+  if (1001 === code)
+    return exitProcess(0);
+  child_process.execSync('kill -9 '+process.pid);
+}
 
 async function onProcessExit(signal, code) {
   for (const cb of exit_cb)

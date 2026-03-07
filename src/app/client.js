@@ -5,6 +5,7 @@
 const Logger = require('../logger');
 const WebSocket = require('ws');
 const EventEmitter = require('node:events');
+const CommandManager = require('../manager/command');
 
 class Client extends EventEmitter {
   constructor(address, opts = {}) {
@@ -17,6 +18,7 @@ class Client extends EventEmitter {
     this.ready = false;
     this.reconnect = reconnect ?? true;
     this.address = address;
+    this.command_manager = new CommandManager();
 
     this.seq = 0;
 
@@ -101,18 +103,18 @@ class Client extends EventEmitter {
   }
 
   stop(reason, delay) {
-    this._exit(1, reason, delay);
+    this._exit(1000, reason, delay);
   }
 
   restart(reason, delay) {
-    this._exit(0, reason, delay);
+    this._exit(1001, reason, delay);
   }
   
   _exit(code, reason, delay) {
     const { logger } = this;
     const f = formatDuration;
     if (logger)
-      logger.info('(%s) %s : %s', code ? 'stop' : 'restart', delay ? format('in %s', f(delay)) : 'immediately', reason ?? 'none');
+      logger.info('(%s) %s : %s', code ? 'restart' : 'stop', delay ? format('in %s', f(delay)) : 'immediately', reason ?? 'none');
     if (delay)
       asyncDelay(delay).then(process.exit.bind(process, code));
     else

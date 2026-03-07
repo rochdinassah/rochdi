@@ -7,6 +7,7 @@ const Route = require('./_route');
 const StateManager = require('../manager/state');
 const ws = require('ws');
 const Logger = require('../logger');
+const CommandManager = require('../manager/command');
 
 const { WebSocketServer, WebSocket } = ws;
 
@@ -32,6 +33,7 @@ class Server extends WebSocketServer {
     this.clients.add = noop;
 
     this.state_manager = new StateManager();
+    this.command_manager = new CommandManager();
 
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Pong', this.onPong);
@@ -52,6 +54,7 @@ Server.prototype.registerRoute = function (method, path, handler) {
 Server.prototype.run = function () {
   return new Promise(resolve => {
     const { port, ping_interval, http_server, logger, pingClients } = this;
+    
     http_server.on('request', this[Symbol.for('onRequest')].bind(this)).listen(port, '::0', resolve);
 
     if (false !== ping_interval)
