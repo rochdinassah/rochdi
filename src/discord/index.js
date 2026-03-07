@@ -71,7 +71,7 @@ class Discord extends EventEmitter {
     return new Promise(resolve => this.once('AuthComplete', resolve));
   }
 
-  disconnect(code = 1001) {
+  disconnect(code = 1000) {
     return this.connection_manager.disconnect(code);
   }
 
