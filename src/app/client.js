@@ -114,7 +114,7 @@ class Client extends EventEmitter {
     const { logger } = this;
     const f = formatDuration;
     if (logger)
-      logger.info('(%s) %s : %s', code ? 'restart' : 'stop', delay ? format('in %s', f(delay)) : 'immediately', reason ?? 'none');
+      logger.info('(%s) %s : %s', code === 1001 ? 'restart' : 'stop', delay ? format('in %s', f(delay)) : 'immediately', reason ?? 'none');
     if (delay)
       asyncDelay(delay).then(process.exit.bind(process, code));
     else
