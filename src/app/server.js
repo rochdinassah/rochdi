@@ -17,7 +17,7 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    const { port, ping_interval, logger } = opts;
+    const { port, ping_interval, states, logger } = opts;
 
     this.logger = logger || new Logger.SilentLogger();
     
@@ -32,7 +32,7 @@ class Server extends WebSocketServer {
 
     this.clients.add = noop;
 
-    this.state_manager = new StateManager();
+    this.state_manager = new StateManager({ states });
     this.command_manager = new CommandManager();
 
     this.on('connection', this[Symbol.for('onConnection')]);
