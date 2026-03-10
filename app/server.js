@@ -39,8 +39,10 @@ class Server extends rochdi.Server {
 
     writeFileSync(RAW_DIR+'/interaction', format('Last interaction: %s', info.time));
 
-    res.writeHead(200);
-    res.end('interaction ok');
+    res.writeHead(200, {
+      'Content-Type': 'application/json'
+    });
+    res.end(JSON.stringify(info));
   }
 
   onGetInteractionInfoRequest(req, res) {

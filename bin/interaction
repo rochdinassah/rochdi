@@ -7,6 +7,6 @@ const { Logger, HttpClient } = rochdi;
 const logger = new Logger({ prefix: 'interaction' });
 const http_client = new HttpClient({ logger });
 
-http_client.get('http://rochdi.ddns.net/Interaction').then(res => {
+http_client.get('http://rochdi.ddns.net:4444/Interaction').then(res => {
   log(res.data);
 });
