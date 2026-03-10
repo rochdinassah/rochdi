@@ -10,7 +10,7 @@ const { env } = process;
 const {
   REDIS_USER,
   REDIS_PASS,
-  REDIS_HOST,
+  REDIS_ADDR,
   REDIS_PORT
 } = env;
 
@@ -27,7 +27,7 @@ class RedisClient extends EventEmitter {
       username: REDIS_USER,
       password: REDIS_PASS,
       socket: {
-        host: REDIS_HOST,
+        host: REDIS_ADDR,
         port: REDIS_PORT,
         reconnectStrategy: retries => {
           if (32 < retries)
