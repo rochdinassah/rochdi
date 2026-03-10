@@ -50,7 +50,7 @@ class Server extends rochdi.Server {
       return res.writeHead(404), res.end();
 
     const headers = {
-      'conten-type': 'application/json'
+      'content-type': 'application/json'
     };
 
     res.writeHead(200, headers);
