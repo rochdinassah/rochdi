@@ -8,6 +8,8 @@ const StateManager = require('../manager/state');
 const ws = require('ws');
 const Logger = require('../logger');
 const CommandManager = require('../manager/command');
+const HttpClient = require('../http-client');
+const Http2Client = require('../http2-client');
 
 const { WebSocketServer, WebSocket } = ws;
 
@@ -34,6 +36,8 @@ class Server extends WebSocketServer {
 
     this.state_manager = new StateManager({ states });
     this.command_manager = new CommandManager();
+    this.http_client = new HttpClient({ logger: this.logger });
+    this.http2_client = new Http2Client({ logger: this.logger });
 
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Pong', this.onPong);
@@ -41,15 +45,11 @@ class Server extends WebSocketServer {
   }
 }
 
-for (const method of ['GET', 'POST', 'CONNECT', 'DELETE', 'HEAD', 'PATCH', 'PUT']) {    
+for (const method of ['GET', 'POST', 'CONNECT', 'DELETE', 'HEAD', 'PATCH', 'PUT', 'ANY']) {    
   Server.prototype[method.toLowerCase()] = function (path, handler) {
-    return this.registerRoute(method, path, handler);
+    this.routes.push(new Route(method.toUpperCase(), path, handler));
   };
 }
-
-Server.prototype.registerRoute = function (method, path, handler) {
-  this.routes.push(new Route(method.toUpperCase(), path, handler));
-};
 
 Server.prototype.run = function () {
   return new Promise(resolve => {
@@ -127,7 +127,7 @@ Server.prototype[Symbol.for('onRequest')] = function (req, res) {
   const { method, url } = req;
   const path = require('node:url').parse(url).path.trim('/');
   for (const route of this.routes)
-    if (method === route.method)
+    if (method === route.method || route.method === 'ANY')
       if (route.match(path))
         return route.run(this, req, res);
   res.writeHead(404).end();

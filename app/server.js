@@ -5,16 +5,53 @@
 const rochdi = require('..');
 const fs = require('node:fs');
 
-const { Server, Logger } = rochdi;
-const { readFileSync } = fs;
+const { Logger } = rochdi;
+const { readFileSync, writeFileSync } = fs;
 
-const logger = new Logger({ prefix: 'app' });
-const server = new Server({ port: 4444, logger });
+const RAW_DIR = '/opt/rochdi/raw';
 
-server.get('/GetLocalAddr', (req, res) => {
-  res.writeHead(200);
-  res.write(String(readFileSync('/opt/rochdi/raw/addr')));
-  res.end();
-});
+class Server extends rochdi.Server {
+  constructor() {
+    super({ port: 4444, logger: new Logger({ prefix: 'app' })});
 
-server.run();
+    this.registerRoutes();
+    this.run();
+  }
+
+  registerRoutes() {
+    this.get('/GetLocalAddr', this.onGetLocalAddrRequest);
+    this.any('/Interaction', this.onInteractionRequest);
+    this.get('/GetInteraction', this.onGetInteractionInfoRequest);
+  }
+
+  onGetLocalAddrRequest(req, res) {
+    res.writeHead(200);
+    res.end(String(readFileSync(RAW_DIR+'/addr')));
+  }
+
+  onInteractionRequest(req, res) {
+    const info = {
+      ip: req.ip,
+      time: new Date()
+    };
+
+    this.interaction_info = info;
+
+    writeFileSync(RAW_DIR+'/interaction', format('Last interaction: %s', info.time));
+
+    res.writeHead(200);
+    res.end('interaction ok');
+  }
+
+  onGetInteractionInfoRequest(req, res) {
+    const { interaction_info } = this;
+
+    if (!interaction_info)
+      return res.writeHead(404), res.end();
+
+    res.writeHead(200);
+    res.end(JSON.stringify(interaction_info));
+  }
+}
+
+new Server();

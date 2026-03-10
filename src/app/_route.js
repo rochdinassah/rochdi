@@ -25,32 +25,46 @@ Route.prototype.parsePattern = function () {
 };
 
 Route.prototype.run = function (app, req, res) {
+  const { handler, params } = this;
+
   const data_buff = [];
+
   req.on('data', data_buff.push.bind(data_buff));
   req.on('end', () => {
+    const { socket } = req;
+    const { remoteAddress } = socket;
+
     let data = String(Buffer.concat(data_buff));
 
     try {
       data = JSON.parse(data);
     } catch {}
 
-    req.data = data;
-    req.params = this.params;
+    const ip_pattern = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/;
+    const ip_match = ip_pattern.exec(remoteAddress);
 
-    this.handler.call(app, req, res);
+    req.data = data;
+    req.params = params;
+    req.ip = ip_match ? ip_match[0] : remoteAddress;
+
+    handler.call(app, req, res);
   });
 };
 
 Route.prototype.match = function (path) {
-  if (this.pattern) {
-    const match = this.pattern.exec(path);
-    if (match) {
-      const param_values = match.slice(1);
-      const { params, param_keys } = this;
-      for (let i = 0; param_values.length > i; ++i)
-        params[param_keys[i]] = param_values[i];
-      return true;
-    }
+  const { pattern } = this;
+
+  if (!pattern)
+    return false;
+
+  const match = this.pattern.exec(path);
+  if (match) {
+    const param_values = match.slice(1);
+    const { params, param_keys } = this;
+    for (let i = 0; param_values.length > i; ++i)
+      params[param_keys[i]] = param_values[i];
+    return true;
   }
+
   return false;
 };
