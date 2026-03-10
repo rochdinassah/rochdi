@@ -14,7 +14,11 @@ const port = env.HOST_PORT;
 
 class Server extends rochdi.Server {
   constructor() {
-    super({ port, logger: new Logger({ prefix: 'app' })});
+    super({
+      port,
+      notification_channel: 'debug',
+      logger: new Logger({ prefix: 'app' })
+    });
 
     this.registerRoutes();
     this.run();
@@ -41,8 +45,7 @@ class Server extends rochdi.Server {
 
     writeFileSync(RAW_DIR+'/interaction', format('Last interaction: %s', info.time));
 
-    res.writeHead(200);
-    res.end('interaction ok');
+    res.writeHead(200).end('interaction ok');
   }
 
   onGetInteractionInfoRequest(req, res) {
@@ -55,8 +58,7 @@ class Server extends rochdi.Server {
       'content-type': 'application/json'
     };
 
-    res.writeHead(200, headers);
-    res.end(JSON.stringify(interaction_info));
+    res.writeHead(200, headers).end(JSON.stringify(interaction_info));
   }
 }
 

@@ -11,9 +11,15 @@ const CommandManager = require('../manager/command');
 const HttpClient = require('../http-client');
 const Http2Client = require('../http2-client');
 const RedisClient = require('./redis');
+const Discord = require('../discord');
 
 const { WebSocketServer, WebSocket } = ws;
 const { env } = process;
+
+const discord_bot_token = decrypt(
+  'sFyeftxBt0SYaKx+z4T0YFZRKuW4GSb85YBFEphdDnXwsCtrqtAJbu7ZnELKYechfrpQZXBkneR+TBlhqaWMmMFxb6odWqTYc6EFZb2mD7k=',
+  env.ENCRYPTION_PASSWORD
+);
 
 class Server extends WebSocketServer {
   constructor(opts = {}) {
@@ -21,11 +27,15 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    const { port, ping_interval, states } = opts;
+    const { port, notification_channel, ping_interval, states } = opts;
+
+    if (!notification_channel)
+      exit('Server.constructor: "notification_channel" option is missing');
 
     const logger = this.logger = opts.logger || new Logger.SilentLogger();
-
+    
     this.port = port;
+    this.notification_channel = notification_channel;
     this.ping_interval = ping_interval ?? 3e4;
     this.http_server = http_server;
     this.cache_key = env.CACHE_KEY;
@@ -42,31 +52,23 @@ class Server extends WebSocketServer {
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger});
     this.redis_client = new RedisClient({ logger });
+    this.discord = new Discord(discord_bot_token, { logger, bot_user: true });
 
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Pong', this.onPong);
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
+    this.on('DiscordMessage', this.onDiscordMessage);
 
     this.redis_client.once('Ready', this.onRedisReady.bind(this));
+    this.discord.once('Ready', this.onDiscordReady.bind(this));
 
-    onExit(this.backup.bind(this));
+    this.discord.connect();
   }
 
   onEchoRequestMessage(client, data) {
     client.reply(data.seq, { echo_value: data.value });
     client.sendMessage('EchoRequestMessage', { value: randomString(4) }, reply => {
       log('client reply:', reply);
-    });
-  }
-
-  onRedisReady() {
-    const { redis_client, cache_key } = this;
-    redis_client.get(cache_key).then(cache => {
-      if (!cache)
-        cache = {};
-      setInterval(this.backup.bind(this), 24e5);
-      this.cache = cache;
-      this.emit('CacheReady');
     });
   }
 }
@@ -192,6 +194,18 @@ Server.prototype[Symbol.for('onConnectionMessage')] = function (client, data) {
   this.emit(t, client, d);
 };
 
+Server.prototype.onRedisReady = function () {
+  const { redis_client, cache_key } = this;
+  redis_client.get(cache_key).then(cache => {
+    if (!cache)
+      cache = {};
+    setInterval(this.backup.bind(this), 24e5);
+    onExit(this.backup.bind(this));
+    this.cache = cache;
+    this.emit('CacheReady');
+  });
+};
+
 Server.prototype.backup = function (key) {
   const { redis_client, logger, cache, cache_key } = this;
 
@@ -244,6 +258,45 @@ Server.prototype.reset = function () {
   this.backup().then(() => {
     logger.verbose('reset complete');
   });
+};
+
+Server.prototype.onDiscordReady = async function () {
+  const { discord, notification_channel } = this;
+
+  const guild = discord.getGuild('console');
+
+  if (!guild)
+    exit('Server.onDiscordReady: "console" guild missing');
+
+  if (!guild.hasChannel(notification_channel))
+    await guild.createTextChannel(notification_channel);
+  
+  const channel = guild.getChannel(notification_channel);
+  channel.on('Message', this.onDiscordMessage.bind(this));
+  discord.channel = channel;
+  this.emit('NotificationReady');
+};
+
+Server.prototype.onDiscordMessage = function (msg) {
+  const { command_manager, discord } = this;
+  const { author, content, channel_id, guild_id } = msg;
+
+  if (discord.user.id === author.id)
+    return;
+};
+
+Server.prototype.notify = function (content, opts = {}) {
+  const { logger, discord } = this;
+  const { level, skip_log } = opts;
+  const { channel } = discord;
+
+  if (!discord || !discord.ready || !channel)
+    return Promise.resolve(false);
+
+  if (!skip_log)
+    logger.verbose(content);
+
+  return channel.sendMessage(content);
 };
 
 module.exports = Server;
