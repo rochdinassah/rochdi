@@ -20,6 +20,10 @@ class Server extends rochdi.Server {
       logger: new Logger({ prefix: 'app' })
     });
 
+    log(process.env.REDIS_ADDR);
+    log(process.env.REDIS_PORT);
+    log(process.env.HOST_PORT);
+
     this.registerRoutes();
     this.run();
   }
