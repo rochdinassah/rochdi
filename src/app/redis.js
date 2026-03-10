@@ -8,10 +8,10 @@ const redis = require('redis');
 const { env } = process;
 
 const {
-  REDIS_SERVER_USERNAME,
-  REDIS_SERVER_PASSWORD,
-  REDIS_SERVER_HOST,
-  REDIS_SERVER_PORT
+  REDIS_USER,
+  REDIS_PASS,
+  REDIS_HOST,
+  REDIS_PORT
 } = env;
 
 class RedisClient extends EventEmitter {
@@ -24,11 +24,11 @@ class RedisClient extends EventEmitter {
     this.connected = false;
     
     const connection = this.connection = redis.createClient({
-      username: REDIS_SERVER_USERNAME,
-      password: REDIS_SERVER_PASSWORD,
+      username: REDIS_USER,
+      password: REDIS_PASS,
       socket: {
-        host: REDIS_SERVER_HOST,
-        port: REDIS_SERVER_PORT,
+        host: REDIS_HOST,
+        port: REDIS_PORT,
         reconnectStrategy: retries => {
           if (32 < retries)
             return new Error('redis gave up for reconnection');
