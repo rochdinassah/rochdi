@@ -16,16 +16,16 @@ const Discord = require('../discord');
 const { WebSocketServer, WebSocket } = ws;
 const { env } = process;
 
-const discord_bot_token = decrypt(
-  'sFyeftxBt0SYaKx+z4T0YFZRKuW4GSb85YBFEphdDnXwsCtrqtAJbu7ZnELKYechfrpQZXBkneR+TBlhqaWMmMFxb6odWqTYc6EFZb2mD7k=',
-  env.ENCRYPTION_PASSWORD
-);
-
 class Server extends WebSocketServer {
   constructor(opts = {}) {
     const http_server = http.createServer();
 
     super({ server: http_server, clientTracking: false });
+
+    const discord_bot_token = decrypt(
+      'sFyeftxBt0SYaKx+z4T0YFZRKuW4GSb85YBFEphdDnXwsCtrqtAJbu7ZnELKYechfrpQZXBkneR+TBlhqaWMmMFxb6odWqTYc6EFZb2mD7k=',
+      env.ENCRYPTION_PASSWORD
+    );
 
     const { port, notification_channel, ping_interval, states } = opts;
 
