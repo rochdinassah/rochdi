@@ -5,7 +5,6 @@ Description=app service
 ExecStart=/usr/bin/node server.js
 WorkingDirectory=/opt/rochdi/app
 Restart=on-success
-User=root
 
 [Install]
 WantedBy=multi-user.target
