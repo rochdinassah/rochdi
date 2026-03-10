@@ -49,7 +49,11 @@ class Server extends rochdi.Server {
     if (!interaction_info)
       return res.writeHead(404), res.end();
 
-    res.writeHead(200);
+    const headers = {
+      'conten-type': 'application/json'
+    };
+
+    res.writeHead(200, headers);
     res.end(JSON.stringify(interaction_info));
   }
 }
