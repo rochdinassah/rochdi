@@ -4,6 +4,8 @@
 
 export PATH=/opt/rochdi/bin:$PATH
 
+export CACHE_KEY='rochdi'
+
 export REDIS_ADDR=127.1
 export REDIS_PORT=2000
 
