@@ -7,10 +7,16 @@ const { Logger, HttpClient } = rochdi;
 const logger = new Logger({ prefix: 'interaction' });
 const http_client = new HttpClient({ logger });
 
-const { REMOTE_ADDR, REMOTE_PORT } = process.env;
+const { HOST_ADDR, HOST_PORT } = process.env;
 
-const address = 'http://'+REMOTE_ADDR+':'+REMOTE_PORT;
+const base_url = 'http://'+HOST_ADDR+':'+HOST_PORT;
 
-http_client.get(address+'/GetInteraction').then(res => {
-  log(res.data);
+startTimer('GetInteraction');
+
+http_client.get(base_url+'/GetInteraction').then(res => {
+  const { status_code, data } = res;
+
+  data.took = endTimer('GetInteraction');
+
+  log(data);
 });
