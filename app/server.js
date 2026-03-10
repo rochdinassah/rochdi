@@ -7,12 +7,14 @@ const fs = require('node:fs');
 
 const { Logger } = rochdi;
 const { readFileSync, writeFileSync } = fs;
+const { env } = process;
 
 const RAW_DIR = '/opt/rochdi/raw';
+const port = env.HOST_PORT;
 
 class Server extends rochdi.Server {
   constructor() {
-    super({ port: 4444, logger: new Logger({ prefix: 'app' })});
+    super({ port, logger: new Logger({ prefix: 'app' })});
 
     this.registerRoutes();
     this.run();

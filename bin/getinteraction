@@ -11,12 +11,15 @@ const { HOST_ADDR, HOST_PORT } = process.env;
 
 const base_url = 'http://'+HOST_ADDR+':'+HOST_PORT;
 
-startTimer('GetInteraction');
-
 http_client.get(base_url+'/GetInteraction').then(res => {
   const { status_code, data } = res;
+  
+  if (200 !== status_code)
+    return logger.verbose('no interaction');
 
-  data.took = endTimer('GetInteraction');
+  const { ip, time } = data;
 
-  log(data);
+  logger.verbose('from: %s', ip);
+  logger.verbose('time: %s', time);
+  logger.verbose('%s ago', formatDuration(new Date()-Date.parse(time)));
 });

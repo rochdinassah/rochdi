@@ -10,8 +10,10 @@ const Logger = require('../logger');
 const CommandManager = require('../manager/command');
 const HttpClient = require('../http-client');
 const Http2Client = require('../http2-client');
+const RedisClient = require('./redis');
 
 const { WebSocketServer, WebSocket } = ws;
+const { env } = process;
 
 class Server extends WebSocketServer {
   constructor(opts = {}) {
@@ -19,13 +21,14 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    const { port, ping_interval, states, logger } = opts;
+    const { port, ping_interval, states } = opts;
 
-    this.logger = logger || new Logger.SilentLogger();
-    
+    const logger = this.logger = opts.logger || new Logger.SilentLogger();
+
     this.port = port;
     this.ping_interval = ping_interval ?? 3e4;
     this.http_server = http_server;
+    this.cache_key = env.CACHE_KEY;
 
     this.routes = [];
 
@@ -36,12 +39,35 @@ class Server extends WebSocketServer {
 
     this.state_manager = new StateManager({ states });
     this.command_manager = new CommandManager();
-    this.http_client = new HttpClient({ logger: this.logger });
-    this.http2_client = new Http2Client({ logger: this.logger });
+    this.http_client = new HttpClient({ logger });
+    this.http2_client = new Http2Client({ logger});
+    this.redis_client = new RedisClient({ logger });
 
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Pong', this.onPong);
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
+
+    this.redis_client.once('Ready', this.onRedisReady.bind(this));
+
+    onExit(this.backup.bind(this));
+  }
+
+  onEchoRequestMessage(client, data) {
+    client.reply(data.seq, { echo_value: data.value });
+    client.sendMessage('EchoRequestMessage', { value: randomString(4) }, reply => {
+      log('client reply:', reply);
+    });
+  }
+
+  onRedisReady() {
+    const { redis_client, cache_key } = this;
+    redis_client.get(cache_key).then(cache => {
+      if (!cache)
+        cache = {};
+      setInterval(this.backup.bind(this), 24e5);
+      this.cache = cache;
+      this.emit('CacheReady');
+    });
   }
 }
 
@@ -166,6 +192,60 @@ Server.prototype[Symbol.for('onConnectionMessage')] = function (client, data) {
   this.emit(t, client, d);
 };
 
+Server.prototype.backup = function (key) {
+  const { redis_client, logger, cache, cache_key } = this;
+
+  logger.verbose('backup in progress...');
+
+  if (!redis_client || !redis_client.connected)
+    return logger.warn('backup error'), Promise.resolve(false);
+
+  return redis_client.set(key ?? cache_key, cache).then(() => {
+    if (key)
+      logger.verbose('backup checkpoint ok');
+    return logger.verbose('backup ok'), true;
+  });
+};
+
+Server.prototype.triggerBackup = function () {
+  clearTimeout(this.backup_triggering_timeout_id);
+  this.backup_triggering_timeout_id = setTimeout(this.backup.bind(this), 2**13);
+};
+
+Server.prototype.rollback = function () {
+  const { logger, redis_client, cache_key } = this;
+
+  logger.info('rollback in progress...');
+
+  return redis_client.get(cache_key+'-backup').then(cache => {
+    return redis_client.set(cache_key, cache).then(() => {
+      logger.info('rollback complete');
+      return cache;
+    });
+  });
+};
+
+Server.prototype.verifyCache = function (template = {}) {
+  const { cache } = this;
+  
+  for (const key of Object.keys(template))
+    if (null !== template[key] && getType(cache[key]) !== getType(template[key]))
+      cache[key] = template[key];
+
+  for (const key of Object.keys(cache))
+    if (void 0 === template[key])
+      delete cache[key];
+};
+
+Server.prototype.reset = function () {
+  const { logger } = this;
+  logger.verbose('resetting...');
+  this.cache = {};
+  this.backup().then(() => {
+    logger.verbose('reset complete');
+  });
+};
+
 module.exports = Server;
 
 WebSocket.prototype.seq = 0;
@@ -195,11 +275,4 @@ WebSocket.prototype.stop = function (reason, delay) {
 
 WebSocket.prototype.restart = function (reason, delay) {
   this.sendMessage('RestartRequestMessage', { reason, delay });
-};
-
-Server.prototype.onEchoRequestMessage = function (client, data) {
-  client.reply(data.seq, { echo_value: data.value });
-  client.sendMessage('EchoRequestMessage', { value: randomString(4) }, reply => {
-    log('client reply:', reply);
-  });
 };
