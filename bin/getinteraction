@@ -17,9 +17,10 @@ http_client.get(base_url+'/GetInteraction').then(res => {
   if (200 !== status_code)
     return logger.verbose('no interaction');
 
-  const { ip, time } = data;
+  const { ip, time, payload } = data;
 
   logger.verbose('from: %s', ip);
   logger.verbose('time: %s', time);
+  logger.verbose('payload: %s', payload);
   logger.verbose('%s ago', formatDuration(new Date()-Date.parse(time)));
 });

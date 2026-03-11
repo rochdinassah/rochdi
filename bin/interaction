@@ -7,13 +7,15 @@ const { Logger, HttpClient } = rochdi;
 const logger = new Logger({ prefix: 'interaction' });
 const http_client = new HttpClient({ logger });
 
+const payload = process.argv[2];
+
 const { HOST_ADDR, HOST_PORT } = process.env;
 
-const base_url = 'http://'+HOST_ADDR+':'+HOST_PORT;
+const url = 'http://'+HOST_ADDR+':'+HOST_PORT;
 
 startTimer('Interaction');
 
-http_client.get(base_url+'/Interaction').then(res => {
+http_client.post(url+'/Interaction', { body: { payload }}).then(res => {
   const { status_code, data } = res;
   
   logger.verbose('%s | %s', data, endTimer('Interaction'));

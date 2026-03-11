@@ -36,18 +36,20 @@ class Server extends rochdi.Server {
 
   onGetLocalAddrRequest(req, res) {
     res.writeHead(200);
-    res.end(String(readFileSync(RAW_DIR+'/addr')));
+    res.end(this.cache.local_addr);
   }
 
   onInteractionRequest(req, res) {
+    const { data } = req;
+    const { payload } = data;
+
     const info = {
       ip: req.ip,
-      time: new Date()
+      time: new Date(),
+      payload
     };
 
     this.interaction_info = info;
-
-    writeFileSync(RAW_DIR+'/interaction', format('Last interaction: %s', info.time));
 
     res.writeHead(200).end('interaction ok');
   }
