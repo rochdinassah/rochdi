@@ -2,7 +2,7 @@
 Description=app service
 
 [Service]
-ExecStart=/usr/bin/node server.js
+ExecStart=/usr/bin/node index.js
 WorkingDirectory=/opt/rochdi/app
 Restart=on-success
 

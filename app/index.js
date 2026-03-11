@@ -2,7 +2,7 @@
 
 'use strict';
 
-const rochdi = require('..');
+const rochdi = require('../main');
 const fs = require('node:fs');
 
 const { Logger } = rochdi;
