@@ -2,7 +2,7 @@
 
 'use strict';
 
-require('..');
+require('../main');
 
 const { writeFileSync } = require('node:fs');
 const { execSync } = require('node:child_process');
