@@ -286,7 +286,7 @@ Server.prototype.awaitNotificationReady = function () {
 Server.prototype.onDiscordMessage = function (msg) {
   const { command_manager, discord } = this;
   const { author, content, channel_id, guild_id } = msg;
-
+  
   if (discord.user.id === author.id)
     return;
 };
