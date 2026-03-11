@@ -4,11 +4,6 @@
 
 export PATH=/opt/rochdi/bin:$PATH
 
-export CACHE_KEY='rochdi'
-
-export REDIS_ADDR=127.1
-export REDIS_PORT=2000
-
 export HOST_ADDR='rochdi.ddns.net'
 export HOST_PORT=80
 

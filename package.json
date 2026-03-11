@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "app": "node app/main",
-    "server": "node app/server",
-    "test": "node test.js"
+    "app": "node --env-file=.env app/main",
+    "server": "node --env-file=.env app/server",
+    "test": "node --env-file=.env test.js"
   },
   "repository": {
     "type": "git",
