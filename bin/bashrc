@@ -25,6 +25,11 @@ if [ $(pwd) == $(echo ~) ]; then desktop; fi
 # aliases end
 
 # functions start
+pull() {
+  git reset --hard HEAD
+  git pull
+}
+
 push() {
   commit=$@
 

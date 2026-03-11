@@ -9,9 +9,7 @@ const http_client = new HttpClient({ logger });
 
 const { HOST_ADDR, HOST_PORT } = process.env;
 
-const base_url = 'http://'+HOST_ADDR+':'+HOST_PORT;
-
-http_client.get(base_url+'/GetInteraction').then(res => {
+http_client.get('http://rochdi.ddns.net/GetInteraction').then(res => {
   const { status_code, data } = res;
   
   if (200 !== status_code)

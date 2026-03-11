@@ -5,7 +5,8 @@ Description=app client service
 ExecStart=/usr/bin/node client.js
 WorkingDirectory=/opt/rochdi/app
 Restart=on-success
-EnvironmentFile=/etc/bash.bashrc
+RestartSec=4
+EnvironmentFile=/etc/environment
 
 [Install]
 WantedBy=multi-user.target

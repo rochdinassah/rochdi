@@ -9,7 +9,6 @@ const { Logger } = rochdi;
 const { readFileSync, writeFileSync } = fs;
 const { env } = process;
 
-const RAW_DIR = '/opt/rochdi/raw';
 const port = env.HOST_PORT;
 
 class Server extends rochdi.Server {
