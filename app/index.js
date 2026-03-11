@@ -113,7 +113,7 @@ class Server extends rochdi.Server {
 const server = new Server();
 
 server.awaitReady().then(() => {
-  server.http_client.get('http://127.1:80/Cache/name').then(res => {
+  server.http_client.get('http://127.1/Cache/name').then(res => {
     log(res.data);
   });
   server.notify('DEBUG_READY');

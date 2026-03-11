@@ -153,7 +153,7 @@ Server.prototype.onPong = function (client, data) {
 
 Server.prototype[Symbol.for('onRequest')] = function (req, res) {
   const { method, url } = req;
-  const path = require('node:url').parse(url).path.trim('/');
+  const path = new URL('http://127.1'+url).pathname.trim('/');
   for (const route of this.routes)
     if (method === route.method || route.method === 'ANY')
       if (route.match(path))
