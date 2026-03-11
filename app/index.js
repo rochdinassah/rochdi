@@ -16,7 +16,7 @@ class Server extends rochdi.Server {
   constructor() {
     super({
       port,
-      notification_channel: 'debug',
+      notification_channel: 'app',
       logger: new Logger({ prefix: 'app' })
     });
 
@@ -110,4 +110,11 @@ class Server extends rochdi.Server {
   }
 }
 
-new Server();
+const server = new Server();
+
+server.awaitReady().then(() => {
+  server.http_client.get('http://127.1:80/Cache/name').then(res => {
+    log(res.data);
+  });
+  server.notify('DEBUG_READY');
+});

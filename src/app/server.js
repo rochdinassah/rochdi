@@ -59,9 +59,9 @@ class Server extends WebSocketServer {
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
     this.on('DiscordMessage', this.onDiscordMessage);
 
-    this.redis_client.once('Ready', this.onRedisReady.bind(this));
-    this.discord.once('Ready', this.onDiscordReady.bind(this));
-
+    this.redis_client.on('Ready', this.onRedisReady.bind(this));
+    this.discord.on('Ready', this.onDiscordReady.bind(this));
+    this.discord.on('Resumed', this.onDiscordResumed.bind(this));
     this.discord.connect();
   }
 
@@ -206,6 +206,13 @@ Server.prototype.onRedisReady = function () {
   });
 };
 
+Server.prototype.awaitCacheReady = function () {
+  const { cache } = this;
+  if (cache)
+    return Promise.resolve();
+  return new Promise(resolve => this.once('CacheReady', resolve));
+};
+
 Server.prototype.backup = function (key) {
   const { redis_client, logger, cache, cache_key } = this;
 
@@ -277,6 +284,10 @@ Server.prototype.onDiscordReady = async function () {
   this.emit('NotificationReady');
 };
 
+Server.prototype.onDiscordResumed = function () {
+  this.notify('discord session resumed');
+};
+
 Server.prototype.awaitNotificationReady = function () {
   if (this.discord.channel)
     return Promise.resolve();
@@ -303,6 +314,10 @@ Server.prototype.notify = function (content, opts = {}) {
     logger.verbose(content);
 
   return channel.sendMessage(content);
+};
+
+Server.prototype.awaitReady = function () {
+  return this.awaitCacheReady().then(this.awaitNotificationReady.bind(this));
 };
 
 module.exports = Server;
