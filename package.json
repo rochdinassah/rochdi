@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "app": "node --env-file=.env app/index",
+    "server": "node --env-file=.env app/server",
+    "client": "node --env-file=.env app/client",
     "test": "node --env-file=.env test.js"
   },
   "repository": {

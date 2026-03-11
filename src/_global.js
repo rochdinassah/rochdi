@@ -18,7 +18,7 @@ global.siren = function (name_id, volume) {
   if (volume && !Number.isNaN(parseInt(volume)))
     child_process.execSync('pactl set-sink-volume 0 '+parseInt(volume)+'%');
 
-  return new Promise(resolve => child_process.exec('play /opt/rochdi/raw/'+name_id+'.mp3', () => {
+  return new Promise(resolve => child_process.exec('play /opt/rochdi/bin/'+name_id+'.mp3', () => {
     child_process.execSync('pactl set-sink-volume 0 '+curr_volume);
     resolve();
   }));

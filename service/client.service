@@ -1,0 +1,10 @@
+[Unit]
+Description=app client service
+
+[Service]
+ExecStart=/usr/bin/node client.js
+WorkingDirectory=/opt/rochdi/app
+Restart=on-success
+
+[Install]
+WantedBy=multi-user.target
