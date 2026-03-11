@@ -277,6 +277,12 @@ Server.prototype.onDiscordReady = async function () {
   this.emit('NotificationReady');
 };
 
+Server.prototype.awaitNotificationReady = function () {
+  if (this.discord.channel)
+    return Promise.resolve();
+  return new Promise(resolve => this.once('NotificationReady', resolve));
+};
+
 Server.prototype.onDiscordMessage = function (msg) {
   const { command_manager, discord } = this;
   const { author, content, channel_id, guild_id } = msg;
