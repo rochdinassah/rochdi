@@ -27,7 +27,7 @@ class Server extends WebSocketServer {
       env.ENCRYPTION_PASSWORD
     );
 
-    const { port, notification_channel, ping_interval, states } = opts;
+    const { port, notification_channel, cache_key, ping_interval, states } = opts;
 
     if (!notification_channel)
       exit('Server.constructor: "notification_channel" option is missing');
@@ -38,7 +38,7 @@ class Server extends WebSocketServer {
     this.notification_channel = notification_channel;
     this.ping_interval = ping_interval ?? 3e4;
     this.http_server = http_server;
-    this.cache_key = env.CACHE_KEY;
+    this.cache_key = cache_key;
 
     this.routes = [];
 
