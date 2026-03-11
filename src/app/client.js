@@ -6,19 +6,23 @@ const Logger = require('../logger');
 const WebSocket = require('ws');
 const EventEmitter = require('node:events');
 const CommandManager = require('../manager/command');
+const HttpClient = require('../http-client');
+const Http2Client = require('../http2-client');
 
 class Client extends EventEmitter {
   constructor(address, opts = {}) {
     super();
 
-    const { reconnect, manual, logger } = opts;
+    const { reconnect, manual } = opts;
 
-    this.logger = logger ?? new Logger.SilentLogger();
+    const logger = this.logger = opts.logger ?? new Logger.SilentLogger();
 
     this.ready = false;
     this.reconnect = reconnect ?? true;
     this.address = address;
     this.command_manager = new CommandManager();
+    this.http_client = new HttpClient({ logger });
+    this.http2_client = new Http2Client({ logger });
 
     this.seq = 0;
 

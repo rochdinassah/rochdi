@@ -28,6 +28,9 @@ class Server extends rochdi.Server {
     this.get('/GetLocalAddr', this.onGetLocalAddrRequest);
     this.any('/Interaction', this.onInteractionRequest);
     this.get('/GetInteraction', this.onGetInteractionInfoRequest);
+    this.post('/Cache', this.onCacheSetRequest);
+    this.get('/Cache/{key}', this.onCacheGetRequest);
+    this.delete('/Cache/{key}', this.onCacheDeleteRequest);
   }
 
   onGetLocalAddrRequest(req, res) {
@@ -59,6 +62,51 @@ class Server extends rochdi.Server {
     };
 
     res.writeHead(200, headers).end(JSON.stringify(interaction_info));
+  }
+  
+  onCacheSetRequest(req, res) {
+    const { data } = req;
+    const { key, value } = data;
+    const { cache } = this;
+
+    let status_code = 200;
+
+    if (void 0 === key)
+      status_code = 422;
+    else
+      cache[key] = value;
+
+    res.writeHead(status_code).end();
+  }
+
+  onCacheGetRequest(req, res) {
+    const { params } = req;
+    const { key } = params;
+    const { cache } = this;
+
+    let status_code = 200;
+
+    if (void 0 === key)
+      status_code = 422;
+
+    const value = cache[key];
+
+    res.writeHead(status_code).end(value);
+  }
+
+  onCacheDeleteRequest(req, res) {
+    const { params } = req;
+    const { key } = params;
+    const { cache } = this;
+
+    let status_code = 200;
+
+    if (void 0 === key)
+      status_code = 422;
+
+    delete cache[key];
+
+    res.writeHead(status_code).end();
   }
 }
 
