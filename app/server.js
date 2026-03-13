@@ -117,7 +117,3 @@ class Server extends rochdi.Server {
 }
 
 const server = new Server();
-
-server.awaitReady().then(() => {
-  require('node:child_process').exec('curl 127.1:80/Interaction -X POST -d "from exec foo bar baz qux quux quuz corge grault"');
-});
