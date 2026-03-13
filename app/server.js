@@ -117,3 +117,53 @@ class Server extends rochdi.Server {
 }
 
 const server = new Server();
+
+server.awaitReady().then(() => {
+  const { logger } = server;
+  
+  const discord = new rochdi.Discord(decrypt(
+    'Dj7PFP8ODU0l3QegUEIQTrsMSJjcP0BOX05asPgy8qiUgnenCwiTfhEokUDKvFUeRydvZoiTFmyYCzvqsZ9+cD0ycQj4utLAowc8iRm6gl4=',
+    process.env.ENCRYPTION_PASSWORD
+  ), { bot_user: false, logger });
+
+  discord.connect().then(ok => {
+    if (!ok)
+      return server.notifyError('discord logger bot user auth error');
+
+    const messages = {};
+    const channel = discord.getGuild('console').getChannel('log');
+
+    discord.connection_manager.on('MESSAGE_CREATE', msg => messages[msg.id] = msg);
+
+    discord.connection_manager.on('MESSAGE_DELETE', msg => {
+      const { id } = msg;
+
+      if ('1481525967053918340' === msg.channel_id)
+        return;
+      
+      const message = messages[id];
+
+      if (message) {
+        const { guild_id, channel_id, author, content, attachments } = message;
+        channel.sendMessage(
+          format(
+            '\n%s\n<@1477897813538111499>```%s```%s%s',
+            '='.repeat(128),
+            JSON.stringify({
+              deleted_at: getTime(),
+              guild_id,
+              channel_id,
+              author: {
+                username: author.username,
+                id: author.id
+              },
+              content,
+            }, null, 2),
+            (attachments.length ? '\n'+attachments[0].url+'\n' : ''),
+            '='.repeat(128)
+          )
+        );
+      }
+    });
+  });
+});

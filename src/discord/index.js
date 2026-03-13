@@ -13,8 +13,6 @@ const Logger = require('../logger');
 const ApiManager = require('./manager/api');
 const GuildManager = require('./manager/guild');
 const ConnectionManager = require('./manager/connection');
-const CommandManager = require('./manager/command');
-const InteractionManager = require('./manager/interaction');
 const MessageManager = require('./manager/message');
 const ChannelManager = require('./manager/channel');
 
@@ -39,8 +37,6 @@ class Discord extends EventEmitter {
     this.connection_manager = new ConnectionManager(this);
     this.api_manager = new ApiManager(this);
     this.guild_manager = new GuildManager(this);
-    this.command_manager = new CommandManager(this);
-    this.interaction_manager = new InteractionManager(this);
     this.message_manager = new MessageManager(this);
     this.channel_manager = new ChannelManager(this);
 
@@ -55,15 +51,12 @@ class Discord extends EventEmitter {
   }
 
   async connect() {
-    const { api_manager, command_manager, connection_manager, bot_user } = this;
+    const { api_manager, connection_manager, bot_user } = this;
 
     const user = void 0 === bot_user ? await api_manager.fetchMe() : { bot: bot_user };
 
     if (!user)
       return false;
-
-    if (user.bot)
-      await command_manager.fetchCommands();
     
     connection_manager.state = 'CONNECTING';
     connection_manager.connect('wss://gateway.discord.gg/?encoding=json&v='+exports.API_VERSION);
@@ -110,7 +103,7 @@ class Discord extends EventEmitter {
   }
 
   onReadyMessage(data) {
-    const { connection_manager, guild_manager, command_manager, logger } = this;
+    const { connection_manager, guild_manager, logger } = this;
     const { user, guilds } = data;
     const { username, email, id } = this.user = user;
     
@@ -126,7 +119,7 @@ class Discord extends EventEmitter {
 
     Promise.all(promises).then(() => {
       if (user.bot) {
-        logger.verbose('auth ok(bot), %s(%s), commands(%d)', username, id, command_manager.size);
+        logger.verbose('auth ok(bot), %s(%s)', username, id);
       } else {
         logger.verbose('auth ok(user), %s(%s), email(%s)', username, id, email);
       }
