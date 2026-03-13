@@ -39,3 +39,6 @@ then
   echo NodeJS: $(node -v)
   echo npm: $(npm -v)
 fi
+
+ln -f /opt/rochdi/service/* /etc/systemd/system
+systemctl daemon-reload

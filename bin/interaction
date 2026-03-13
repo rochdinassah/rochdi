@@ -1,18 +1,3 @@
-#!/usr/bin/env node
+#!/bin/bash
 
-const rochdi = require('..');
-
-const { Logger, HttpClient } = rochdi;
-
-const logger = new Logger({ prefix: 'interaction' });
-const http_client = new HttpClient({ logger });
-
-const payload = process.argv[2];
-
-startTimer('Interaction');
-
-http_client.post('http://rochdi.ddns.net/Interaction', { body: { payload }}).then(res => {
-  const { status_code, data } = res;
-  
-  logger.verbose('%s | %s', data, endTimer('Interaction'));
-});
+curl -X POST -d "$1" http://rochdi.ddns.net/Interaction

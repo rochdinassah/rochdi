@@ -40,17 +40,23 @@ class Server extends rochdi.Server {
 
   onInteractionRequest(req, res) {
     const { data } = req;
-    const { payload } = data;
 
     const info = {
       ip: req.ip,
       time: new Date(),
-      payload
+      payload: data
     };
 
     this.interaction_info = info;
 
-    res.writeHead(200).end('interaction ok');
+    this.notify(format(
+      'interaction:\nfrom: %s\ntime: %s\npayload: %s',
+      info.ip,
+      info.time,
+      info.payload
+    ));
+
+    res.writeHead(200).end('interaction ok\n');
   }
 
   onGetInteractionInfoRequest(req, res) {
