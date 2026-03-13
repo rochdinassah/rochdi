@@ -287,7 +287,7 @@ Server.prototype.onDiscordReady = async function () {
 };
 
 Server.prototype.onDiscordResumed = function () {
-  this.notify('discord session resumed');
+  this.notifyVerbose('discord session resumed');
 };
 
 Server.prototype.awaitNotificationReady = function () {
