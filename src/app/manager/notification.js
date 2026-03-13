@@ -28,8 +28,11 @@ class NotificationManager {
     if (!discord || !discord.ready || !channel)
       return Promise.resolve(false);
 
-    if (!skip_log)
+    if (!skip_log) {
       logger.verbose(content);
+      if (table)
+        log(table);
+    }
 
     if (bold || table || level)
       content = format('%s**%s**', table ? '### ' : '', content);
