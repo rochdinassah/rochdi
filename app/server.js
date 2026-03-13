@@ -49,13 +49,11 @@ class Server extends rochdi.Server {
 
     this.interaction_info = info;
 
-    this.notify(format(
-      'interaction:\nfrom: %s\ntime: %s\npayload: %s',
-      info.ip,
-      info.time,
-      info.payload
-    ));
-
+    this.notifyVerbose('interaction', {
+      table: info,
+      mention: ['1477897813538111499'],
+    });
+    
     res.writeHead(200).end('interaction ok\n');
   }
 
@@ -121,8 +119,5 @@ class Server extends rochdi.Server {
 const server = new Server();
 
 server.awaitReady().then(() => {
-  server.http_client.get('http://127.1/Cache/name').then(res => {
-    log(res.data);
-  });
-  server.notify('DEBUG_READY');
+  require('node:child_process').exec('curl 127.1:80/Interaction -X POST -d "from exec foo bar baz qux quux quuz corge grault"');
 });

@@ -49,11 +49,11 @@ class MessageManager extends EventEmitter {
   }
 
   onMessageCreateMessage(infos) {
-    if (0 !== infos.channel_type)
-      return;
-
     const { manager, guild_manager } = this;
-    const { guild_id, channel_id } = infos;
+    const { channel_type, guild_id, channel_id } = infos;
+
+    if (0 !== channel_type && 2 !== channel_type)
+      return;
     
     const message = new MessageObject(manager, infos);
 

@@ -12,6 +12,7 @@ const HttpClient = require('../http-client');
 const Http2Client = require('../http2-client');
 const RedisClient = require('./redis');
 const Discord = require('../discord');
+const NotificationManager = require('./manager/notification');
 
 const { WebSocketServer, WebSocket } = ws;
 const { env } = process;
@@ -48,11 +49,12 @@ class Server extends WebSocketServer {
     this.clients.add = noop;
 
     this.state_manager = new StateManager({ states });
-    this.command_manager = new CommandManager();
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger});
     this.redis_client = new RedisClient({ logger });
     this.discord = new Discord(discord_bot_token, { logger, bot_user: true });
+    this.command_manager = new CommandManager();
+    this.notification_manager = new NotificationManager(this);
 
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Pong', this.onPong);
@@ -302,18 +304,25 @@ Server.prototype.onDiscordMessage = function (msg) {
     return;
 };
 
+// issue notification
 Server.prototype.notify = function (content, opts = {}) {
-  const { logger, discord } = this;
-  const { level, skip_log } = opts;
-  const { channel } = discord;
+  return this.notification_manager.notify(content, opts);
+};
 
-  if (!discord || !discord.ready || !channel)
-    return Promise.resolve(false);
+Server.prototype.notifyError = function (content, opts = {}) {
+  return this.notification_manager.notify(content, { ...opts, level: 'error' });
+};
 
-  if (!skip_log)
-    logger.verbose(content);
+Server.prototype.notifyInfo = function (content, opts = {}) {
+  return this.notification_manager.notify(content, { ...opts, level: 'info' });
+};
 
-  return channel.sendMessage(content);
+Server.prototype.notifyWarn = function (content, opts = {}) {
+  return this.notification_manager.notify(content, { ...opts, level: 'warn' });
+};
+
+Server.prototype.notifyVerbose = function (content, opts = {}) {
+  return this.notification_manager.notify(content, { ...opts, level: 'verbose' });
 };
 
 Server.prototype.awaitReady = function () {
