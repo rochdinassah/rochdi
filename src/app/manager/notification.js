@@ -31,7 +31,7 @@ class NotificationManager {
     if (!skip_log)
       logger.verbose(content);
 
-    if (bold || table)
+    if (bold || table || level)
       content = format('%s**%s**', table ? '### ' : '', content);
 
     const message_opts = {
