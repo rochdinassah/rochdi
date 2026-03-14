@@ -8,6 +8,7 @@ const tls = require('node:tls');
 const util = require('node:util');
 const child_process = require('node:child_process');
 const net = require('node:net');
+const os = require('node:os');
 
 global.awaitPortOpen = function (port, addr = '127.0.0.1') {
   return new Promise(resolve => {
@@ -214,6 +215,8 @@ global.onExit = exit_cb.push.bind(exit_cb);
 
 const exitProcess = process.exit;
 process.exit = code => {
+  if ('linux' !== os.platform())
+    return exitProcess(code);
   if (1001 === code)
     return exitProcess(0);
   child_process.execSync('kill -9 '+process.pid);
