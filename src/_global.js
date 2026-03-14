@@ -216,7 +216,7 @@ global.onExit = exit_cb.push.bind(exit_cb);
 const exitProcess = process.exit;
 process.exit = code => {
   if ('linux' !== os.platform())
-    return child_process.execSync('taskkill \/PID '+process.pid);
+    return child_process.execSync('taskkill \/PID '+process.pid+' \/F \/T');
 
   if (1001 === code)
     return exitProcess(0);
