@@ -12,6 +12,7 @@ const Http2Client = require('../http2-client');
 const Logger = require('../logger');
 const ApiManager = require('./manager/api');
 const GuildManager = require('./manager/guild');
+const MemberManager = require('./manager/member');
 const ConnectionManager = require('./manager/connection');
 const MessageManager = require('./manager/message');
 const ChannelManager = require('./manager/channel');
@@ -37,6 +38,7 @@ class Discord extends EventEmitter {
     this.connection_manager = new ConnectionManager(this);
     this.api_manager = new ApiManager(this);
     this.guild_manager = new GuildManager(this);
+    this.member_manager = new MemberManager(this);
     this.message_manager = new MessageManager(this);
     this.channel_manager = new ChannelManager(this);
 

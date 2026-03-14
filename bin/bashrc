@@ -11,7 +11,7 @@ export HOST_ADDR='rochdi.ddns.net'
 export HOST_PORT=80
 
 # aliases start
-alias aws='cd /opt/aws'
+alias webauth='cd /opt/webauth'
 alias azar='echo "globalThis.jotaiAtomCache.get(\"/app/src/stores/match/atoms.ts/matchSwipeDisableDurationSecondsAtom\").read = e => void 0;"'
 alias desktop='cd ~/Desktop'
 alias c='clear'

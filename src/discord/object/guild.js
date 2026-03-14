@@ -98,6 +98,54 @@ class GuildObject extends EventEmitter {
   clearMessages() {
     return this.manager.guild_manager.clearMessages(this.id);
   }
+
+  quickBan(user_id, opts = {}) {
+    return this.manager.member_manager.quickBan(this.id, user_id, opts);
+  }
+
+  muteMember(user_id, reason) {
+    return this.manager.member_manager.muteMember(this.id, user_id, reason);
+  }
+
+  unmuteMember(user_id, reason) {
+    return this.manager.member_manager.unmuteMember(this.id, user_id, reason);
+  }
+
+  deafMember(user_id, reason) {
+    return this.manager.member_manager.deafMember(this.id, user_id, reason);
+  }
+
+  undeafMember(user_id, reason) {
+    return this.manager.member_manager.undeafMember(this.id, user_id, reason);
+  }
+
+  muteAndDeafMember(user_id, reason) {
+    return this.manager.member_manager.muteAndDeafMember(this.id, user_id, reason);
+  }
+
+  unmuteAndUndeafMember(user_id, reason) {
+    return this.manager.member_manager.unmuteAndUndeafMember(this.id, user_id, reason);
+  }
+
+  timeoutMember(user_id, reason) {
+    return this.manager.member_manager.timeoutMember(this.id, user_id, reason);
+  }
+
+  removeMemberTimeout(user_id, reason) {
+    return this.manager.member_manager.removeMemberTimeout(this.id, user_id, reason);
+  }
+
+  banMember(user_id, reason, delete_messages = false) {
+    return this.manager.member_manager.banMember(this.id, user_id, reason, delete_messages);
+  }
+
+  unbanMember(user_id, reason) {
+    return this.manager.member_manager.unbanMember(this.id, user_id, reason);
+  }
+
+  kickMember(user_id, reason) {
+    return this.manager.member_manager.kickMember(this.id, user_id, reason);
+  }
 }
 
 module.exports = GuildObject;
