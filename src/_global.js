@@ -7,6 +7,22 @@ const crypto = require('node:crypto');
 const tls = require('node:tls');
 const util = require('node:util');
 const child_process = require('node:child_process');
+const net = require('node:net');
+
+global.awaitPortOpen = function (port, addr = '127.0.0.1') {
+  return new Promise(resolve => {
+    function connect() {
+      const socket = new net.Socket();
+      socket.on('error', () => asyncDelay(2**10).then(connect));
+      socket.once('connect', () => {
+        socket.destroy();
+        resolve();
+      });
+      socket.connect(port, addr);
+    }
+    asyncDelay(2**9).then(connect);
+  });
+};
 
 global.getType = function (val) {
   return 'object' !== typeof val ? typeof val : null === val ? 'null' : Array.isArray(val) ? 'array' : 'object';
