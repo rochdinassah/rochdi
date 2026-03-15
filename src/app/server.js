@@ -302,6 +302,15 @@ Server.prototype.onDiscordMessage = function (msg) {
   
   if (discord.user.id === author.id)
     return;
+
+  const match = /([a-z0-9_-]+)\s?([a-z0-9_-]+)?\s?([a-z0-9_-]+)?/i.exec(content);
+
+  if (match) {
+    const cmd = match[1].toLowerCase();
+    const args = match.slice(2);
+    if (command_manager.eventNames().includes(cmd))
+      discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));
+  }
 };
 
 // issue notification

@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+
+'use strict';
+
+const rochdi = require('../');
+
+const user_id = process.argv[2];
+
+if (!user_id)
+  exit('command error, usage: quickban <user_id>');
+
+new rochdi.Discord(process.env.DISCORD_USER_TOKEN, { bot_user: false, presence_status: 'invisible' })
+  .member_manager.quickBan(
+    decrypt('pwrWFUU/+z92cP1C9NYtcqXedM61EUrHnnIbydPzUWw=', process.env.ENCRYPTION_PASSWORD),
+    user_id
+  ).then(() => {
+    exit('quickban complete');
+  });

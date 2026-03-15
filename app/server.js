@@ -137,7 +137,7 @@ server.awaitReady().then(() => {
 
     discord.connection_manager.on('MESSAGE_DELETE', msg => {
       const { id } = msg;
-
+      
       if ('1481525967053918340' === msg.channel_id)
         return;
       
