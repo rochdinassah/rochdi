@@ -146,9 +146,9 @@ server.awaitReady().then(() => {
       const channel_name = channel.name;
       
       if (/r{1,}(((i|o|a){1,}){1,})?(u{1,})?(ch|x)?(h{1,})?d(i)?/i.test(content)) {
-        server.notifyError('action required', {
+        server.notifyError(format('action required (%s)', guild_name), {
           table: {
-            on: format('%s | %s', guild_name, channel_name),
+            channel: channel_name,
             sender: format('%s | %s', author_name, author_id),
             content: content
           },
@@ -174,9 +174,9 @@ server.awaitReady().then(() => {
       const guild_name = guild.name;
       const channel_name = channel.name;
 
-      server.notifyError('message deleted', {
+      server.notifyError(format('message deleted (%s)', guild_name), {
         table: {
-          on: format('%s | %s', guild_name, channel_name),
+          channel: channel_name,
           sender: format('%s | %s', author_name, author_id),
           content: content,
           attachments: attachments.length ? attachments[0].url : 'none'
