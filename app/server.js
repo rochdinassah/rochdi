@@ -131,39 +131,60 @@ server.awaitReady().then(() => {
       return server.notifyError('discord logger bot user auth error');
 
     const messages = {};
-    const channel = discord.getGuild('console').getChannel('log');
+    
+    discord.connection_manager.on('MESSAGE_CREATE', msg => {
+      const { id, content, channel_id, author, guild_id } = msg;
 
-    discord.connection_manager.on('MESSAGE_CREATE', msg => messages[msg.id] = msg);
-
-    discord.connection_manager.on('MESSAGE_DELETE', msg => {
-      const { id } = msg;
-      
-      if ('1481525967053918340' === msg.channel_id)
+      if (server.discord.user_id === author.id)
         return;
-      
-      const message = messages[id];
 
-      if (message) {
-        const { guild_id, channel_id, author, content, attachments } = message;
-        channel.sendMessage(
-          format(
-            '\n%s\n<@1477897813538111499>```%s```%s%s',
-            '='.repeat(128),
-            JSON.stringify({
-              deleted_at: getTime(),
-              guild_id,
-              channel_id,
-              author: {
-                username: author.username,
-                id: author.id
-              },
-              content,
-            }, null, 2),
-            (attachments.length ? '\n'+attachments[0].url+'\n' : ''),
-            '='.repeat(128)
-          )
-        );
+      const author_id = author.id;
+      const author_name = author.global_name ?? author.username;
+      const guild = discord.guild_manager.getGuild(guild_id);
+      const channel = guild.getChannel(channel_id);
+      const guild_name = guild.name;
+      const channel_name = channel.name;
+      
+      if (/r{1,}(((i|o|a){1,}){1,})?(u{1,})?(ch|x)?(h{1,})?d(i)?/i.test(content)) {
+        server.notifyError('action required', {
+          table: {
+            server: guild_name,
+            channel: channel_name,
+            author: author_name,
+            content: content
+          },
+          mention: ['1477897813538111499']
+        });
       }
+
+      messages[id] = msg;
+    });
+
+    discord.connection_manager.on('MESSAGE_DELETE', msg => {      
+      const message = messages[msg.id];
+
+      if (!message || '1477897813538111499' === message.author.id)
+        return;
+
+      const { id, content, channel_id, author, guild_id, attachments } = message;
+
+      const author_id = author.id;
+      const author_name = author.global_name ?? author.username;
+      const guild = discord.guild_manager.getGuild(guild_id);
+      const channel = guild.getChannel(channel_id);
+      const guild_name = guild.name;
+      const channel_name = channel.name;
+
+      server.notifyError('message deleted', {
+        table: {
+          server: guild_name,
+          channel: channel_name,
+          author: author_name,
+          content: content,
+          attachments: attachments.length ? attachments[0].url : 'none'
+        },
+        mention: ['1477897813538111499']
+      });
     });
   });
 });
