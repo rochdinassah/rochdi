@@ -145,7 +145,7 @@ server.awaitReady().then(() => {
       const guild_name = guild.name;
       const channel_name = channel.name;
       
-      if (/r{1,}(((i|o|a){1,}){1,})?(u{1,})?(ch|x)?(h{1,})?d(i)?/i.test(content.replace(/[^a-z]/ig, ''))) {
+      if (/r{1,}(((i|o|a){1,}){1,})?(u{1,})?(ch|x)(h{1,})?d(i)?/i.test(content.replace(/[^a-z]/ig, ''))) {
         server.notifyError(format('action required (%s)', guild_name), {
           table: {
             channel: channel_name,
