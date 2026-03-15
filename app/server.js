@@ -176,9 +176,8 @@ server.awaitReady().then(() => {
 
       server.notifyError('message deleted', {
         table: {
-          server: guild_name,
-          channel: channel_name,
-          author: author_name,
+          on: format('%s | %s', guild_name, channel_name),
+          sender: format('%s | %s', author_name, author_id),
           content: content,
           attachments: attachments.length ? attachments[0].url : 'none'
         },
