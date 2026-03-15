@@ -163,7 +163,7 @@ server.awaitReady().then(() => {
     discord.connection_manager.on('MESSAGE_DELETE', msg => {      
       const message = messages[msg.id];
 
-      if (!message || '1477897813538111499' === message.author.id)
+      if (!message || '1477897813538111499' === message.channel_id)
         return;
 
       const { id, content, channel_id, author, guild_id, attachments } = message;
