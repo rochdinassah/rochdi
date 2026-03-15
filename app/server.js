@@ -148,9 +148,8 @@ server.awaitReady().then(() => {
       if (/r{1,}(((i|o|a){1,}){1,})?(u{1,})?(ch|x)?(h{1,})?d(i)?/i.test(content)) {
         server.notifyError('action required', {
           table: {
-            server: guild_name,
-            channel: channel_name,
-            author: author_name,
+            on: format('%s | %s', guild_name, channel_name),
+            sender: format('%s | %s', author_name, author_id),
             content: content
           },
           mention: ['1477897813538111499']
