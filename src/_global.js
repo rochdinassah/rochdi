@@ -222,7 +222,6 @@ process.exit = code => {
 
   // if ('linux' === os.platform())
   //   return child_process.execSync('kill -9 '+process.pid);
-
   // child_process.execSync('taskkill \/PID '+process.pid+' \/F \/T');  
 }
 
