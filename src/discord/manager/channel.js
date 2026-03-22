@@ -23,8 +23,10 @@ class ChannelManager extends EventEmitter {
     connection.on('CHANNEL_CREATE', this.onChannelCreateMessage.bind(this));
     connection.on('CHANNEL_UPDATE', this.onChannelUpdateMessage.bind(this));
     connection.on('CHANNEL_DELETE', this.onChannelDeleteMessage.bind(this));
+    connection.on('VOICE_STATE_UPDATE', this.onVoiceStateUpdateMessage.bind(this));
+    connection.on('VOICE_SERVER_UPDATE', this.onVoiceServerUpdateMessage.bind(this));
   }
-
+  
   _createChannel(guild_id, type, name, is_private) {
     const { api_manager, logger } = this;
 
@@ -61,6 +63,38 @@ class ChannelManager extends EventEmitter {
     });
   }
 
+  joinChannel(guild_id, channel_id, opts = {}) {
+    return new Promise(resolve => {
+      const { connection_manager } = this;
+
+      const self_mute = opts.self_mute ?? true;
+      const self_deaf = opts.self_deaf ?? false;
+      const self_video = opts.self_video ?? false;
+
+      connection_manager.send({ op: 4, d: {
+        guild_id,
+        channel_id,
+        self_mute,
+        self_deaf
+      }});
+
+      this.once('VoiceStateUpdate', () => resolve());
+    });
+  }
+
+  quitChannel(guild_id) {
+    return new Promise(resolve => {
+      const { connection_manager } = this;
+      connection_manager.send({ op: 4, d: {
+        guild_id,
+        channel_id: null,
+        self_mute: true,
+        self_deaf: false
+      }});
+      this.once('VoiceStateUpdate', () => resolve());      
+    });
+  }
+
   async deleteChannels(guild_id, channel_name_ids) {
     for (const channel of this.guild_manager.getGuild(guild_id).channels.values()) {
       await this.deleteChannel(channel.id);
@@ -78,6 +112,14 @@ class ChannelManager extends EventEmitter {
   
   onChannelDeleteMessage(data) {
     this.guild_manager.getGuild(data.guild_id).unsetChannel(data.id);
+  }
+
+  onVoiceStateUpdateMessage(data) {
+    this.emit('VoiceStateUpdate', data);
+  }
+
+  onVoiceServerUpdateMessage(data) {
+    this.emit('VoiceServerUpdate', data);
   }
 }
 

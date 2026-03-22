@@ -144,8 +144,26 @@ server.awaitReady().then(() => {
       const channel = guild.getChannel(channel_id);
       const guild_name = guild.name;
       const channel_name = channel.name;
+
+      const patterns = [
+        'rochdi',
+        'rouchdi',
+        'roxdi',
+        'rouxdi',
+        'roxhdi',
+        'rouxhdi',
+        'roushdi',
+        'roshdi',
+        'رشدي',
+        'روشدي',
+        'primus',
+        'primos',
+        'pandatak',
+        'pandatack',
+        'fbi'
+      ].map(pattern => new RegExp(pattern.split('').map(character => character+'{1,}').join(''), 'i'));
       
-      if (/r{1,}(((i|o|a){1,}){1,})?(u{1,})?(ch|x)(h{1,})?d(i)?/i.test(content.replace(/[^a-z]/ig, ''))) {
+      if (patterns.filter(pattern => pattern.test(content.replace(/[^a-z\u0623-\u06FF]/ig, ''))).length) {
         server.notifyError(format('action required (%s)', guild_name), {
           table: {
             channel: channel_name,

@@ -57,7 +57,7 @@ class GuildObject extends EventEmitter {
 
   makeChannel(infos) {
     const { channels } = this;
-    const channel = new ChannelObject(this.manager, infos);
+    const channel = new ChannelObject(this.manager, this.id, infos);
     channels.set(infos.id, channel);
     this.emit('ChannelMake::'+infos.id, channel);
   }

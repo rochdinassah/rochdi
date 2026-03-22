@@ -56,7 +56,7 @@ class ConnectionManager extends EventEmitter {
 
   send(payload, callback) {
     const { connection } = this;
-    if (connection)
+    if (connection && 1 === connection.readyState)
       connection.send(JSON.stringify(payload), callback);
   }
 
@@ -96,10 +96,12 @@ class ConnectionManager extends EventEmitter {
   }
 
   onMessage(msg) {
-    const data = JSON.parse(msg);
-    const { t, s, op, d } = data;
-    if (!this.emit('Op::'+op, d, t, s))
-      log(op);
+    try {
+      const data = JSON.parse(msg);
+      const { t, s, op, d } = data;
+      if (!this.emit('Op::'+op, d, t, s))
+        log(op);
+    } catch {}
   }
 
   onDispatchEvent(data, type, seq) {

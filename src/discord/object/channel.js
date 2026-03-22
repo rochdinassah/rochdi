@@ -5,11 +5,12 @@
 const EventEmitter = require('node:events');
 
 class ChannelObject extends EventEmitter {
-  constructor(manager, infos) {
+  constructor(manager, guild_id, infos) {
     super();
 
     const { type, position, permission_overwrites, parent_id, name, last_message_id, id, flags } = infos;
-    
+
+    this.guild_id = guild_id;
     this.type = type;
     this.position = position;
     this.permission_overwrites = permission_overwrites;
@@ -32,6 +33,14 @@ class ChannelObject extends EventEmitter {
 
   deleteMessage(message_id) {
     return this.manager.message_manager.deleteMessage(this.id, message_id);
+  }
+
+  join(opts = {}) {
+    return this.manager.channel_manager.joinChannel(this.guild_id, this.id, opts);
+  }
+
+  quit() {
+    return this.manager.channel_manager.quitChannel(this.guild_id);
   }
 }
 

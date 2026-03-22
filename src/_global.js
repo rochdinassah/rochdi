@@ -215,13 +215,15 @@ global.onExit = exit_cb.push.bind(exit_cb);
 
 const exitProcess = process.exit;
 process.exit = code => {
-  if ('linux' !== os.platform())
-    return child_process.execSync('taskkill \/PID '+process.pid+' \/F \/T');
-
   if (1001 === code)
-    return exitProcess(0);
-  
-  child_process.execSync('kill -9 '+process.pid);
+    exitProcess(0);
+  else
+    exitProcess(code);
+
+  // if ('linux' === os.platform())
+  //   return child_process.execSync('kill -9 '+process.pid);
+
+  // child_process.execSync('taskkill \/PID '+process.pid+' \/F \/T');  
 }
 
 async function onProcessExit(signal, code) {
