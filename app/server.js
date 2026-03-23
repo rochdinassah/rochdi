@@ -51,7 +51,7 @@ class Server extends rochdi.Server {
 
     this.notifyVerbose('interaction', {
       table: info,
-      mention: ['1477897813538111499'],
+      mention: ['859826176830865458'],
     });
     
     res.writeHead(200).end('interaction ok\n');
@@ -169,7 +169,7 @@ server.awaitReady().then(() => {
             sender: format('%s | %s', author_name, author_id),
             content: content
           },
-          mention: ['1477897813538111499']
+          mention: ['859826176830865458']
         });
       }
 
@@ -198,7 +198,7 @@ server.awaitReady().then(() => {
           content: content,
           attachments: attachments.length ? attachments[0].url : 'none'
         },
-        mention: ['1477897813538111499']
+        mention: ['859826176830865458']
       });
     });
   });
