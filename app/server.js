@@ -122,7 +122,7 @@ server.awaitReady().then(() => {
   const { logger } = server;
   
   const discord = new rochdi.Discord(decrypt(
-    'Dj7PFP8ODU0l3QegUEIQTrsMSJjcP0BOX05asPgy8qiUgnenCwiTfhEokUDKvFUeRydvZoiTFmyYCzvqsZ9+cD0ycQj4utLAowc8iRm6gl4=',
+    'EJ1qPNXXK6g0KeiwU2xdinzwPoAfWD1qRYpNQHbi6WRo9URiSDuMxo8Jn1USkj0szNI/aCst11kEl/LC1DuL9dAGgsvvCLrHYIFCcsXnMjw',
     process.env.ENCRYPTION_PASSWORD
   ), { bot_user: false, logger });
 
@@ -159,8 +159,7 @@ server.awaitReady().then(() => {
         'primus',
         'primos',
         'pandatak',
-        'pandatack',
-        'fbi'
+        'pandatack'
       ].map(pattern => new RegExp(pattern.split('').map(character => character+'{1,}').join(''), 'i'));
       
       if (patterns.filter(pattern => pattern.test(content.replace(/[^a-z\u0623-\u06FF]/ig, ''))).length) {

@@ -104,7 +104,7 @@ class GuildManager extends EventEmitter {
     }
 
     log('Discord::GuildManager::fetchMessages: fetched size(%d)', messages.length);
-
+    
     return messages;
   }
 
