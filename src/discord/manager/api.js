@@ -15,18 +15,18 @@ const xsp_obj = {
   system_locale: 'en-US',
   has_client_mods: false,
   browser_user_agent: Http2Client.USER_AGENT,
-  browser_version: '140.0.0.0',
+  browser_version: '144.0.0.0',
   os_version: '',
   referrer: '',
   referring_domain: '',
   referrer_current: '',
   referring_domain_current: '',
   release_channel: 'stable',
-  client_build_number: 448675,
+  client_build_number: 514705,
   client_event_source: null,
-  client_launch_id: 'c1e72fcc-9d97-4512-9e6a-ba429d82327f',
+  client_launch_id: '60f9db0e-5dd3-4518-9631-834739e97544',
   launch_signature: '085ba60c-45a4-43b4-8244-bab71221638e',
-  client_heartbeat_session_id: '242991a3-bba8-4b2e-b6d7-f99b13384ac4',
+  // client_heartbeat_session_id: '242991a3-bba8-4b2e-b6d7-f99b13384ac4',
   client_app_state: 'focused'
 };
 

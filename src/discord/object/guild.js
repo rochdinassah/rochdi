@@ -146,6 +146,51 @@ class GuildObject extends EventEmitter {
   kickMember(user_id, reason) {
     return this.manager.member_manager.kickMember(this.id, user_id, reason);
   }
+
+  stopChannelJoinPrevention() {
+    const { manager, bound_on_voice_stat_update_listener } = this;
+    const { connection_manager } = manager;
+    if (bound_on_voice_stat_update_listener)
+      connection_manager.off('VOICE_STATE_UPDATE', bound_on_voice_stat_update_listener);
+  }
+
+  startChannelJoinPrevention(opts = {}) {
+    const { user_ids, channel_ids } = opts;
+    const { manager, id } = this;
+    const { connection_manager, api_manager } = manager;
+
+    this.stopChannelJoinPrevention();
+
+    function onVoiceUpdateMessage(msg) {
+      const { user_id, guild_id, channel_id } = msg;
+
+      if (guild_id !== id || null === channel_id || opts.channel_id === channel_id)
+        return;
+
+      if (user_ids)
+        if (!user_ids.includes(user_id))
+          return;
+
+      if (channel_ids)
+        if (!channel_ids.includes(channel_id))
+          return;
+
+      api_manager.patch('/guilds/'+id+'/members/'+user_id, {
+        channel_id: void 0 === opts.channel_id ? null : opts.channel_id,
+        deaf: true,
+        mute: true
+      }).then(res => {
+        const { status_code, data } = res;
+        if (200 === status_code)
+          return log(status_code)
+        log(data, status_code);
+      });
+    }
+
+    this.bound_on_voice_stat_update_listener = onVoiceUpdateMessage.bind(this);
+
+    connection_manager.on('VOICE_STATE_UPDATE', this.bound_on_voice_stat_update_listener);
+  }
 }
 
 module.exports = GuildObject;

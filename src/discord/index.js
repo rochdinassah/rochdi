@@ -90,7 +90,7 @@ class Discord extends EventEmitter {
       
       payload = { op: 2, d };
     }
-
+    
     connection_manager.send(payload);
   }
 

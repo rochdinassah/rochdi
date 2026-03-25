@@ -122,7 +122,7 @@ class Client extends EventEmitter {
     if (delay)
       asyncDelay(delay).then(process.exit.bind(process, code));
     else
-      process.exit(code);    
+      process.exit(code);
   }
 
   onRestartRequestMessage(data) {
