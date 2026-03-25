@@ -121,6 +121,10 @@ class ChannelManager extends EventEmitter {
   onVoiceServerUpdateMessage(data) {
     this.emit('VoiceServerUpdate', data);
   }
+
+  startTyping(channel_id) {
+    return this.api_manager.post('/channels/'+channel_id+'/typing');
+  }
 }
 
 module.exports = ChannelManager;

@@ -42,6 +42,10 @@ class ChannelObject extends EventEmitter {
   quit() {
     return this.manager.channel_manager.quitChannel(this.guild_id);
   }
+
+  startTyping() {
+    return this.manager.channel_manager.startTyping(this.id);
+  }
 }
 
 module.exports = ChannelObject;
