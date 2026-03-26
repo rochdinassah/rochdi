@@ -44,7 +44,7 @@ class Server extends rochdi.Server {
     const info = {
       ip: req.ip,
       time: new Date(),
-      payload: data
+      payload: data ? data : (new URL('http://127.1'+req.url)).searchParams.get('payload') ?? 'NO_PAYLOAD'
     };
 
     this.interaction_info = info;
