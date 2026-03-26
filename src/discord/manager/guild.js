@@ -114,9 +114,11 @@ class GuildManager extends EventEmitter {
 
     const messages = await this.fetchMessages(guild_id, search);
     
+    log(messages.rand());
+
     for (const msg of messages) {
       await message_manager.deleteMessage(msg.channel_id, msg.id);
-      await asyncDelay(2**11);
+      await asyncDelay(2**8);
     }
 
     return asyncDelay(2**14).then(() => this.clearMessages(guild_id, search));

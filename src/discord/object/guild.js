@@ -9,7 +9,7 @@ class GuildObject extends EventEmitter {
   constructor(manager, infos) {
     super();
 
-    const { id, channels, roles } = infos;
+    const { id, channels, roles, members } = infos;
 
     this.name = infos.properties?.name ?? infos.name;
     this.id = id;
@@ -17,6 +17,10 @@ class GuildObject extends EventEmitter {
     this.manager = manager;
     this.channels = new Map();
     this.roles = roles;
+    this.members = new Map();
+
+    for (const member of members)
+      this.members.set(member.user.id, member);
 
     channels.forEach(this.makeChannel.bind(this));
   }
