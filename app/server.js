@@ -21,6 +21,7 @@ class Server extends rochdi.Server {
     });
 
     this.registerRoutes();
+    this.registerCommands();
     this.run();
   }
 
@@ -31,6 +32,11 @@ class Server extends rochdi.Server {
     this.post('/Cache', this.onCacheSetRequest);
     this.get('/Cache/{key}', this.onCacheGetRequest);
     this.delete('/Cache/{key}', this.onCacheDeleteRequest);
+  }
+
+  registerCommands() {
+    const { command_manager } = this;
+    command_manager.on('ping', this.onPingCommand.bind(this));
   }
 
   onGetLocalAddrRequest(req, res) {
@@ -114,92 +120,84 @@ class Server extends rochdi.Server {
 
     res.writeHead(status_code).end();
   }
+
+  onPingCommand() {
+    this.notifyVerbose('pong');
+  }
 }
 
 const server = new Server();
 
 server.awaitReady().then(() => {
-  const { logger } = server;
+  const { logger, discord } = server;
+
+  server.notifyVerbose('app server ready');
   
-  const discord = new rochdi.Discord(decrypt(
-    'EJ1qPNXXK6g0KeiwU2xdinzwPoAfWD1qRYpNQHbi6WRo9URiSDuMxo8Jn1USkj0szNI/aCst11kEl/LC1DuL9dAGgsvvCLrHYIFCcsXnMjw',
-    process.env.ENCRYPTION_PASSWORD
-  ), { bot_user: false, logger });
-
-  discord.connect().then(ok => {
-    if (!ok)
-      return server.notifyError('discord logger bot user auth error');
-
-    const messages = {};
+  const messages = {};
     
-    discord.connection_manager.on('MESSAGE_CREATE', msg => {
-      const { id, content, channel_id, author, guild_id } = msg;
+  discord.connection_manager.on('MESSAGE_CREATE', msg => {
+    const { id, content, channel_id, author, guild_id } = msg;
 
-      if (server.discord.user_id === author.id)
-        return;
+    if (discord.user_id === author.id)
+      return;
 
-      const author_id = author.id;
-      const author_name = author.global_name ?? author.username;
-      const guild = discord.guild_manager.getGuild(guild_id);
-      const channel = guild.getChannel(channel_id);
-      const guild_name = guild.name;
-      const channel_name = channel.name;
+    const author_id = author.id;
+    const author_name = author.global_name ?? author.username;
+    const guild = discord.guild_manager.getGuild(guild_id);
+    const channel = guild.getChannel(channel_id);
+    const guild_name = guild.name;
+    const channel_name = channel.name;
 
-      const patterns = [
-        'rochdi',
-        'rouchdi',
-        'roxdi',
-        'rouxdi',
-        'roxhdi',
-        'rouxhdi',
-        'roushdi',
-        'roshdi',
-        'رشدي',
-        'روشدي',
-        'primus',
-        'primos',
-        'pandatak',
-        'pandatack'
-      ].map(pattern => new RegExp(pattern.split('').map(character => character+'{1,}').join(''), 'i'));
-      
-      if (patterns.filter(pattern => pattern.test(content.replace(/[^a-z\u0623-\u06FF]/ig, ''))).length) {
-        server.notifyError(format('action required (%s)', guild_name), {
-          table: {
-            channel: channel_name,
-            sender: format('%s | %s', author_name, author_id),
-            content: content
-          },
-          mention: ['400046787341320227']
-        });
-      }
-
-      messages[id] = msg;
-    });
-
-    discord.connection_manager.on('MESSAGE_DELETE', msg => {      
-      const message = messages[msg.id];
-
-      if (!message || '1481131563080220754' === message.channel_id)
-        return;
-
-      const { id, content, channel_id, author, guild_id, attachments } = message;
-
-      const author_id = author.id;
-      const author_name = author.global_name ?? author.username;
-      const guild = discord.guild_manager.getGuild(guild_id);
-      const channel = guild.getChannel(channel_id);
-      const guild_name = guild.name;
-      const channel_name = channel.name;
-
-      server.notifyError(format('message deleted (%s)', guild_name), {
+    const patterns = [
+      'rochdi',
+      'rouchdi',
+      'roxdi',
+      'rouxdi',
+      'roxhdi',
+      'rouxhdi',
+      'roushdi',
+      'roshdi',
+      'رشدي',
+      'روشدي'
+    ].map(pattern => new RegExp(pattern.split('').map(character => character+'{1,}').join(''), 'i'));
+    
+    if (patterns.filter(pattern => pattern.test(content.replace(/[^a-z\u0623-\u06FF]/ig, ''))).length) {
+      server.notifyError(format('action required (%s)', guild_name), {
         table: {
           channel: channel_name,
           sender: format('%s | %s', author_name, author_id),
-          content: content,
-          attachments: attachments.length ? attachments[0].url : 'none'
+          content: content
         },
         mention: ['400046787341320227']
       });
+    }
+
+    messages[id] = msg;
+  });
+
+  discord.connection_manager.on('MESSAGE_DELETE', msg => {      
+    const message = messages[msg.id];
+
+    if (!message || '1481131563080220754' === message.channel_id)
+      return;
+
+    const { id, content, channel_id, author, guild_id, attachments } = message;
+
+    const author_id = author.id;
+    const author_name = author.global_name ?? author.username;
+    const guild = discord.guild_manager.getGuild(guild_id);
+    const channel = guild.getChannel(channel_id);
+    const guild_name = guild.name;
+    const channel_name = channel.name;
+
+    server.notifyError(format('message deleted (%s)', guild_name), {
+      table: {
+        channel: channel_name,
+        sender: format('%s | %s', author_name, author_id),
+        content: content,
+        attachments: attachments.length ? attachments[0].url : 'none'
+      },
+      mention: ['400046787341320227']
     });
   });
 });
