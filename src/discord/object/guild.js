@@ -19,8 +19,9 @@ class GuildObject extends EventEmitter {
     this.roles = roles;
     this.members = new Map();
 
-    for (const member of members)
-      this.members.set(member.user.id, member);
+    if (members)
+      for (const member of members)
+        this.members.set(member.user.id, member);
 
     channels.forEach(this.makeChannel.bind(this));
   }
