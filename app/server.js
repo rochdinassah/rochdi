@@ -130,12 +130,96 @@ const server = new Server();
 
 server.awaitReady().then(() => {
   const { logger, discord } = server;
+  const { connection_manager, api_manager } = discord;
 
   server.notifyVerbose('app server ready');
-  
-  const messages = {};
+
+  connection_manager.on('GUILD_AUDIT_LOG_ENTRY_CREATE', async msg => {
+    const { user_id, target_id, changes, action_type, guild_id } = msg;
     
-  discord.connection_manager.on('MESSAGE_CREATE', msg => {
+    const guild = discord.getGuild(guild_id);
+    
+    const source_user = await api_manager.fetchUser(user_id);
+    const target_user = await api_manager.fetchUser(target_id);
+
+    if (!source_user || source_user.bot)
+      return;
+
+    const mention = ['400046787341320227'];
+
+    if (12 === action_type)
+      return server.notifyError(format('"%s" deleted a channel (%s)', source_user.name, guild.name), { mention });
+
+    if (20 === action_type)
+      return server.notifyError(format('"%s" kicked "%s" (%s)', source_user.name, target_user.name, guild.name), { mention });
+
+    if (22 === action_type)
+      return server.notifyError(format('"%s" banned "%s" (%s)', source_user.name, target_user.name, guild.name), { mention });
+
+    if (23 === action_type)
+      return server.notifyError(
+        format('"%s" removed the ban for "%s" (%s)', source_user.name, target_user.name, guild.name),
+        { mention }
+      );
+
+    if (24 === action_type) {
+      if ('communication_disabled_until' === changes[0].key) {
+        if (!changes[0].new_value)
+          return server.notifyError(
+            format('"%s" removed timeout for "%s" (%s)', source_user.name, target_user.name, guild.name),
+            { mention }
+          );
+
+        const diff = new Date(changes[0].new_value)-new Date();
+        const duration = formatDuration(1e3+diff-(diff%1e3));
+        return server.notifyError(
+          format('"%s" timed out "%s" for %s (%s)', source_user.name, target_user.name, duration, guild.name),
+          { mention }
+        );
+      }
+
+      return server.notifyError(
+        format(
+          '"%s" updated(%s) "%s" (%s)',
+          source_user.name,
+          (changes[0].new_value ? '' : 'un')+changes[0].key,
+          target_user.name, guild.name
+        ),
+        { mention }
+      );
+    }
+    
+    if (26 === action_type)
+      return server.notifyError(format('"%s" moved someone (%s)', source_user.name, guild.name), { mention });
+
+    if (27 === action_type)
+      return server.notifyError(format('"%s" disconnected someone (%s)', source_user.name, guild.name), { mention });
+
+    if (!source_user.bot)
+      return server.notifyError(format('"%s" did something (%s)', source_user.name, guild.name), { mention });
+  });
+
+  connection_manager.on('GUILD_MEMBER_ADD', msg => {
+    const { user, mute, deaf, communication_disabled_until, guild_id } = msg;
+    const { username, id, global_name } = user;
+
+    const guild = discord.getGuild(guild_id);
+    const name = global_name ?? username;
+
+    server.notifyError(format('member join (%s)', guild.name), {
+      table: {
+        name,
+        mute,
+        deaf,
+        timeout: null !== communication_disabled_until
+      },
+      mention: ['400046787341320227']
+    });
+  });
+
+  // MESSAGE MONITOR START
+  const messages = {};
+  connection_manager.on('MESSAGE_CREATE', msg => {
     const { id, content, channel_id, author, guild_id } = msg;
 
     if (discord.user_id === author.id)
@@ -172,10 +256,10 @@ server.awaitReady().then(() => {
       });
     }
 
-    messages[id] = msg;
+    if (msg.attachments.length)
+      messages[id] = msg;
   });
-
-  discord.connection_manager.on('MESSAGE_DELETE', msg => {      
+  connection_manager.on('MESSAGE_DELETE', msg => {      
     const message = messages[msg.id];
 
     if (!message || '1481131563080220754' === message.channel_id)
@@ -200,4 +284,5 @@ server.awaitReady().then(() => {
       mention: ['400046787341320227']
     });
   });
+  // MESSAGE MONITOR END
 });

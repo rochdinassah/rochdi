@@ -85,6 +85,18 @@ class ApiManager extends EventEmitter {
       return data;
     });
   }
+
+  fetchUser(user_id) {
+    return this.get('users/'+user_id).then(res => {
+      const { status_code, data } = res;
+      
+      if (200 !== status_code)
+        return;
+
+      data.name = data.global_name ?? data.username;
+      return data;
+    });
+  }
 }
 
 for (const method of ['get', 'post', 'delete', 'put', 'patch']) {
