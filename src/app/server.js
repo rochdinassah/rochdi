@@ -23,11 +23,11 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    // const discord_bot_token = decrypt(
-    //   'sFyeftxBt0SYaKx+z4T0YFZRKuW4GSb85YBFEphdDnXwsCtrqtAJbu7ZnELKYechfrpQZXBkneR+TBlhqaWMmMFxb6odWqTYc6EFZb2mD7k=',
-    //   env.ENCRYPTION_PASSWORD
-    // );
-    const discord_bot_token = env.DISCORD_BOT_TOKEN;
+    const discord_bot_token = decrypt(
+      'sFyeftxBt0SYaKx+z4T0YCM7WA9zmQ+Olv4WwFSNPwMpeLyZnLad3FPFiB+ms2IX36og6duqGg7kacxhw2x4yVxgjarB5IdMuZjdR2/a4+E=',
+      env.ENCRYPTION_PASSWORD
+    );
+    // const discord_bot_token = env.DISCORD_BOT_TOKEN;
 
     const { port, notification_channel, cache_key, ping_interval, states } = opts;
 
