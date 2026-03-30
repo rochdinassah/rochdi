@@ -18,12 +18,12 @@ class MemberMenager extends EventEmitter {
   }
 
   quickBan(guild_id, user_id, opts = {}) {
-    const { reason, delete_messages } = opts;
+    const { reason } = opts;
     return this.muteAndDeafMember(guild_id, user_id, reason).then(() => {
       return asyncDelay(2**11).then(() => {
         return this.timeoutMember(guild_id, user_id, reason).then(() => {
           return asyncDelay(2**11).then(() => {
-            return this.banMember(guild_id, user_id, reason, delete_messages);
+            return this.kickMember(guild_id, user_id, reason);
           });
         });
       });

@@ -9,15 +9,14 @@ const rochdi = require('../');
 const user_id = process.argv[2];
 
 if (!user_id)
-  exit('command error, usage: quickban <user_id>');
+  exit('command error, usage: ban <user_id>');
 
 new rochdi.Discord(process.env.DISCORD_USER_TOKEN, { bot_user: false, presence_status: 'invisible' })
   .member_manager.banMember(
-    // decrypt('pwrWFUU/+z92cP1C9NYtcqXedM61EUrHnnIbydPzUWw=', process.env.ENCRYPTION_PASSWORD),
-    '1364201039892316271',
+    decrypt('pwrWFUU/+z92cP1C9NYtcqXedM61EUrHnnIbydPzUWw=', process.env.ENCRYPTION_PASSWORD),
     user_id,
-    'break rules',
+    void 0,
     true
   ).then(() => {
-    exit('quickban complete');
+    log('ban complete');
   });
