@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+
+'use strict';
+
+require('../');
+
+log(encrypt(process.argv[2], process.env.ENCRYPTION_PASSWORD));

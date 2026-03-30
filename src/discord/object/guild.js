@@ -100,8 +100,8 @@ class GuildObject extends EventEmitter {
     return this.manager.channel_manager.deleteChannels(this.id, channel_name_ids);
   }
 
-  clearMessages() {
-    return this.manager.guild_manager.clearMessages(this.id);
+  clearMessages(user_id) {
+    return this.manager.guild_manager.clearMessages(this.id, user_id);
   }
 
   quickBan(user_id, opts = {}) {
