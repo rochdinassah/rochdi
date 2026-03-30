@@ -206,8 +206,12 @@ server.awaitReady().then(() => {
     const guild = discord.getGuild(guild_id);
     const name = global_name ?? username;
 
-    if (['1478481616652341371'].includes(id))
-      guild.kickMember('1478481616652341371');
+    // if ([
+    //   '1478481616652341371',
+    //   '1335778378887729213',
+    //   '1374512144762015795'
+    // ].includes(id))
+    //   guild.kickMember(id);
 
     server.notifyError(format('member join (%s)', guild.name), {
       table: {
