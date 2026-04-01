@@ -253,6 +253,10 @@ server.awaitReady().then(() => {
       'rouxhdi',
       'roushdi',
       'roshdi',
+      'roshdy',
+      'rochdy',
+      'ruchdi',
+      'ruchdy',
       'رشدي',
       'روشدي'
     ].map(pattern => new RegExp(pattern.split('').map(character => character+'{1,}').join(''), 'i'));
