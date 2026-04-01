@@ -123,7 +123,7 @@ class Server extends rochdi.Server {
   }
 
   onMyIpRequest(req, res) {
-    res.writeHead(200).end('1111');
+    res.writeHead(200).end(req.ip);
   }
 
   onPingCommand() {
