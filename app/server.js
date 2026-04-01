@@ -32,6 +32,7 @@ class Server extends rochdi.Server {
     this.post('/Cache', this.onCacheSetRequest);
     this.get('/Cache/{key}', this.onCacheGetRequest);
     this.delete('/Cache/{key}', this.onCacheDeleteRequest);
+    this.get('/MyIp', this.onMyIpRequest);
   }
 
   registerCommands() {
@@ -119,6 +120,10 @@ class Server extends rochdi.Server {
     delete cache[key];
 
     res.writeHead(status_code).end();
+  }
+
+  onMyIpRequest(req, res) {
+    res.writeHead(200).end('1111');
   }
 
   onPingCommand() {
