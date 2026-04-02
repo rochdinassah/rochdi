@@ -135,9 +135,52 @@ const server = new Server();
 
 server.awaitReady().then(() => {
   const { logger, discord } = server;
-  const { connection_manager, api_manager } = discord;
+  const { connection_manager, message_manager, api_manager } = discord;
 
   server.notifyVerbose('app server ready');
+
+  message_manager.on('Message', message => {
+    const { author, content, guild_id, channel_id } = message;
+
+    if (discord.user_id === message.author.id || '400046787341320227' !== message.author.id)
+      return;
+
+    const parts = content.split(' ');
+    const [cmd, ...args] = parts;
+
+    if (!['lock', 'unlock'].includes(cmd))
+      return;
+
+    message.delete();
+
+    if ('lock' === cmd) {
+      const guild = discord.getGuild(guild_id);
+      const channel = guild.getChannel(channel_id);
+      
+      const { permission_overwrites } = channel;
+
+      for (const permission_overwrites_entry of permission_overwrites) {
+        const { type, id, deny, allow } = permission_overwrites_entry;
+        if (2048 === (allow&2048))
+          api_manager.put(format('/channels/%s/permissions/%s', channel_id, id), { type, id, allow: allow-2048, deny });
+      }
+    } else if ('unlock' === cmd) {
+      const guild = discord.getGuild(guild_id);
+      const channel = guild.getChannel(channel_id);
+
+      const { permission_overwrites } = channel;
+
+      for (const permission_overwrites_entry of permission_overwrites) {
+        const { type, id, deny, allow } = permission_overwrites_entry;
+
+        if (guild_id === id)
+          continue;
+
+        if (2048 !== (allow&2048))
+          api_manager.put(format('/channels/%s/permissions/%s', channel_id, id), { type, id, allow: String(Number(allow)+2048), deny });
+      }
+    }
+  });
 
   connection_manager.on('GUILD_AUDIT_LOG_ENTRY_CREATE', async msg => {
     const { user_id, target_id, changes, action_type, guild_id } = msg;
@@ -211,12 +254,12 @@ server.awaitReady().then(() => {
     const guild = discord.getGuild(guild_id);
     const name = global_name ?? username;
 
-    // if ([
-    //   '1478481616652341371',
-    //   '1335778378887729213',
-    //   '1374512144762015795'
-    // ].includes(id))
-    //   guild.kickMember(id);
+    if ([
+      '1389675573143535767',
+      '1148338387107991572',
+      '1374512144762015795'
+    ].includes(id))
+      guild.kickMember(id);
 
     server.notifyError(format('member join (%s)', guild.name), {
       table: {

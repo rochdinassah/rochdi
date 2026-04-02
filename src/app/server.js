@@ -299,7 +299,7 @@ Server.prototype.onDiscordMessage = function (msg) {
   
   if (discord.user.id === author.id)
     return;
-
+  
   const match = /([a-z0-9_-]+)\s?([a-z0-9_-]+)?\s?([a-z0-9_-]+)?/i.exec(content);
 
   if (match) {

@@ -25,7 +25,7 @@ class MessageObject extends EventEmitter {
   }
 
   delete() {
-    return this.manager.message_manager.deleteMessage(this.channel_id, this.id);
+    return this.manager.deleteMessage(this.channel_id, this.id);
   }
 }
 

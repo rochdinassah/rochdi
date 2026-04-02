@@ -61,6 +61,7 @@ class MessageManager extends EventEmitter {
     const channel = guild.getChannel(channel_id);
     
     channel.emit('Message', message);
+    this.emit('Message', message);
   }
 }
 

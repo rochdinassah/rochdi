@@ -11,7 +11,7 @@ class ConnectionManager extends EventEmitter {
     super();
 
     const { logger } = manager;
-
+    
     this.manager = manager;
     this.logger = logger;
 

@@ -111,7 +111,14 @@ for (const method of ['get', 'post', 'delete', 'put', 'patch']) {
     if (body)
       headers['content-type'] = 'application/json';
 
-    return http2_client[method](url, { headers, body });
+    return http2_client[method](url, { headers, body }).then(res => {
+      const { status_code, data } = res;
+
+      if (429 === status_code)
+        return asyncDelay(1e3*data.retry_after).then(this[method].bind(this, endpoint, body, headers));
+
+      return res;
+    });
   };
 }
 

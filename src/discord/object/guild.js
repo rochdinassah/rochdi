@@ -16,8 +16,11 @@ class GuildObject extends EventEmitter {
 
     this.manager = manager;
     this.channels = new Map();
-    this.roles = roles;
+    this.roles = new Map();
     this.members = new Map();
+
+    for (const role of roles)
+      this.roles.set(role.id, role);
 
     if (members)
       for (const member of members)
@@ -179,21 +182,12 @@ class GuildObject extends EventEmitter {
       if (channel_ids)
         if (!channel_ids.includes(channel_id))
           return;
-
-      function doRequestMemberUpdate() {
-        clearTimeout(this.channel_join_prevention_retry_timeout_id);
-        return api_manager.patch('/guilds/'+id+'/members/'+user_id, {
-          channel_id: void 0 === opts.channel_id ? null : opts.channel_id,
-          deaf: true,
-          mute: true
-        }).then(res => {
-          const { status_code, data } = res;
-          if (429 === status_code)
-            this.channel_join_prevention_retry_timeout_id = setTimeout(doRequestMemberUpdate.bind(this), 2**10);
-        });
-      }
-
-      doRequestMemberUpdate.call(this);
+        
+      return api_manager.patch('/guilds/'+id+'/members/'+user_id, {
+        channel_id: void 0 === opts.channel_id ? null : opts.channel_id,
+        deaf: true,
+        mute: true
+      });
     }
 
     this.bound_on_voice_stat_update_listener = onVoiceUpdateMessage.bind(this);
