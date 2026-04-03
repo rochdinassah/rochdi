@@ -140,9 +140,16 @@ server.awaitReady().then(() => {
   server.notifyVerbose('app server ready');
 
   message_manager.on('Message', message => {
-    const { author, content, guild_id, channel_id } = message;
+    const { author, content, guild_id, channel_id, member } = message;
 
-    if (discord.user_id === message.author.id || '400046787341320227' !== message.author.id)
+    if (
+      discord.user_id === message.author.id ||
+      (
+        !member.roles.includes('1488630259061493991') &&
+        !member.roles.includes('1352136023311781930') &&
+        !member.roles.includes('1485772865688043601')
+      )
+    )
       return;
 
     const parts = content.split(' ');
