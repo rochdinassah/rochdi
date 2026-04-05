@@ -185,8 +185,8 @@ class GuildObject extends EventEmitter {
         
       return api_manager.patch('/guilds/'+id+'/members/'+user_id, {
         channel_id: void 0 === opts.channel_id ? null : opts.channel_id,
-        deaf: true,
-        mute: true
+        // deaf: true,
+        // mute: true
       });
     }
 
