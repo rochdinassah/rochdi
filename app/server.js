@@ -147,6 +147,7 @@ server.awaitReady().then(() => {
     'tenor.com',
     'klipy.com',
     'discord.com',
+    'discord.gg',
     'instagram.com',
     'facebook.com',
     'tiktok.com',
