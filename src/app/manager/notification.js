@@ -23,7 +23,8 @@ class NotificationManager {
   notify(content, opts = {}) {
     const { logger, discord } = this;
     const { level, bold, skip_log, table, mention } = opts;
-    const { channel } = discord;
+
+    const channel = opts.channel ?? discord.channel;      
 
     if (!discord || !discord.ready || !channel)
       return Promise.resolve(false);

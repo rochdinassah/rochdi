@@ -139,23 +139,54 @@ server.awaitReady().then(() => {
 
   server.notifyVerbose('app server ready');
 
+  const trusted_domains = [
+    'tenor.com',
+    'klipy.com',
+    'instagram.com',
+    'facebook.com',
+    'tiktok.com',
+    'youtube.com'
+  ];
+
   message_manager.on('Message', message => {
     const { author, content, guild_id, channel_id, member } = message;
 
+    if (discord.user_id === message.author.id)
+      return;
+
+    try {
+      const url_components = new URL(content.replace('www.', ''));
+
+      for (const domain of trusted_domains)
+        if (url_components.host === domain)
+          return;
+
+      message.delete();
+
+      const guild = discord.getGuild(guild_id);
+      const channel = guild.getChannel(channel_id);
+
+      return server.notifyError(format('untrusted link sent in "%s"', channel.name), {
+        table: {
+          sender: '<@'+author.id+'> '+author.global_name ?? author.username,
+          sender_id: author.id,
+          content,
+        },
+        channel: discord.getGuild('1312666401189920829').getChannel('1490320908823560262')
+      });
+    } catch {}
+    
     if (
-      discord.user_id === message.author.id ||
-      (
-        !member.roles.includes('1488630259061493991') &&
-        !member.roles.includes('1352136023311781930') &&
-        !member.roles.includes('1485772865688043601')
-      )
+      !member.roles.includes('1488630259061493991') &&
+      !member.roles.includes('1352136023311781930') &&
+      !member.roles.includes('1485772865688043601')
     )
       return;
 
     const parts = content.split(' ');
     const [cmd, ...args] = parts;
 
-    if (!['lock', 'unlock'].includes(cmd))
+    if (!['lock', 'unlock', 'hide', 'show'].includes(cmd))
       return;
 
     message.delete();

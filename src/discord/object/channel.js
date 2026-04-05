@@ -7,7 +7,7 @@ const EventEmitter = require('node:events');
 class ChannelObject extends EventEmitter {
   constructor(manager, guild_id, infos) {
     super();
-
+    
     const { type, position, permission_overwrites, parent_id, name, last_message_id, id, flags } = infos;
 
     this.guild_id = guild_id;
