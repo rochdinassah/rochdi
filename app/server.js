@@ -140,9 +140,6 @@ server.awaitReady().then(() => {
   server.notifyVerbose('app server ready');
   
   const trusted_domains = [
-    'media.giphy.com',
-    'media2.giphy.com',
-    'media3.giphy.com',
     'giphy.com',
     'tenor.com',
     'klipy.com',
@@ -151,9 +148,11 @@ server.awaitReady().then(() => {
     'instagram.com',
     'facebook.com',
     'tiktok.com',
-    'vt.tiktok.com',
-    'youtube.com'
+    'tiktok.com',
+    'youtube.com',
+    'youtu.be',
   ];
+  const url_pattern = /http(?:s)?\:\/\/([a-z0-9_+-.]{1,})/i;
 
   message_manager.on('Message', message => {
     const { author, content, guild_id, channel_id, member } = message;
@@ -161,11 +160,17 @@ server.awaitReady().then(() => {
     if (discord.user_id === message.author.id)
       return;
 
-    try {
-      const url_components = new URL(content.replace('www.', ''));
+    const match = url_pattern.exec(content);
 
-      for (const domain of trusted_domains)
-        if (url_components.host === domain)
+    if (match) {
+      let domain = match[1];
+      let domain_parts = domain.split('.');
+
+      if (2 < domain_parts.length)
+        domain = domain_parts.slice(-2).join('.')
+
+      for (const trusted_domain of trusted_domains)
+        if (domain === trusted_domain)
           return;
 
       message.delete();
@@ -181,7 +186,7 @@ server.awaitReady().then(() => {
         },
         channel: discord.getGuild('1312666401189920829').getChannel('1490320908823560262')
       });
-    } catch {}
+    }
     
     if (
       !member.roles.includes('1488630259061493991') &&
@@ -224,9 +229,13 @@ server.awaitReady().then(() => {
         if (2048 !== (allow&2048))
           api_manager.put(format('/channels/%s/permissions/%s', channel_id, id), { type, id, allow: String(Number(allow)+2048), deny });
       }
+    } else if ('hide' === cmd) {
+
+    } else if ('show' === cmd) {
+
     }
   });
-
+  
   connection_manager.on('GUILD_AUDIT_LOG_ENTRY_CREATE', async msg => {
     const { user_id, target_id, changes, action_type, guild_id } = msg;
     
