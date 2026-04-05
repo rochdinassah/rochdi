@@ -138,7 +138,7 @@ server.awaitReady().then(() => {
   const { connection_manager, message_manager, api_manager } = discord;
 
   server.notifyVerbose('app server ready');
-
+  
   const trusted_domains = [
     'media.giphy.com',
     'media2.giphy.com',
@@ -151,6 +151,7 @@ server.awaitReady().then(() => {
     'instagram.com',
     'facebook.com',
     'tiktok.com',
+    'vt.tiktok.com',
     'youtube.com'
   ];
 
