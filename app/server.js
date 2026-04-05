@@ -140,6 +140,7 @@ server.awaitReady().then(() => {
   server.notifyVerbose('app server ready');
 
   const trusted_domains = [
+    'giphy.com',
     'tenor.com',
     'klipy.com',
     'discord.com',
