@@ -142,6 +142,7 @@ server.awaitReady().then(() => {
   const trusted_domains = [
     'tenor.com',
     'klipy.com',
+    'discord.com',
     'instagram.com',
     'facebook.com',
     'tiktok.com',
