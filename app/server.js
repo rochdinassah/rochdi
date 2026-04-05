@@ -146,6 +146,7 @@ server.awaitReady().then(() => {
     'discord.com',
     'discord.gg',
     'discordapp.net',
+    'discordapp.com',
     'instagram.com',
     'facebook.com',
     'tiktok.com',
