@@ -22,6 +22,7 @@ class MessageManager extends EventEmitter {
 
   startListen(connection) {
     connection.on('MESSAGE_CREATE', this.onMessageCreateMessage.bind(this));
+    connection.on('MESSAGE_UPDATE', this.onMessageCreateMessage.bind(this));
   }
 
   sendMessage(channel_id, content, opts = {}) {
