@@ -121,7 +121,7 @@ class Server extends rochdi.Server {
 
     res.writeHead(status_code).end();
   }
-
+  
   onMyIpRequest(req, res) {
     res.writeHead(200).end(req.ip);
   }
@@ -209,6 +209,7 @@ server.awaitReady().then(() => {
           sender_id: author.id,
           content,
         },
+        mention: ['400046787341320227'],
         channel: discord.getGuild('1312666401189920829').getChannel('1490320908823560262')
       });
     }
