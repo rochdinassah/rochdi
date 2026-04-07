@@ -117,6 +117,7 @@ class GuildManager extends EventEmitter {
     log(messages.at(messages.length-1));
 
     for (const msg of messages) {
+      exit(msg);
       await message_manager.deleteMessage(msg.channel_id, msg.id);
       await asyncDelay(2**8);
     }
