@@ -90,12 +90,16 @@ class GuildObject extends EventEmitter {
     channel.flags = flags;
   }
 
-  createTextChannel(name, is_private) {
-    return this.manager.channel_manager.createTextChannel(this.id, name, is_private);
+  createChannel(type, name, opts) {
+    return this.manager.channel_manager._createChannel(this.id, type, name, opts);
   }
 
-  createVoiceChannel(name, is_private) {
-    return this.manager.channel_manager.createVoiceChannel(this.id, name, is_private);
+  createTextChannel(name, opts) {
+    return this.manager.channel_manager.createTextChannel(this.id, name, opts);
+  }
+
+  createVoiceChannel(name, opts) {
+    return this.manager.channel_manager.createVoiceChannel(this.id, name, opts);
   }
 
   deleteChannel(channel_id) {

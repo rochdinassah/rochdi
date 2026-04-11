@@ -33,7 +33,7 @@ class RoleManager extends EventEmitter {
       const { status_code, data } = res;
 
       if (204 !== status_code)
-        return logger.warn('deleteChannel: request error, http(%d)', status_code), false;
+        return logger.warn('deleteRole: request error, http(%d)', status_code), false;
     
       logger.verbose('role "%s" deleted', role_id);
       return true;

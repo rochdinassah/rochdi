@@ -60,8 +60,8 @@ class GuildManager extends EventEmitter {
     const guild_id = guild_infos.id;
     const guild = new GuildObject(this.manager, guild_infos);
     this.guilds.set(guild_id, guild);
-    this.emit('GuildObjectCreated::'+guild_id);
-    // this.emit('GuildObjectCreated', guild);
+    this.emit('GuildObjectCreated::'+guild_id, guild);
+    this.emit('GuildObjectCreated', guild);
   }
 
   updateGuildInfos(guild_id, infos) {

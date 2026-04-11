@@ -27,12 +27,13 @@ class ChannelManager extends EventEmitter {
     connection.on('VOICE_SERVER_UPDATE', this.onVoiceServerUpdateMessage.bind(this));
   }
   
-  _createChannel(guild_id, type, name, is_private) {
+  _createChannel(guild_id, type, name, opts = {}) {
     const { api_manager, logger } = this;
 
     const guild = this.manager.getGuild(guild_id);
 
-    const body = { type, name, permission_overwrites: [] };
+    const body = { type, name, ...opts };
+
     return api_manager.post('guilds/'+guild.id+'/channels', body).then(res => {
       const { status_code, data } = res;
       if (201 !== status_code)
@@ -41,12 +42,12 @@ class ChannelManager extends EventEmitter {
     });
   }
 
-  createTextChannel(guild_id, name, is_private) {
-    return this._createChannel(guild_id, 0, name, is_private);
+  createTextChannel(guild_id, name, opts) {
+    return this._createChannel(guild_id, 0, name, opts);
   }
 
-  createVoiceChannel(guild_id, name, is_private) {
-    return this._createChannel(guild_id, 2, name, is_private);
+  createVoiceChannel(guild_id, name, opts) {
+    return this._createChannel(guild_id, 2, name, opts);
   }
 
   deleteChannel(channel_id) {
