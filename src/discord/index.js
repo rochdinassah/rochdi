@@ -16,6 +16,7 @@ const MemberManager = require('./manager/member');
 const ConnectionManager = require('./manager/connection');
 const MessageManager = require('./manager/message');
 const ChannelManager = require('./manager/channel');
+const RoleManager = require('./manager/role');
 
 class Discord extends EventEmitter {
   constructor(token, opts = {}) {
@@ -41,6 +42,7 @@ class Discord extends EventEmitter {
     this.member_manager = new MemberManager(this);
     this.message_manager = new MessageManager(this);
     this.channel_manager = new ChannelManager(this);
+    this.role_manager = new RoleManager(this);
 
     this.startListen(this.connection_manager);
   }

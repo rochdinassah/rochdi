@@ -32,8 +32,7 @@ class ChannelManager extends EventEmitter {
 
     const guild = this.manager.getGuild(guild_id);
 
-    const permission_overwrites = !is_private ? [] : [{ id, type: 0, allow: '0', deny: '1049600' }];
-    const body = { type, name, permission_overwrites };
+    const body = { type, name, permission_overwrites: [] };
     return api_manager.post('guilds/'+guild.id+'/channels', body).then(res => {
       const { status_code, data } = res;
       if (201 !== status_code)

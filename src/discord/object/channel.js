@@ -24,7 +24,7 @@ class ChannelObject extends EventEmitter {
   }
 
   delete() {
-    return this.manager.guild_manager.deleteChannel(this.id);
+    return this.manager.channel_manager.deleteChannel(this.id);
   }
   
   sendMessage(content, embeds) {

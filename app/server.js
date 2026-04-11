@@ -15,7 +15,7 @@ class Server extends rochdi.Server {
   constructor() {
     super({
       port,
-      notification_channel: 'app',
+      notification_channel: '1488604263591448657',
       cache_key: 'rochdi',
       logger: new Logger({ prefix: 'app' })
     });
@@ -126,7 +126,8 @@ class Server extends rochdi.Server {
     res.writeHead(200).end(req.ip);
   }
 
-  onPingCommand() {
+  onPingCommand(p, p2, p3, p4, p5, p6) {
+    log(p, p2, p3, p4, p5, p6);
     this.notifyVerbose('pong');
   }
 }

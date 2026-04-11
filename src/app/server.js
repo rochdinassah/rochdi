@@ -299,12 +299,20 @@ Server.prototype.onDiscordMessage = function (msg) {
   
   if (discord.user.id === author.id)
     return;
-  
-  const match = /([a-z0-9_-]+)\s?([a-z0-9_-]+)?\s?([a-z0-9_-]+)?/i.exec(content);
+
+  const match = Array.from(/([a-z0-9.+_-]+)/ig[Symbol.matchAll](content));
+
+  if (!match.length)
+    return;
+
+  const cmd = match[0][1].shift().toLowerCase();
+  const args = match.map(m => m[1]);
+
+  exit(cmd, args);
 
   if (match) {
     const cmd = match[1].toLowerCase();
-    const args = match.slice(2);
+    const args = match.slice(3);
     if (command_manager.eventNames().includes(cmd))
       discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));
   }

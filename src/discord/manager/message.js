@@ -27,7 +27,7 @@ class MessageManager extends EventEmitter {
 
   sendMessage(channel_id, content, opts = {}) {
     const { logger, api_manager } = this;
-
+    
     const payload = { content, tts: false, ...opts };
 
     return api_manager.post('/channels/'+channel_id+'/messages', payload).then(res => {

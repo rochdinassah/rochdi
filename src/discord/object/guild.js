@@ -3,6 +3,7 @@
 'use strict';
 
 const ChannelObject = require('./channel');
+const RoleObject = require('./role');
 const EventEmitter = require('node:events');
 
 class GuildObject extends EventEmitter {
@@ -19,13 +20,11 @@ class GuildObject extends EventEmitter {
     this.roles = new Map();
     this.members = new Map();
 
-    for (const role of roles)
-      this.roles.set(role.id, role);
-
     if (members)
       for (const member of members)
         this.members.set(member.user.id, member);
 
+    roles.forEach(this.makeRole.bind(this));
     channels.forEach(this.makeChannel.bind(this));
   }
 
@@ -68,6 +67,13 @@ class GuildObject extends EventEmitter {
     const channel = new ChannelObject(this.manager, this.id, infos);
     channels.set(infos.id, channel);
     this.emit('ChannelMake::'+infos.id, channel);
+  }
+
+  makeRole(infos) {
+    const { roles } = this;
+    const role = new RoleObject(this.manager, this.id, infos);
+    roles.set(infos.id, role);
+    this.emit('RoleMake::'+infos.id, role);
   }
 
   updateChannelInfos(infos) {

@@ -7,10 +7,11 @@ const EventEmitter = require('node:events');
 class MessageObject extends EventEmitter {
   constructor(manager, infos) {
     super();
-
-    const { timestamp, member, id, embeds, content, channel_type, channel_id, author, attachments, guild_id } = infos;
+        
+    const { timestamp, mentions, member, id, embeds, content, channel_type, channel_id, author, attachments, guild_id } = infos;
         
     this.timestamp = timestamp;
+    this.mentions = mentions;
     this.member = member;
     this.id = id;
     this.embeds = embeds;
