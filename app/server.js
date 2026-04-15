@@ -15,7 +15,7 @@ class Server extends rochdi.Server {
   constructor() {
     super({
       port,
-      notification_channel: '1488604263591448657',
+      notification_channel: '1481131563080220754',
       cache_key: 'rochdi',
       logger: new Logger({ prefix: 'app' })
     });
@@ -156,6 +156,8 @@ server.awaitReady().then(() => {
     'youtu.be',
   ];
   const url_pattern = /http(?:s)?\:\/\/([a-z0-9_+-.]{1,})/i;
+
+  return;
 
   discord.getGuild('1312666401189920829').startChannelJoinPrevention({
     channel_ids: [

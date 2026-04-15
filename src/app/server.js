@@ -305,17 +305,11 @@ Server.prototype.onDiscordMessage = function (msg) {
   if (!match.length)
     return;
 
-  const cmd = match[0][1].shift().toLowerCase();
-  const args = match.map(m => m[1]);
-
-  exit(cmd, args);
-
-  if (match) {
-    const cmd = match[1].toLowerCase();
-    const args = match.slice(3);
-    if (command_manager.eventNames().includes(cmd))
-      discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));
-  }
+  const cmd = match[0].shift().toLowerCase();
+  const args = match.map(m => m[1]).filter(v => v);
+  
+  if (command_manager.eventNames().includes(cmd))
+    discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));
 };
 
 // issue notification
