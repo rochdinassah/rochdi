@@ -2,20 +2,19 @@
 
 'use strict';
 
-require('../main');
+const rochdi = require('../main');
+
+const { HttpClient } = rochdi;
 
 const { writeFileSync } = require('node:fs');
 const { execSync } = require('node:child_process');
 
 const DIR_PATH = '/opt/rochdi';
 
+const http_client = new HttpClient();
+
 awaitInternet().then(asyncDelay.bind(void 0, 2**12)).then(() => {
-  const addr = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
+  const local_address = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
   
-  writeFileSync(DIR_PATH+'/raw/addr', addr);
-  // writeFileSync(DIR_PATH+'/raw/rand', String(rand(2, 999)));
-    
-  execSync('git add -A &> /dev/null');
-  execSync('git commit -m sync &> /dev/null');
-  execSync('git push &> /dev/null');
+  http_client.get('http://rochdi.ddns.net/LocalAddress').then(log);
 });

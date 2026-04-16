@@ -33,6 +33,7 @@ class Server extends rochdi.Server {
     this.get('/Cache/{key}', this.onCacheGetRequest);
     this.delete('/Cache/{key}', this.onCacheDeleteRequest);
     this.get('/MyIp', this.onMyIpRequest);
+    this.any('/LocalAddress', this.onLocalAddressRequest);
   }
 
   registerCommands() {
@@ -126,6 +127,12 @@ class Server extends rochdi.Server {
     res.writeHead(200).end(req.ip);
   }
 
+  onLocalAddressRequest(req, res) {
+    if (req.data.local_address)
+      this.local_address = req.data.local_address;
+    res.writeHead(200).end(this.local_address);
+  }
+
   onPingCommand(p, p2, p3, p4, p5, p6) {
     log(p, p2, p3, p4, p5, p6);
     this.notifyVerbose('pong');
@@ -138,7 +145,7 @@ server.awaitReady().then(() => {
   const { logger, discord } = server;
   const { connection_manager, message_manager, api_manager } = discord;
 
-  server.notifyVerbose('app server ready');
+  return server.notifyVerbose('app server ready');
   
   const trusted_domains = [
     'spotify.com',
