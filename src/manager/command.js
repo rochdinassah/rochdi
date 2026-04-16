@@ -7,11 +7,11 @@ const readline = require('node:readline');
 
 const { stdin, stdout } = process;
 
-module.exports = CommandManager;
-
-Object.setPrototypeOf(CommandManager.prototype, EventEmitter.prototype);
-
-function CommandManager() {}
+class CommandManager extends EventEmitter {
+  constructor() {
+    super();
+  }
+}
 
 CommandManager.prototype.startListen = function () {
   this._interface = readline.createInterface({ input: stdin, output: stdout });
@@ -37,3 +37,5 @@ CommandManager.prototype.close = function () {
   if (this._interface)
     this._interface.close();
 };
+
+module.exports = CommandManager;
