@@ -145,7 +145,7 @@ server.awaitReady().then(() => {
   const { logger, discord } = server;
   const { connection_manager, message_manager, api_manager } = discord;
 
-  return server.notifyVerbose('app server ready');
+  server.notifyVerbose('app server ready');
   
   const trusted_domains = [
     'spotify.com',
@@ -162,10 +162,9 @@ server.awaitReady().then(() => {
     'youtube.com',
     'youtu.be',
   ];
+
   const url_pattern = /http(?:s)?\:\/\/([a-z0-9_+-.]{1,})/i;
-
-  return;
-
+  
   discord.getGuild('1312666401189920829').startChannelJoinPrevention({
     channel_ids: [
       '1312672178910789672',

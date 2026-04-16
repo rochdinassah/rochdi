@@ -15,6 +15,6 @@ const http_client = new HttpClient();
 
 awaitInternet().then(asyncDelay.bind(void 0, 2**12)).then(() => {
   const local_address = String(execSync('hostname -I')).replace(/[\n\r\s]/g, '');
-  
-  http_client.get('http://rochdi.ddns.net/LocalAddress').then(log);
+
+  http_client.post('http://rochdi.ddns.net/LocalAddress', { body: { local_address }});
 });
