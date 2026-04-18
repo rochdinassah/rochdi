@@ -192,7 +192,7 @@ server.awaitReady().then(() => {
   message_manager.on('Message', message => {
     const { author, content, guild_id, channel_id, member } = message;
 
-    if (discord.user_id === message.author.id)
+    if (discord.user_id === author.id || author.bot)
       return;
 
     const match = url_pattern.exec(content);
