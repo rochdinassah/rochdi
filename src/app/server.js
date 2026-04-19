@@ -263,7 +263,7 @@ Server.prototype.reset = function () {
 };
 
 Server.prototype.awaitNotificationReady = function () {
-  if (this.discord.channel)
+  if (this.discord.channel || !this.notification_channel)
     return Promise.resolve();
   return new Promise(resolve => this.once('NotificationReady', resolve));
 };
