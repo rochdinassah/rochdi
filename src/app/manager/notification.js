@@ -94,7 +94,7 @@ class NotificationManager {
     const channel = guild.getChannel(notification_channel);
     channel.on('Message', this.onDiscordMessage.bind(this));
     discord.channel = channel;
-    this.emit('NotificationReady');
+    app.emit('NotificationReady');
   }
 
   onDiscordResumed() {
