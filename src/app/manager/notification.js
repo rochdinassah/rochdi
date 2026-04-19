@@ -20,6 +20,14 @@ class NotificationManager {
     this.discord = discord;
   }
 
+  connect() {
+    const { discord } = this;
+
+    discord.on('Ready', this.onDiscordReady.bind(this));
+    discord.on('Resumed', this.onDiscordResumed.bind(this));
+    discord.connect();
+  }
+
   notify(content, opts = {}) {
     const { logger, discord } = this;
     const { level, bold, skip_log, table, mention } = opts;
@@ -69,6 +77,48 @@ class NotificationManager {
       content = mention.map(user_id => '<@'+user_id+'>').join('\n')+content;
 
     return channel.sendMessage(content, message_opts);
+  }
+
+  async onDiscordReady() {
+    const { discord, app } = this;
+    const { notification_channel } = app;
+
+    const guild = discord.getGuild('console');
+
+    if (!guild)
+      exit('NotificationManager.onDiscordReady: "console" guild missing');
+
+    if (!guild.hasChannel(notification_channel))
+      await guild.createTextChannel(notification_channel);
+    
+    const channel = guild.getChannel(notification_channel);
+    channel.on('Message', this.onDiscordMessage.bind(this));
+    discord.channel = channel;
+    this.emit('NotificationReady');
+  }
+
+  onDiscordResumed() {
+    this.notifyVerbose('discord session resumed');
+  }
+
+  onDiscordMessage(msg) {
+    const { app, discord } = this;
+    const { command_manager } = app;
+    const { author, content, channel_id, guild_id } = msg;
+    
+    if (discord.user.id === author.id)
+      return;
+
+    const match = Array.from(/([a-z0-9.+_-]+)/ig[Symbol.matchAll](content));
+
+    if (!match.length)
+      return;
+
+    const cmd = match[0].shift().toLowerCase();
+    const args = match.map(m => m[1]).filter(v => v);
+    
+    if (command_manager.eventNames().includes(cmd))
+      discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));
   }
 }
 

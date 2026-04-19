@@ -27,9 +27,6 @@ class Server extends WebSocketServer {
 
     const { port, notification_channel, cache_key, ping_interval, states } = opts;
 
-    if (!notification_channel)
-      exit('Server.constructor: "notification_channel" option is missing');
-
     const logger = this.logger = opts.logger || new Logger.SilentLogger();
     
     this.port = port;
@@ -56,12 +53,11 @@ class Server extends WebSocketServer {
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Pong', this.onPong);
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
-    this.on('DiscordMessage', this.onDiscordMessage);
 
     this.redis_client.on('Ready', this.onRedisReady.bind(this));
-    this.discord.on('Ready', this.onDiscordReady.bind(this));
-    this.discord.on('Resumed', this.onDiscordResumed.bind(this));
-    this.discord.connect();
+
+    if (notification_channel)
+      this.notification_manager.connect();
   }
 
   onEchoRequestMessage(client, data) {
@@ -266,50 +262,10 @@ Server.prototype.reset = function () {
   });
 };
 
-Server.prototype.onDiscordReady = async function () {
-  const { discord, notification_channel } = this;
-
-  const guild = discord.getGuild('console');
-
-  if (!guild)
-    exit('Server.onDiscordReady: "console" guild missing');
-
-  if (!guild.hasChannel(notification_channel))
-    await guild.createTextChannel(notification_channel);
-  
-  const channel = guild.getChannel(notification_channel);
-  channel.on('Message', this.onDiscordMessage.bind(this));
-  discord.channel = channel;
-  this.emit('NotificationReady');
-};
-
-Server.prototype.onDiscordResumed = function () {
-  this.notifyVerbose('discord session resumed');
-};
-
 Server.prototype.awaitNotificationReady = function () {
   if (this.discord.channel)
     return Promise.resolve();
   return new Promise(resolve => this.once('NotificationReady', resolve));
-};
-
-Server.prototype.onDiscordMessage = function (msg) {
-  const { command_manager, discord } = this;
-  const { author, content, channel_id, guild_id } = msg;
-  
-  if (discord.user.id === author.id)
-    return;
-
-  const match = Array.from(/([a-z0-9.+_-]+)/ig[Symbol.matchAll](content));
-
-  if (!match.length)
-    return;
-
-  const cmd = match[0].shift().toLowerCase();
-  const args = match.map(m => m[1]).filter(v => v);
-  
-  if (command_manager.eventNames().includes(cmd))
-    discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));
 };
 
 // issue notification
