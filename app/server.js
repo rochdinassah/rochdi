@@ -26,7 +26,6 @@ class Server extends rochdi.Server {
   }
 
   registerRoutes() {
-    this.get('/GetLocalAddr', this.onGetLocalAddrRequest);
     this.any('/Interaction', this.onInteractionRequest);
     this.get('/GetInteraction', this.onGetInteractionInfoRequest);
     this.post('/Cache', this.onCacheSetRequest);
@@ -39,11 +38,6 @@ class Server extends rochdi.Server {
   registerCommands() {
     const { command_manager } = this;
     command_manager.on('ping', this.onPingCommand.bind(this));
-  }
-
-  onGetLocalAddrRequest(req, res) {
-    res.writeHead(200);
-    res.end(this.cache.local_addr);
   }
 
   onInteractionRequest(req, res) {
@@ -128,9 +122,9 @@ class Server extends rochdi.Server {
   }
 
   onLocalAddressRequest(req, res) {
-    if (req.data.local_address)
-      this.local_address = req.data.local_address;
-    res.writeHead(200).end(this.local_address);
+    const { data } = req;
+    const { address } = data;
+    res.writeHead(200).end(this.localaddr = address);
   }
 
   onPingCommand(p, p2, p3, p4, p5, p6) {

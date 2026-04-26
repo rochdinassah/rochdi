@@ -85,9 +85,9 @@ class MemberMenager extends EventEmitter {
       deaf: false
     }, headers);
   }
-
+  
   timeoutMember(guild_id, user_id, reason, until_date) {
-    until_date = new Date((new Date()).setHours((new Date()).getHours()+1+24*28));
+    until_date = new Date((new Date()).setHours((new Date()).getHours()+24*28));
 
     const headers = {};
 
