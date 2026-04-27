@@ -124,7 +124,7 @@ class Server extends rochdi.Server {
   onLocalAddressRequest(req, res) {
     const { data } = req;
     const { address } = data;
-    res.writeHead(200).end(this.localaddr = address);
+    res.writeHead(200).end(address ? (this.localaddr = address) : this.localaddr);
   }
 
   onPingCommand(p, p2, p3, p4, p5, p6) {
