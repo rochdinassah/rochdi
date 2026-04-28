@@ -34,16 +34,20 @@ class NotificationManager {
 
     const channel = opts.channel ?? discord.channel;
 
+    if ((!String(content).length || void 0 === content) && !table)
+      return Promise.resolve(false);
+    
     if (!skip_log) {
-      if (content)
-        logger.info(content);
-      if (table)
-        log(table);
+      const content_present = String(content).length && String(void 0) !== String(content) || String(void 0) === content;
+      log(
+        content_present ? content+(table && ':' || '') : table,
+        content_present && table ? table : ''
+      );
     }
 
     if (!discord || !discord.ready || !channel)
       return Promise.resolve(false);
-    
+
     if (bold || table || level)
       content = format('%s**%s**', table ? '### ' : '', content);
 
