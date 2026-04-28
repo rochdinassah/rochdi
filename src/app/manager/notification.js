@@ -32,17 +32,18 @@ class NotificationManager {
     const { logger, discord } = this;
     const { level, bold, skip_log, table, mention } = opts;
 
-    const channel = opts.channel ?? discord.channel;      
-
-    if (!discord || !discord.ready || !channel)
-      return Promise.resolve(false);
+    const channel = opts.channel ?? discord.channel;
 
     if (!skip_log) {
-      logger.verbose(content);
+      if (content)
+        logger.info(content);
       if (table)
         log(table);
     }
 
+    if (!discord || !discord.ready || !channel)
+      return Promise.resolve(false);
+    
     if (bold || table || level)
       content = format('%s**%s**', table ? '### ' : '', content);
 

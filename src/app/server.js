@@ -34,6 +34,7 @@ class Server extends WebSocketServer {
     this.ping_interval = ping_interval ?? 3e4;
     this.http_server = http_server;
     this.cache_key = cache_key;
+    this.cache = {};
 
     this.routes = [];
 
@@ -45,19 +46,21 @@ class Server extends WebSocketServer {
     this.state_manager = new StateManager({ states });
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger});
-    this.redis_client = new RedisClient({ logger });
     this.discord = new Discord(discord_bot_token, { logger, bot_user: true });
     this.command_manager = new CommandManager();
     this.notification_manager = new NotificationManager(this);
 
-    this.on('connection', this[Symbol.for('onConnection')]);
-    this.on('Pong', this.onPong);
-    this.on('EchoRequestMessage', this.onEchoRequestMessage);
-
-    this.redis_client.on('Ready', this.onRedisReady.bind(this));
+    if (cache_key) {
+      this.redis_client = new RedisClient({ logger });
+      this.redis_client.on('Ready', this.onRedisReady.bind(this));
+    }
 
     if (notification_channel)
       this.notification_manager.connect();
+
+    this.on('connection', this[Symbol.for('onConnection')]);
+    this.on('Pong', this.onPong);
+    this.on('EchoRequestMessage', this.onEchoRequestMessage);
   }
 
   onEchoRequestMessage(client, data) {
@@ -78,7 +81,9 @@ Server.prototype.run = function () {
   return new Promise(resolve => {
     const { port, ping_interval, http_server, logger, pingClients } = this;
     
-    http_server.on('request', this[Symbol.for('onRequest')].bind(this)).listen(port, '::0', resolve);
+    http_server.on('request', this[Symbol.for('onRequest')].bind(this)).listen(port, '::0', () => {
+      resolve(this.awaitReady());
+    });
 
     if (false !== ping_interval)
       this.ping_interval_id = setInterval(pingClients.bind(this), ping_interval);
@@ -211,8 +216,6 @@ Server.prototype.awaitCacheReady = function () {
 Server.prototype.backup = function (key) {
   const { redis_client, logger, cache, cache_key } = this;
 
-  logger.verbose('backup in progress...');
-
   if (!redis_client || !redis_client.connected)
     return logger.warn('backup error'), Promise.resolve(false);
 
@@ -230,6 +233,9 @@ Server.prototype.triggerBackup = function () {
 
 Server.prototype.rollback = function () {
   const { logger, redis_client, cache_key } = this;
+
+  if (!redis_client || redis_client.connected)
+    return void logger.warn('Server.rollback: redis_client is either not connected or not set');
 
   logger.info('rollback in progress...');
 
@@ -290,7 +296,17 @@ Server.prototype.notifyVerbose = function (content, opts = {}) {
 };
 
 Server.prototype.awaitReady = function () {
-  return this.awaitCacheReady().then(this.awaitNotificationReady.bind(this));
+  const { cache_key, notification_channel } = this;
+
+  const promises = [];
+
+  if (cache_key)
+    promises.push(this.awaitCacheReady());
+
+  if (notification_channel)
+    promises.push(this.awaitNotificationReady());
+
+  return Promise.all(promises);
 };
 
 module.exports = Server;

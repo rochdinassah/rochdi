@@ -17,12 +17,12 @@ const {
 class RedisClient extends EventEmitter {
   constructor(opts = {}) {
     super();
-
+    
     const { logger } = opts;
 
     this.logger = logger;
     this.connected = false;
-    
+
     const connection = this.connection = redis.createClient({
       username: REDIS_USER,
       password: REDIS_PASS,
