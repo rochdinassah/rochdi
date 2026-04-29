@@ -52,7 +52,9 @@ class Client extends EventEmitter {
   }
 
   close() {
-    const { connection } = this;
+    const { connection, timer_manager } = this;
+
+    timer_manager.clear();
 
     if (!connection)
       return Promise.resolve();
