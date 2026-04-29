@@ -2,6 +2,8 @@
 
 'use strict';
 
+const timers = require('node:timers');
+
 class TimerManager {
   constructor() {
     this.map = new Map();

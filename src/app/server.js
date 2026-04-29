@@ -13,6 +13,7 @@ const Http2Client = require('../http2-client');
 const RedisClient = require('./redis');
 const Discord = require('../discord');
 const NotificationManager = require('./manager/notification');
+const TimerManager = require('../manager/timer');
 
 const { WebSocketServer, WebSocket } = ws;
 const { env } = process;
@@ -49,6 +50,7 @@ class Server extends WebSocketServer {
     this.discord = new Discord(discord_bot_token, { logger, bot_user: true });
     this.command_manager = new CommandManager();
     this.notification_manager = new NotificationManager(this);
+    this.timer_manager = new TimerManager();
 
     if (cache_key) {
       this.redis_client = new RedisClient({ logger });
