@@ -10,6 +10,7 @@ global.log = console.log.bind(console);
 global.noop = Function.prototype;
 
 module.exports = {
+  TimerManager: require('./src/manager/timer'),
   StateManager: require('./src/manager/state'),
   CommandManager: require('./src/manager/command'),
   Openai: require('./src/openai'),
