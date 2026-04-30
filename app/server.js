@@ -55,8 +55,8 @@ class Server extends rochdi.Server {
       table: info,
       mention: ['400046787341320227'],
     });
-    
-    res.writeHead(200).end('interaction ok\n');
+
+    res.send('interaction ok\n');    
   }
 
   onGetInteractionInfoRequest(req, res) {
@@ -69,7 +69,7 @@ class Server extends rochdi.Server {
       'content-type': 'application/json'
     };
 
-    res.writeHead(200, headers).end(JSON.stringify(interaction_info));
+    res.status(200, headers).send(JSON.stringify(interaction_info));
   }
   
   onCacheSetRequest(req, res) {
@@ -84,7 +84,7 @@ class Server extends rochdi.Server {
     else
       cache[key] = value;
 
-    res.writeHead(status_code).end();
+    res.status(status_code).send(value);
   }
 
   onCacheGetRequest(req, res) {
@@ -99,7 +99,7 @@ class Server extends rochdi.Server {
 
     const value = cache[key];
 
-    res.writeHead(status_code).end(value);
+    res.status(status_code).send(value);
   }
 
   onCacheDeleteRequest(req, res) {
@@ -114,21 +114,20 @@ class Server extends rochdi.Server {
 
     delete cache[key];
 
-    res.writeHead(status_code).end();
+    res.status(status_code).send();
   }
   
   onMyIpRequest(req, res) {
-    res.writeHead(200).end(req.ip);
+    res.send(req.ip);
   }
 
   onLocalAddressRequest(req, res) {
     const { data } = req;
     const { address } = data;
-    res.writeHead(200).end(address ? (this.localaddr = address) : this.localaddr);
+    res.status(200).send(address ? (this.localaddr = address) : this.localaddr);
   }
 
   onPingCommand(p, p2, p3, p4, p5, p6) {
-    log(p, p2, p3, p4, p5, p6);
     this.notifyVerbose('pong');
   }
 }

@@ -17,6 +17,7 @@ const TimerManager = require('../manager/timer');
 
 const { WebSocketServer, WebSocket } = ws;
 const { env } = process;
+const { ServerResponse } = http;
 
 class Server extends WebSocketServer {
   constructor(opts = {}) {
@@ -160,7 +161,7 @@ Server.prototype[Symbol.for('onRequest')] = function (req, res) {
     if (method === route.method || route.method === 'ANY')
       if (route.match(path))
         return route.run(this, req, res);
-  res.writeHead(404).end();
+  res.status(404, 'Not Found').send();
 };
 
 Server.prototype[Symbol.for('onConnection')] = function (client) {
@@ -340,4 +341,17 @@ WebSocket.prototype.stop = function (reason, delay) {
 
 WebSocket.prototype.restart = function (reason, delay) {
   this.sendMessage('RestartRequestMessage', { reason, delay });
+};
+
+ServerResponse.prototype.status = function (code, message) {
+  this.statusCode = code;
+  this.statusMessage = message;
+  return this;
+};
+
+ServerResponse.prototype.send = function (data, headers = {}) {
+  for (const key of Object.keys(headers))
+    this.setHeader(key, headers[key]);
+  this.end(data);
+  return this;
 };
