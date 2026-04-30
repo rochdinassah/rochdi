@@ -352,6 +352,10 @@ ServerResponse.prototype.status = function (code, message) {
 ServerResponse.prototype.send = function (data, headers = {}) {
   for (const key of Object.keys(headers))
     this.setHeader(key, headers[key]);
+
+  if ('object' === typeof data)
+    data = JSON.stringify(data);
+
   this.end(data);
   return this;
 };
