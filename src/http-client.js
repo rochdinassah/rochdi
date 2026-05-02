@@ -65,15 +65,9 @@ class HttpClient extends EventEmitter {
       const req = ('https:' === protocol ? https : http)
         .request({ method, hostname, port, path, headers })
         .on('error', this.onError.bind(this, { resolve, reject }, arguments))
-        .on('timeout', this.onError.bind(this, { resolve, reject }, arguments, { code: 'timeout' }))
+        .on('timeout', () => req.destroy())
         .on('response', this.onResponse.bind(this, { resolve, reject }));
       this.resetCipher();
-
-      req.foo = req.emit;
-      req.emit = (event, ...args) => {
-        log('emission:', event);
-        req.foo(event, ...args);
-      };
 
       if (body)
         req.write(body);
@@ -83,12 +77,19 @@ class HttpClient extends EventEmitter {
   }
 
   onError(promise, args, error) {
+    const { logger } = this;
+
     const retry_on_error = args[2].retry_on_error ?? this.retry_on_error;
     if (!retry_on_error)
       return promise.reject('request error: '+error.code);
+
     const jitter = 'number' === typeof retry_on_error ? retry_on_error : rand(1e3, 4e3);
-    setTimeout(() => promise.resolve(this._request(...args)), jitter);
-    this.logger.warn('request error, retrying in %s', formatDuration(jitter));
+
+    asyncDelay(jitter).then(() => {
+      promise.resolve(this._request(...args))
+    });
+
+    logger.warn('request error, retrying in %s', formatDuration(jitter));
   }
 
   onResponse(promise, response) {

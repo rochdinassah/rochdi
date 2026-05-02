@@ -15,12 +15,9 @@ const http_client = new HttpClient({ logger, retry_on_error: true });
 
 function getIp() {
   return http_client.get('http://rochdi.ddns.net/MyIp').then(res => {
-    log(res);
     return res.data;
   });
 }
-
-// return gestIp();
 
 startTimer();
 logger.verbose('rotating android...');
