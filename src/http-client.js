@@ -65,8 +65,15 @@ class HttpClient extends EventEmitter {
       const req = ('https:' === protocol ? https : http)
         .request({ method, hostname, port, path, headers })
         .on('error', this.onError.bind(this, { resolve, reject }, arguments))
+        .on('timeout', this.onError.bind(this, { resolve, reject }, arguments, { code: 'timeout' }))
         .on('response', this.onResponse.bind(this, { resolve, reject }));
       this.resetCipher();
+
+      req.foo = req.emit;
+      req.emit = (event, ...args) => {
+        log('emission:', event);
+        req.foo(event, ...args);
+      };
 
       if (body)
         req.write(body);

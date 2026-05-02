@@ -80,7 +80,7 @@ class Http2Client extends Base {
           return resolve({ status_code: -1 });
         }
 
-        const failure_timeout_id = setTimeout(() => stream.emit('error'), 2**12);
+        const failure_timeout_id = setTimeout(() => stream.emit('error', { code: 'timeout' }), 2**12);
         stream.on('response', () => clearTimeout(failure_timeout_id));
         stream.on('error', error => {
           if (!stream.retrying) {
