@@ -81,7 +81,7 @@ class HttpClient extends EventEmitter {
 
     const retry_on_error = args[2].retry_on_error ?? this.retry_on_error;
     if (!retry_on_error)
-      return promise.reject('request error: '+error.code);
+      return promise.reject(format('request error: "%s", %s', args[1], error.code));
 
     const jitter = 'number' === typeof retry_on_error ? retry_on_error : rand(1e3, 4e3);
 
@@ -89,7 +89,7 @@ class HttpClient extends EventEmitter {
       promise.resolve(this._request(...args))
     });
 
-    logger.warn('request error, retrying in %s', formatDuration(jitter));
+    logger.warn('request error: "%s", retrying in %s', args[1], formatDuration(jitter));
   }
 
   onResponse(promise, response) {

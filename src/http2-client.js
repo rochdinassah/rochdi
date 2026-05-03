@@ -111,14 +111,14 @@ class Http2Client extends Base {
   onError(promise, args, session, error) {
     const retry_on_error = args[2].retry_on_error ?? this.retry_on_error;
     if (!retry_on_error)
-      return promise.reject('request error: '+error.code);
+      return promise.reject('request error: "%s", '+error.code, args[1]);
 
     const { logger } = this;
     const { ready, closed, destroyed, authority } = session;
 
     const retry = () => promise.resolve(this._request(...args));
 
-    logger.warn('request error, retrying...');
+    logger.warn('request error: "%s", retrying...', args[1]);
 
     if (!ready || closed || destroyed) {
       this.awaitSession(authority).then(retry.bind(this));
