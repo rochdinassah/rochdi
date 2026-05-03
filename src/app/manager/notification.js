@@ -39,10 +39,13 @@ class NotificationManager {
     
     if (!skip_log) {
       const content_present = String(content).length && String(void 0) !== String(content) || String(void 0) === content;
-      log(
-        content_present ? content+(table && ':' || '') : table,
-        content_present && table ? table : ''
-      );
+
+      if (!content_present && table)
+        log(table);
+      else if (content_present && !table)
+        logger.verbose(content);
+      else if (content_present && table)
+        log(content+':', table)
     }
 
     if (!discord || !discord.ready || !channel)
