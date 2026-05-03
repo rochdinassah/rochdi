@@ -11,9 +11,15 @@ const user_id = process.argv[2];
 if (!user_id)
   exit('command error, usage: quickban <user_id>');
 
-new rochdi.Discord('', { bot_user: false, presence_status: 'invisible' })
+const enc_key = process.env.ENCRYPTION_PASSWORD;
+const token = decrypt(
+  '68KctW4glAMwhPWDDySukqpdPL7b2A6XSbhDNmeS9A2Yem31PHfI68P39+gGnxDSfS1Dz+poiit2dMpugm8+Mag8ifx6UYTfURz+ix7T8mE=',
+  enc_key
+);
+
+new rochdi.Discord(token, { bot_user: false, presence_status: 'invisible', logger })
   .member_manager.quickBan(
-    decrypt('pwrWFUU/+z92cP1C9NYtcqXedM61EUrHnnIbydPzUWw=', process.env.ENCRYPTION_PASSWORD),
+    decrypt('pwrWFUU/+z92cP1C9NYtcqXedM61EUrHnnIbydPzUWw=', enc_key),
     user_id
   ).then(() => {
     exit('quickban complete');
