@@ -26,19 +26,27 @@ class StateManager extends EventEmitter {
   }
 
   acquire(label = 'default') {
-    if (!this.acquired)
-      return this.acquired = label || true, Promise.resolve();
-    return new Promise(resolve => this.acq_queue.push(resolve));
+    const { acquired, acq_queue } = this;
+
+    if (acquired)
+      return new Promise(resolve => acq_queue.push(() => resolve(this.acquired = true)));
+
+    return (
+      this.acquired = label,
+      Promise.resolve()
+    );
   }
 
   release() {
     if (!this.acquired)
       throw new Error('StateManager.release: state is not acquired');
+
     this.acquired = false;
+
     if (this.acq_queue.length)
       this.acq_queue.shift()();
   }
-
+  
   lock() {
     return this.updateState('Locked', true);
   }
