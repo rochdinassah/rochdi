@@ -10,6 +10,9 @@ const child_process = require('node:child_process');
 const net = require('node:net');
 const os = require('node:os');
 
+global.exec = child_process.exec;
+global.execSync = child_process.execSync;
+
 global.awaitPortOpen = function (port, addr = '127.0.0.1') {
   return new Promise(resolve => {
     function connect() {
@@ -30,13 +33,13 @@ global.getType = function (val) {
 };
 
 global.siren = function (name_id, volume) {
-  const curr_volume = /Volume: front-left:\s{1,}\d{1,} \/\s{1,}(\d{1,}%)/.exec(child_process.execSync('pactl get-sink-volume 0'))[1];
+  const curr_volume = /Volume: front-left:\s{1,}\d{1,} \/\s{1,}(\d{1,}%)/.exec(execSync('pactl get-sink-volume 0'))[1];
 
   if (volume && !Number.isNaN(parseInt(volume)))
-    child_process.execSync('pactl set-sink-volume 0 '+parseInt(volume)+'%');
+    execSync('pactl set-sink-volume 0 '+parseInt(volume)+'%');
 
-  return new Promise(resolve => child_process.exec('play /opt/rochdi/bin/'+name_id+'.mp3', () => {
-    child_process.execSync('pactl set-sink-volume 0 '+curr_volume);
+  return new Promise(resolve => exec('play /opt/rochdi/bin/'+name_id+'.mp3', () => {
+    execSync('pactl set-sink-volume 0 '+curr_volume);
     resolve();
   }));
 };
@@ -219,10 +222,6 @@ process.exit = code => {
     exitProcess(0);
   else
     exitProcess(code);
-
-  // if ('linux' === os.platform())
-  //   return child_process.execSync('kill -9 '+process.pid);
-  // child_process.execSync('taskkill \/PID '+process.pid+' \/F \/T');  
 }
 
 async function onProcessExit(signal, code) {

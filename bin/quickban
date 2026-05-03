@@ -17,7 +17,7 @@ const token = decrypt(
   enc_key
 );
 
-new rochdi.Discord(token, { bot_user: false, presence_status: 'invisible', logger })
+new rochdi.Discord(token, { bot_user: false, presence_status: 'invisible' })
   .member_manager.quickBan(
     decrypt('pwrWFUU/+z92cP1C9NYtcqXedM61EUrHnnIbydPzUWw=', enc_key),
     user_id
