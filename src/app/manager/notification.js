@@ -45,7 +45,7 @@ class NotificationManager {
       else if (content_present && !table)
         logger.verbose(content);
       else if (content_present && table)
-        log(content+':', table)
+        log(content+':', table);
     }
 
     if (!discord || !discord.ready || !channel)
