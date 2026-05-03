@@ -88,7 +88,7 @@ class HttpClient extends EventEmitter {
     asyncDelay(jitter).then(() => {
       promise.resolve(this._request(...args))
     });
-
+    
     logger.warn('request error: "%s", retrying in %s', args[1], formatDuration(jitter));
   }
 

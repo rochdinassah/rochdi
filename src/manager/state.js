@@ -32,6 +32,8 @@ class StateManager extends EventEmitter {
   }
 
   release() {
+    if (!this.acquired)
+      throw new Error('StateManager.release: state is not acquired');
     this.acquired = false;
     if (this.acq_queue.length)
       this.acq_queue.shift()();
