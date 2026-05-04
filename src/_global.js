@@ -9,9 +9,21 @@ const util = require('node:util');
 const child_process = require('node:child_process');
 const net = require('node:net');
 const os = require('node:os');
+const fs = require('node:fs');
+
+const { exec, execSync } = child_process;
+const { writeFileSync, readFileSync, existsSync, unlinkSync } = fs;
 
 global.exec = child_process.exec;
 global.execSync = child_process.execSync;
+global.writeFileSync = writeFileSync;
+global.readFileSync = readFileSync;
+global.existsSync = existsSync;
+global.unlinkSync = unlinkSync;
+
+global.saveJson = function (path, object) {
+  writeFileSync(path, JSON.stringify(object, null, 2));
+};
 
 global.awaitPortOpen = function (port, addr = '127.0.0.1') {
   return new Promise(resolve => {
