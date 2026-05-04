@@ -30,7 +30,7 @@ class StateManager extends EventEmitter {
     const { acquired, acq_queue } = this;
 
     if (acquired)
-      return new Promise(resolve => acq_queue.set(this.cursor++, resolveCb.bind(this, resolve)));
+      return new Promise(resolve => acq_queue.set(this.cursor++, resolve));
 
     return (
       this.acquired = label,
@@ -44,9 +44,9 @@ class StateManager extends EventEmitter {
     if (!acquired)
       throw new Error('StateManager.release: state is not acquired');
 
-    this.acquired = false;
-
-    if (acq_queue.size)
+    if (!acq_queue.size)
+      this.acquired = false;
+    else
       acq_queue.pull(cursor-acq_queue.size)();
   }
   
@@ -103,11 +103,6 @@ class StateManager extends EventEmitter {
       });
     });
   }
-}
-
-function resolveCb(resolve) {
-  this.acquired = true;
-  resolve();
 }
 
 module.exports = StateManager;
