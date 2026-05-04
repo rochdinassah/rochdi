@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+const rochdi = require('../');
+const fs = require('node:fs');
+
+const { Logger } = rochdi;
+
+const logger = new Logger({ prefix: 'timer' });
+
+fs.writeFileSync('/tmp/'+(process.argv[2] ?? 'default'), String(Number(new Date())));

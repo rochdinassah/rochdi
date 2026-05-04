@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+
+const rochdi = require('../');
+const fs = require('node:fs');
+
+const { Logger } = rochdi;
+const { readFileSync, existsSync } = fs;
+
+const logger = new Logger({ prefix: 'timer' });
+
+const path = '/tmp/'+(process.argv[2] ?? 'default');
+
+if (!existsSync(path))
+  return;
+
+const start_timer = Number(readFileSync(path));
+
+log(formatDuration(new Date()-start_timer));
