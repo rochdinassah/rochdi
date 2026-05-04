@@ -11,7 +11,8 @@ class StateManager extends EventEmitter {
     const { states } = opts;
 
     this.acquired = false;
-    this.acq_queue = [];
+    this.acq_queue = new Map();
+    this.cursor = 0;
 
     this.initStates(states);
   }
@@ -29,7 +30,7 @@ class StateManager extends EventEmitter {
     const { acquired, acq_queue } = this;
 
     if (acquired)
-      return new Promise(resolve => acq_queue.push(() => resolve(this.acquired = true)));
+      return new Promise(resolve => acq_queue.set(this.cursor++, resolveCb.bind(this, resolve)));
 
     return (
       this.acquired = label,
@@ -38,13 +39,15 @@ class StateManager extends EventEmitter {
   }
 
   release() {
-    if (!this.acquired)
+    const { acquired, acq_queue, cursor } = this;
+
+    if (!acquired)
       throw new Error('StateManager.release: state is not acquired');
 
     this.acquired = false;
 
-    if (this.acq_queue.length)
-      this.acq_queue.shift()();
+    if (acq_queue.size)
+      acq_queue.pull(cursor-acq_queue.size)();
   }
   
   lock() {
@@ -100,6 +103,11 @@ class StateManager extends EventEmitter {
       });
     });
   }
+}
+
+function resolveCb(resolve) {
+  this.acquired = true;
+  resolve();
 }
 
 module.exports = StateManager;
