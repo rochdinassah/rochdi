@@ -16,16 +16,28 @@ const NotificationManager = require('./manager/notification');
 const TimerManager = require('../manager/timer');
 
 const { WebSocketServer, WebSocket } = ws;
-const { env } = process;
 const { ServerResponse } = http;
+
+const { PWD, DISCORD_BOT_TOKEN } = process.env;
+
+function initCache() {
+  const cache_path = PWD+'/cache/backup.json';
+
+  if (!existsSync(cache_path)) {
+    require('node:fs').mkdirSync(PWD+'/cache');
+    saveJson(cache_path, {});
+  }
+
+  // return require(cache_path);
+}
+
+exit(initCache());
 
 class Server extends WebSocketServer {
   constructor(opts = {}) {
     const http_server = http.createServer();
 
     super({ server: http_server, clientTracking: false });
-
-    const discord_bot_token = env.DISCORD_BOT_TOKEN;
 
     const { port, notification_channel, cache_key, ping_interval, states } = opts;
 
@@ -36,7 +48,7 @@ class Server extends WebSocketServer {
     this.ping_interval = ping_interval ?? 3e4;
     this.http_server = http_server;
     this.cache_key = cache_key;
-    this.cache = {};
+    this.cache = initCache();
 
     this.routes = [];
 
@@ -48,7 +60,7 @@ class Server extends WebSocketServer {
     this.state_manager = new StateManager({ states });
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger});
-    this.discord = new Discord(discord_bot_token, { logger, bot_user: true });
+    this.discord = new Discord(DISCORD_BOT_TOKEN, { logger, bot_user: true });
     this.command_manager = new CommandManager();
     this.notification_manager = new NotificationManager(this);
     this.timer_manager = new TimerManager();

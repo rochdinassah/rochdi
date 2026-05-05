@@ -22,7 +22,7 @@ global.existsSync = existsSync;
 global.unlinkSync = unlinkSync;
 
 global.saveJson = function (path, object) {
-  writeFileSync(path, JSON.stringify(object, null, 2));
+  writeFileSync(path, JSON.stringify(object, null, 2), { flag: 'w+' });
 };
 
 global.awaitPortOpen = function (port, addr = '127.0.0.1') {
