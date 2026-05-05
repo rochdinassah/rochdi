@@ -59,6 +59,8 @@ class Server extends WebSocketServer {
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Pong', this.onPong);
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
+
+    this.initCache();
   }
 
   onEchoRequestMessage(client, data) {
@@ -85,8 +87,6 @@ Server.prototype.run = function () {
 
     if (false !== ping_interval)
       this.ping_interval_id = setInterval(pingClients.bind(this), ping_interval);
-
-    this.initCache();
   });
 };
 
