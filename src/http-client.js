@@ -20,7 +20,7 @@ class HttpClient extends EventEmitter {
 
     this.logger = logger ?? new Logger.SilentLogger();
     this.retry_on_error = retry_on_error ?? true;
-    this.timeout = timeout;
+    this.timeout = timeout ?? 2**13;
     this.user_agent = user_agent ?? DEFAULT_USER_AGENT;
   }
 
@@ -47,7 +47,7 @@ class HttpClient extends EventEmitter {
   _request(method, url_string, opts = {}) {
     return new Promise((resolve, reject) => {
       const { protocol, hostname, pathname, search, port } = new URL(url_string);
-      const { cipher } = opts;
+      const { cipher, timeout } = opts;
 
       const path = pathname+search;
 
@@ -68,6 +68,8 @@ class HttpClient extends EventEmitter {
         .on('timeout', () => req.destroy())
         .on('response', this.onResponse.bind(this, { resolve, reject }));
       this.resetCipher();
+
+      req.setTimeout(timeout ?? this.timeout);
 
       if (body)
         req.write(body);
