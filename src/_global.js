@@ -12,7 +12,7 @@ const os = require('node:os');
 const fs = require('node:fs');
 
 const { exec, execSync } = child_process;
-const { writeFileSync, readFileSync, existsSync, unlinkSync } = fs;
+const { writeFileSync, readFileSync, existsSync, unlinkSync, mkdirSync } = fs;
 
 global.exec = child_process.exec;
 global.execSync = child_process.execSync;
@@ -20,6 +20,7 @@ global.writeFileSync = writeFileSync;
 global.readFileSync = readFileSync;
 global.existsSync = existsSync;
 global.unlinkSync = unlinkSync;
+global.mkdirSync = mkdirSync;
 
 global.saveJson = function (path, object) {
   writeFileSync(path, JSON.stringify(object, null, 2), { flag: 'w+' });

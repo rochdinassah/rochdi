@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/rochdinassah/rochdi#readme",
   "dependencies": {
-    "redis": "^5.11.0",
     "ws": "8.18.3"
   }
 }

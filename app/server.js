@@ -16,7 +16,6 @@ class Server extends rochdi.Server {
     super({
       port,
       notification_channel: '1481131563080220754',
-      cache_key: 'rochdi',
       logger: new Logger({ prefix: 'app' })
     });
 

@@ -10,7 +10,6 @@ const Logger = require('../logger');
 const CommandManager = require('../manager/command');
 const HttpClient = require('../http-client');
 const Http2Client = require('../http2-client');
-const RedisClient = require('./redis');
 const Discord = require('../discord');
 const NotificationManager = require('./manager/notification');
 const TimerManager = require('../manager/timer');
@@ -20,18 +19,9 @@ const { ServerResponse } = http;
 
 const { PWD, DISCORD_BOT_TOKEN } = process.env;
 
-function initCache() {
-  const cache_path = PWD+'/cache/backup.json';
-
-  if (!existsSync(cache_path)) {
-    require('node:fs').mkdirSync(PWD+'/cache');
-    saveJson(cache_path, {});
-  }
-
-  // return require(cache_path);
-}
-
-exit(initCache());
+const CACHE_DIR_PATH = PWD+'/cache';
+const CACHE_FILE_PATH = CACHE_DIR_PATH+'/backup.json';
+const CACHE_GITIGNORE_FILE_PATH = CACHE_DIR_PATH+'/.gitignore';
 
 class Server extends WebSocketServer {
   constructor(opts = {}) {
@@ -39,7 +29,7 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    const { port, notification_channel, cache_key, ping_interval, states } = opts;
+    const { port, notification_channel, ping_interval, states } = opts;
 
     const logger = this.logger = opts.logger || new Logger.SilentLogger();
     
@@ -47,8 +37,6 @@ class Server extends WebSocketServer {
     this.notification_channel = notification_channel;
     this.ping_interval = ping_interval ?? 3e4;
     this.http_server = http_server;
-    this.cache_key = cache_key;
-    this.cache = initCache();
 
     this.routes = [];
 
@@ -64,11 +52,6 @@ class Server extends WebSocketServer {
     this.command_manager = new CommandManager();
     this.notification_manager = new NotificationManager(this);
     this.timer_manager = new TimerManager();
-
-    if (cache_key) {
-      this.redis_client = new RedisClient({ logger });
-      this.redis_client.on('Ready', this.onRedisReady.bind(this));
-    }
 
     if (notification_channel)
       this.notification_manager.connect();
@@ -102,6 +85,8 @@ Server.prototype.run = function () {
 
     if (false !== ping_interval)
       this.ping_interval_id = setInterval(pingClients.bind(this), ping_interval);
+
+    this.initCache();
   });
 };
 
@@ -209,57 +194,35 @@ Server.prototype[Symbol.for('onConnectionMessage')] = function (client, data) {
   this.emit(t, client, d);
 };
 
-Server.prototype.onRedisReady = function () {
-  const { redis_client, cache_key } = this;
-  redis_client.get(cache_key).then(cache => {
-    if (!cache)
-      cache = {};
-    setInterval(this.backup.bind(this), 24e5);
-    onExit(this.backup.bind(this));
-    this.cache = cache;
-    this.emit('CacheReady');
-  });
-};
+Server.prototype.initCache = function () {
+  if (!existsSync(CACHE_DIR_PATH))
+    mkdirSync(CACHE_DIR_PATH);
 
-Server.prototype.awaitCacheReady = function () {
-  const { cache } = this;
-  if (cache)
-    return Promise.resolve();
-  return new Promise(resolve => this.once('CacheReady', resolve));
-};
+  if (!existsSync(CACHE_GITIGNORE_FILE_PATH))
+    writeFileSync(CACHE_GITIGNORE_FILE_PATH, 'backup.json');
 
-Server.prototype.backup = function (key) {
-  const { redis_client, logger, cache, cache_key } = this;
+  if (!existsSync(CACHE_FILE_PATH))
+    saveJson(CACHE_FILE_PATH, {});
 
-  if (!redis_client || !redis_client.connected)
-    return logger.warn('backup error'), Promise.resolve(false);
+  setInterval(this.backup.bind(this), 24e5);
+  onExit(this.backup.bind(this));
 
-  return redis_client.set(key ?? cache_key, cache).then(() => {
-    if (key)
-      logger.verbose('backup checkpoint ok');
-    return logger.verbose('backup ok'), true;
-  });
+  this.cache = require(CACHE_FILE_PATH);
+}
+
+Server.prototype.backup = function () {
+  const { logger, cache } = this;
+  return (
+    logger.verbose('backup in progress...'),
+    saveJson(CACHE_FILE_PATH, cache),
+    logger.verbose('backup ok'),
+    true
+  );
 };
 
 Server.prototype.triggerBackup = function () {
   clearTimeout(this.backup_triggering_timeout_id);
   this.backup_triggering_timeout_id = setTimeout(this.backup.bind(this), 2**13);
-};
-
-Server.prototype.rollback = function () {
-  const { logger, redis_client, cache_key } = this;
-
-  if (!redis_client || redis_client.connected)
-    return void logger.warn('Server.rollback: redis_client is either not connected or not set');
-
-  logger.info('rollback in progress...');
-
-  return redis_client.get(cache_key+'-backup').then(cache => {
-    return redis_client.set(cache_key, cache).then(() => {
-      logger.info('rollback complete');
-      return cache;
-    });
-  });
 };
 
 Server.prototype.verifyCache = function (template = {}) {
@@ -311,12 +274,9 @@ Server.prototype.notifyVerbose = function (content, opts = {}) {
 };
 
 Server.prototype.awaitReady = function () {
-  const { cache_key, notification_channel } = this;
+  const { notification_channel } = this;
 
   const promises = [];
-
-  if (cache_key)
-    promises.push(this.awaitCacheReady());
 
   if (notification_channel)
     promises.push(this.awaitNotificationReady());
