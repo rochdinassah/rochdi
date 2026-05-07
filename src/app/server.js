@@ -17,9 +17,9 @@ const TimerManager = require('../manager/timer');
 const { WebSocketServer, WebSocket } = ws;
 const { ServerResponse } = http;
 
-const { PWD, DISCORD_BOT_TOKEN } = process.env;
+const { DISCORD_BOT_TOKEN } = process.env;
 
-const CACHE_DIR_PATH = PWD+'/cache';
+const CACHE_DIR_PATH = process.cwd()+'/cache';
 const CACHE_FILE_PATH = CACHE_DIR_PATH+'/backup.json';
 const CACHE_GITIGNORE_FILE_PATH = CACHE_DIR_PATH+'/.gitignore';
 
