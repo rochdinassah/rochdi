@@ -221,6 +221,22 @@ global.awaitInternet = function () {
   });
 };
 
+global.getIp = function () {
+  return new Promise(resolve => {
+    function cb(err, ip) {
+      resolve(err ? false : ip);
+    }
+    const http2_client = new(require('./http-client'))({ retry_on_error: false, keepalive: false });
+    return http2_client.get('https://checkip.amazonaws.com').then(res => {
+      const { status_code, data } = res;
+      if (200 !== status_code)
+        return false;
+      http2_client.close();
+      cb(null, data.replace(/[\s\n]/g, ''));
+    }).catch(cb);
+  });
+};
+
 // PROCESS EXIT START
 const exit_cb = [];
 const signals = ['INT', 'HUP', 'TERM', 'QUIT', 'USR1', 'USR2'];
