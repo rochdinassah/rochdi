@@ -8,5 +8,5 @@ http2_client.get('https://checkip.amazonaws.com')
   if (200 !== status_code)
     throw new Error('ip: request error, http('+status_code+')');
   log(data.replace(/[\s\n]/g, ''));
-  http2_client.destroy();
+  http2_client.close();
 });

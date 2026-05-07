@@ -24,6 +24,10 @@ class HttpClient extends EventEmitter {
     this.user_agent = user_agent ?? DEFAULT_USER_AGENT;
   }
 
+  close() {
+    this.logger.verbose('closed');
+  }
+
   updateCipher(cipher) {
     if (cipher)
       tls.DEFAULT_CIPHERS = cipher;

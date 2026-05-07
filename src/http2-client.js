@@ -24,9 +24,11 @@ class Http2Client extends Base {
     this.sessions = new Map();
   }
 
-  destroy() {
-    for (const session of this.sessions.values())
+  close() {
+    const { sessions, logger } = this;
+    for (const session of sessions.values())
       session.destroy();
+    logger.verbose('closed');
   }
 
   ensureSession(authority, opts = {}) {

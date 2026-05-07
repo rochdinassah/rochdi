@@ -67,7 +67,7 @@ class ApiManager extends EventEmitter {
   }
 
   close() {
-    http2_client.destroy();
+    http2_client.close();
   }
 
   fetchMe(attempt = 1) {

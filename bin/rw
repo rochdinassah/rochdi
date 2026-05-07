@@ -28,7 +28,7 @@ function fetchIp(retry_on_error) {
       'user-agent': 'curl'
     }
   }).then(res => {
-    http2_client.destroy();
+    http2_client.close();
     const { status_code, data } = res;
     if (200 === status_code)
       return data.replace(/[\s\n]/g, '');
