@@ -14,7 +14,7 @@ const logger = new Logger({ prefix: 'ra' });
 const http_client = new HttpClient({ logger, retry_on_error: true });
 
 function getIp() {
-  return http_client.get('http://rochdi.ddns.net/MyIp').then(res => {
+  return http_client.get('http://rochdi.ddns.net/MyIp', { timeout: 2**13 }).then(res => {
     return res.data;
   });
 }
@@ -27,10 +27,8 @@ getIp().then(curr_ip => {
   execSync('adb shell cmd connectivity airplane-mode disable');
   asyncDelay(2**10).then(() => {
     awaitInternet().then(() => {
-      asyncDelay(2**10).then(() => {
-        getIp().then(new_ip => {
-          logger[curr_ip !== new_ip ? 'info' : 'error']('rotation complete (%s) | IP: %s', endTimer(), new_ip);
-        });
+      getIp().then(new_ip => {
+        logger[curr_ip !== new_ip ? 'info' : 'error']('rotation complete (%s) | IP: %s', endTimer(), new_ip);
       });
     });
   });
