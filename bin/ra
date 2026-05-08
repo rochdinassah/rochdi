@@ -13,12 +13,6 @@ const { execSync } = child_process;
 const logger = new Logger({ prefix: 'ra' });
 const http_client = new HttpClient({ logger, retry_on_error: true });
 
-function getIp() {
-  return http_client.get('http://rochdi.ddns.net/MyIp', { timeout: 2**13 }).then(res => {
-    return res.data;
-  });
-}
-
 startTimer();
 logger.verbose('rotating android...');
 
