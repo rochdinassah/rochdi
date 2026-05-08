@@ -26,7 +26,7 @@ class TimerManager {
     this.map.set(label, timeout_obj.unref());
   }
 
-  clear() {
+  close() {
     const { map } = this;
     map.forEach(clearTimeout);
     map.clear();
