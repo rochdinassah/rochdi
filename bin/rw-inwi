@@ -20,21 +20,6 @@ const pass = env.WIFI_ROUTER_PASS || exit('rw: WIFI_ROUTER_PASS env is missing')
 
 const gateway_url = 'http://192.168.1.2';
 
-function fetchIp(retry_on_error) {
-  return http2_client.get('https://ifconfig.me', {
-    retry_on_error: false,
-    timeout: 2**12,
-    headers: {
-      'user-agent': 'curl'
-    }
-  }).then(res => {
-    http2_client.close();
-    const { status_code, data } = res;
-    if (200 === status_code)
-      return data.replace(/[\s\n]/g, '');
-  }).catch(noop);
-}
-
 function getSessionId() {
   return http_client.get(gateway_url+'/cgi-bin/ajax?ajaxmethod=get_refresh_sessionid').then(res => {
     const { status_code, data } = res;
@@ -67,7 +52,7 @@ function login(user, pass, session_id) {
 void async function () {
   logger.debug('rebooting');
   
-  const curr_ip = await fetchIp();
+  const curr_ip = await getIp();
 
   if (curr_ip)
     logger.debug('curr ip: %s', curr_ip);
@@ -86,7 +71,7 @@ void async function () {
         startTimer('Reboot');
         logger.debug('reboot command sent, awaiting for internet...');
         return awaitInternet().then(() => {
-          fetchIp(true).then(ip => logger.debug('reboot complete, ip: %s (%s)', ip, endTimer('Reboot')));
+          getIp(true).then(ip => logger.debug('reboot complete, ip: %s (%s)', ip, endTimer('Reboot')));
         });
       });
     });
