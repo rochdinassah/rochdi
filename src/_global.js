@@ -62,8 +62,12 @@ global.probabilityCallback = function (percentage, callback, ...args) {
     callback(...args);
 };
 
+const TIMEOUT_MAX_VAL = 2**32/2-1;
+
 global.asyncDelay = function (ms) {
-  return !ms ? Promise.resolve() : new Promise(resolve => setTimeout(resolve, Math.min(ms, 2**32/2-1)));
+  if ('number' !== typeof ms || 1 > ms)
+    return Promise.resolve();
+  return new Promise(resolve => setTimeout(resolve, Math.min(ms, TIMEOUT_MAX_VAL)));
 };
 
 global.formatNumber = new Intl.NumberFormat().format;
@@ -201,12 +205,10 @@ global.rand = function (min, max) {
   return Math.floor(min+((1+max-min)*Math.random()));
 };
 
-global.hasInternetAccess = function () {
+global.checkInternet = function () {
   return new Promise(resolve => {
     http2.connect('https://google.com')
-      .on('error', () => {
-        resolve(false);
-      })
+      .on('error', () => resolve(false))
       .on('connect', function () {
         this.destroy();
         resolve(true);
@@ -215,8 +217,8 @@ global.hasInternetAccess = function () {
 };
 
 global.awaitInternet = function () {
-  return hasInternetAccess().then(has_access => {
-    if (!has_access)
+  return checkInternet().then(ok => {
+    if (!ok)
       return new Promise(resolve => setTimeout(() => resolve(awaitInternet()), 4e3));
   });
 };
@@ -234,6 +236,15 @@ global.getIp = function () {
       http2_client.close();
       cb(null, data.replace(/[\s\n]/g, ''));
     }).catch(cb);
+  });
+};
+
+global.awaitIpChange = function (curr_ip) {
+  return awaitInternet().then(getIp).then(ip => {
+    log(ip, curr_ip === ip);
+    if (curr_ip === ip)
+      return asyncDelay(4e3).then(awaitIpChange.bind(void 0, curr_ip));
+    return ip;
   });
 };
 
