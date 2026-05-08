@@ -228,7 +228,7 @@ global.getIp = function () {
     function cb(err, ip) {
       resolve(err ? false : ip);
     }
-    const http2_client = new(require('./http-client'))({ retry_on_error: false });
+    const http2_client = new(require('./http-client'))({ retry_on_error: true });
     return http2_client.get('https://checkip.amazonaws.com').then(res => {
       const { status_code, data } = res;
       if (200 !== status_code)
@@ -239,12 +239,18 @@ global.getIp = function () {
   });
 };
 
-global.awaitIpChange = function (curr_ip) {
-  return awaitInternet().then(getIp).then(ip => {
-    log(ip, curr_ip === ip);
-    if (curr_ip === ip)
-      return asyncDelay(4e3).then(awaitIpChange.bind(void 0, curr_ip));
-    return ip;
+global.awaitIpChange = function (curr_ip, timeout) {
+  return new Promise(async resolve => {
+    let ip = curr_ip;
+    let aborted, timeout_id;
+
+    if (timeout)
+      timeout_id = setTimeout(() => aborted = true, timeout);
+    
+    while (ip === curr_ip && !aborted)
+      ip = await getIp().then(ip => asyncDelay(2**10).then(() => ip));
+    
+    resolve(ip === curr_ip ? false : ip);
   });
 };
 
