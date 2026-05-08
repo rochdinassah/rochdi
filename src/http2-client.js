@@ -12,14 +12,13 @@ class Http2Client extends Base {
   constructor(opts = {}) {
     super();
 
-    const { logger, retry_on_error, timeout, ping_interval, user_agent, keepalive } = opts;
+    const { logger, retry_on_error, timeout, ping_interval, user_agent } = opts;
 
     this.logger = logger ?? new Logger.SilentLogger();
     this.retry_on_error = retry_on_error ?? this.retry_on_error;
     this.timeout = timeout;
     this.ping_interval = ping_interval ?? 59e3;
     this.user_agent = user_agent ?? this.user_agent;
-    this.keepalive = keepalive ?? true;
 
     this.sessions = new Map();
   }
@@ -65,7 +64,7 @@ class Http2Client extends Base {
   _request(method, url_string, opts = {}) {
     return new Promise((resolve, reject) => {
       const { protocol, hostname, pathname, search } = new URL(url_string);
-      const { body, cipher, keepalive } = opts;
+      const { body, cipher } = opts;
 
       const path = pathname+search;
 
@@ -122,11 +121,7 @@ class Http2Client extends Base {
 
     logger.warn('request error: "%s", retrying...', args[1]);
 
-    if (!ready || closed || destroyed) {
-      this.awaitSession(authority).then(retry.bind(this));
-    } else {
-      asyncDelay(rand(2**11, 2**12)).then(retry.bind(this));
-    }
+    asyncDelay(rand(2**12, 2**13)).then(retry.bind(this));
   }
 
   onSessionError(session, error) {
@@ -135,21 +130,13 @@ class Http2Client extends Base {
   }
 
   onSessionClose(session) {
-    const { logger, keepalive } = this;
+    const { logger } = this;
     const { ctime, ping_interval_id, authority } = session;
 
     session.ready = false;
-
+    
     clearInterval(ping_interval_id);
     logger.debug('session close: %s', formatDuration(new Date()-(ctime ?? new Date()-1)));
-
-    if (keepalive) {
-      const retry_timeout = rand(2**11, 2**12);
-      logger.debug('reconnection in %s', formatDuration(retry_timeout));
-      asyncDelay(retry_timeout).then(() => {
-        this.ensureSession(authority);
-      });
-    }
   }
 
   onSessionConnect(session) {

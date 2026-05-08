@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const http2_client = (new(require('../').Http2Client)({ retry_on_error: 2**8, keepalive: false }));
+const http2_client = (new(require('../').Http2Client)({ retry_on_error: 2**8 }));
 
 http2_client.get('https://checkip.amazonaws.com')
 .then(res => {
