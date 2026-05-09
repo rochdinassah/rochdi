@@ -56,7 +56,7 @@ void async function () {
 
   if (curr_ip)
     logger.debug('curr ip: %s', curr_ip);
-
+  
   return getSessionId().then(session_id => {
     return login(user, pass, session_id).then(async session_id => {
       const options = {

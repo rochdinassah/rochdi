@@ -250,7 +250,7 @@ global.awaitIpChange = function (curr_ip, timeout) {
     while (ip === curr_ip && !aborted)
       ip = await getIp().then(ip => asyncDelay(2**10).then(() => ip));
     
-    resolve(ip === curr_ip ? false : ip);
+    resolve(ip === curr_ip ? awaitInternet().then(Boolean) : ip);
   });
 };
 
