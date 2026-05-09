@@ -131,7 +131,7 @@ class Client extends EventEmitter {
 
   onRestartRequestMessage(data) {
     this.restart(data.reason, data.delay);
-  };
+  }
 
   onStopRequestMessage(data) {
     this.stop(data.reason, data.delay);

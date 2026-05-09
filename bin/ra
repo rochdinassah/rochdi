@@ -5,13 +5,10 @@
 'use strict';
 
 const rochdi = require('../main');
-const child_process = require('node:child_process');
 
-const { Logger, HttpClient } = rochdi;
-const { execSync } = child_process;
+const { Logger } = rochdi;
 
 const logger = new Logger({ prefix: 'ra' });
-const http_client = new HttpClient({ logger, retry_on_error: true });
 
 startTimer();
 logger.verbose('rotating android...');
@@ -20,10 +17,8 @@ getIp().then(curr_ip => {
   execSync('adb shell cmd connectivity airplane-mode enable');
   execSync('adb shell cmd connectivity airplane-mode disable');
   asyncDelay(2**10).then(() => {
-    awaitInternet().then(() => {
-      getIp().then(new_ip => {
-        logger[curr_ip !== new_ip ? 'info' : 'error']('rotation complete (%s) | IP: %s', endTimer(), new_ip);
-      });
+    awaitIpChange(curr_ip, 2**13).then(new_ip => {
+      logger[new_ip ? 'info' : 'error']('rotation complete (%s) | IP: %s', endTimer(), new_ip);
     });
   });
 });

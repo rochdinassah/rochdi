@@ -158,7 +158,7 @@ const NUMBERS = '0123456789';
 global.randomString = function (size, opts = {}) {
   const { use_numbers, extra } = opts;
 
-  const characters = [ ...LOWERCASE, ...UPPERCASE ];
+  const characters = [...LOWERCASE, ...UPPERCASE];
 
   if (use_numbers ?? true)
     characters.push(...NUMBERS);
