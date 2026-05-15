@@ -29,7 +29,6 @@ class Client extends EventEmitter {
     this.seq = 0;
 
     this.on('Ping', this.onPing);
-
     this.on('RestartRequestMessage', this.onRestartRequestMessage);
     this.on('StopRequestMessage', this.onStopRequestMessage);
 
@@ -38,6 +37,9 @@ class Client extends EventEmitter {
   }
 
   run() {
+    if (this.ready)
+      return Promise.resolve();
+    
     return new Promise(resolve => {
       const conn = this.connection = new WebSocket(this.address);
 
