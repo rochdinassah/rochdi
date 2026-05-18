@@ -10,15 +10,34 @@ const { Logger } = rochdi;
 
 const logger = new Logger({ prefix: 'ra' });
 
-startTimer();
+async function ensureMobileData() {
+  let state;
+  try {
+    if ('enabled' === String(execSync('adb shell cmd connectivity airplane-mode')).trim())
+      execSync('adb shell cmd connectivity airplane-mode disable')
+  } catch {}
+  try {
+    state = Boolean(Number(execSync('adb shell settings get global mobile_data 2>/dev/null')));
+  } catch {}
+  if (false === state) {
+    await new Promise(resolve => {
+      exec('adb shell settings put global mobile_data 1');
+    });
+  }
+  return awaitInternet();
+}
+
 logger.verbose('rotating android...');
 
-getIp().then(curr_ip => {
-  execSync('adb shell cmd connectivity airplane-mode enable');
-  execSync('adb shell cmd connectivity airplane-mode disable');
-  asyncDelay(2**10).then(() => {
-    awaitIpChange(curr_ip, 2**13).then(new_ip => {
-      logger[new_ip ? 'info' : 'error']('rotation complete (%s) | IP: %s', endTimer(), new_ip);
+startTimer();
+ensureMobileData().then(() => {
+  getIp().then(curr_ip => {
+    execSync('adb shell cmd connectivity airplane-mode enable');
+    execSync('adb shell cmd connectivity airplane-mode disable');
+    asyncDelay(2**10).then(() => {
+      awaitIpChange(curr_ip, 2**13).then(new_ip => {
+        logger[new_ip ? 'info' : 'error']('rotation complete (%s) | IP: %s', endTimer(), new_ip);
+      });
     });
   });
 });

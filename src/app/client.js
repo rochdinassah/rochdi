@@ -66,7 +66,7 @@ class Client extends EventEmitter {
       connection.close(1000);
     });
   }
-
+  
   onError(err) {
     this.logger.warn('connection error, code: %s', err.code);
     this.emit('Error');

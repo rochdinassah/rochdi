@@ -2,8 +2,6 @@
 
 'use strict';
 
-const timers = require('node:timers');
-
 function timeout_cb(label, cb, args) {
   this.delete(label);
   cb(...args);
