@@ -14,28 +14,34 @@ class NetworkManager extends StateManager {
     this.logger = logger ?? new Logger({ prefix: 'network-manager' });
   }
 
-  getConnections(opts = {}) {
+  exec(command) {
     return new Promise(resolve => {
-      const { active } = opts;
-
-      const args = [];
-
-      if (active)
-        args.push('--active');
-
-      exec('nmcli -t -f UUID,TYPE,NAME c s '+args.join(' '), (err, stdout, stderr) => {
-        if (err)
-          return resolve([]);
-        const list = stdout.trim().split(/\n/).map(v => {
-          const [uuid, type,name] = v.split(':');
-          return {
-            uuid,
-            type,
-            name
-          }
-        });
-        resolve(list.filter(connection => 'loopback' !== connection.type));
+      exec(command, (err, stdout, stderr) => {
+        resolve(err ? void 0 : stdout.trim());
       });
+    });
+  }
+
+  getConnections(opts = {}) {
+    const { active } = opts;
+
+    const args = [];
+
+    if (active)
+      args.push('--active');
+
+    return this.exec('nmcli -t -f UUID,TYPE,NAME c s '+args.join(' ')).then(out => {
+      if (!out)
+        return [];
+      const list = stdout.trim().split(/\n/).map(v => {
+        const [uuid, type,name] = v.split(':');
+        return {
+          uuid,
+          type,
+          name
+        }
+      });
+      return list.filter(connection => 'loopback' !== connection.type);
     });
   }
 
@@ -62,21 +68,19 @@ class NetworkManager extends StateManager {
   }
 
   getState(type = 'wifi') {
-    return new Promise(resolve => {
-      exec('nmcli -t -f TYPE,STATE d s', (err, stdout, stderr) => {
-        if (err)
-          return -1;
-        const list = stdout.trim().split(/\n/).map(v => {
-          const [type, state] = v.split(':');
-          return {
-            type,
-            state
-          };
-        });
-        const connection = list.find(connection => type === connection.type);
-        const state = connection ? 'connected' === connection.state ? 1 : 0 : -1;
-        resolve(state);
+    return this.exec('nmcli -t -f TYPE,STATE d s').then(out => {
+      if (out)
+        return -1;
+      const list = stdout.trim().split(/\n/).map(v => {
+        const [type, state] = v.split(':');
+        return {
+          type,
+          state
+        };
       });
+      const connection = list.find(connection => type === connection.type);
+      const state = connection ? 'connected' === connection.state ? 1 : 0 : -1;
+      return state;
     });
   }
 
@@ -108,6 +112,25 @@ class NetworkManager extends StateManager {
 
   disconnect() {
     return this._disconnect();
+  }
+
+  rotateAndroid() {
+    const { logger } = this;
+    return this.exec('adb shell cmd connectivity airplane-mode').then(async enabled => {
+      if (Boolean(Number(enabled)))
+        await this.exec('adb shell cmd connectivity airplane-mode disable');
+      return this.exec('adb shell settings get global mobile_data').then(async enabled => {
+        if (!Boolean(Number(enabled)))
+          await this.exec('adb shell settings put global mobile_data 1');
+        return this.exec('adb shell cmd connectivity airplane-mode enable').then(() => {
+          return this.exec('adb shell cmd connectivity airplane-mode disable').then(() => {
+            return asyncDelay(2**10).then(awaitInternet).then(() => {
+              logger.info('rotation ok | %s', endTimer('Rotation'));
+            });
+          });
+        });
+      });
+    });
   }
 }
 
