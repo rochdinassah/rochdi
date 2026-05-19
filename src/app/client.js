@@ -15,11 +15,12 @@ class Client extends EventEmitter {
   constructor(address, opts = {}) {
     super();
 
-    const { reconnect, manual } = opts;
+    const { ping_interval, reconnect, manual } = opts;
 
     const logger = this.logger = opts.logger ?? new Logger.SilentLogger();
 
     this.ready = false;
+    this.ping_interval = ping_interval ?? 2**16;
     this.reconnect = reconnect ?? true;
     this.address = address;
     this.command_manager = new CommandManager();
@@ -85,6 +86,8 @@ class Client extends EventEmitter {
   }
 
   onOpen() {
+    const { timer_manager, ping_interval } = this;
+    timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
     this.ready = true;
     this.logger.verbose('connection open');
     this.emit('Open');
@@ -95,8 +98,8 @@ class Client extends EventEmitter {
     this.emit(t, d);
   }
   
-  onPing() {
-    this.connection.sendMessage('Pong');
+  onPing(msg) {
+    this.reply(msg.seq);
   }
 
   sendMessage(type, data = {}, cb) {
@@ -112,6 +115,12 @@ class Client extends EventEmitter {
 
   reply(seq, data) {
     this.sendMessage('Reply::'+seq, data);
+  }
+
+  ping() {
+    const { timer_manager, ping_interval } = this;
+    timer_manager.setTimeout('DeadConnection', this.close.bind(this, 1009, 'dead server'), Math.floor(ping_interval));
+    this.sendMessage('Ping', {}, timer_manager.cancel.bind(timer_manager, 'DeadConnection'));
   }
 
   stop(reason, delay) {

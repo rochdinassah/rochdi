@@ -36,7 +36,7 @@ class Server extends WebSocketServer {
     
     this.port = port;
     this.notification_channel = notification_channel;
-    this.ping_interval = ping_interval ?? 3e4;
+    this.ping_interval = ping_interval ?? 2**15;
     this.http_server = http_server;
 
     this.routes = [];
@@ -59,8 +59,8 @@ class Server extends WebSocketServer {
       this.notification_manager.connect();
 
     this.on('connection', this[Symbol.for('onConnection')]);
-    this.on('Pong', this.onPong);
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
+    this.on('Ping', this.onPing);
 
     this.initCache();
   }
@@ -70,6 +70,10 @@ class Server extends WebSocketServer {
     client.sendMessage('EchoRequestMessage', { value: randomString(4) }, reply => {
       log('client reply:', reply);
     });
+  }
+
+  onPing(client, data) {
+    client.reply(data.seq);
   }
 }
 
@@ -101,11 +105,14 @@ Server.prototype.close = function () {
 };
 
 Server.prototype.pingClients = function () {
-  const { clients } = this;
+  const { clients, timer_manager, ping_interval } = this;
   clients.forEach(client => {
-    if (!client.resolved_ping)
-      return client.close(1009, 'unresponsive connection');
-    client.ping();
+    timer_manager.setTimeout(
+      'DeadConnection::'+client.id,
+      client.close.bind(client, 1009, 'dead client'),
+      Math.floor(ping_interval)
+    );
+    client.ping().then(timer_manager.cancel.bind(timer_manager, 'DeadConnection::'+client.id));
   });
 };
 
@@ -149,10 +156,6 @@ Server.prototype.awaitSafeState = function () {
   return this.state_manager.awaitSafeState(...arguments);
 };
 
-Server.prototype.onPong = function (client, data) {
-  client.resolved_ping = true;
-};
-
 Server.prototype[Symbol.for('onRequest')] = function (req, res) {
   const { method, url } = req;
   const path = new URL('http://127.1'+url).pathname.trim('/');
@@ -167,7 +170,6 @@ Server.prototype[Symbol.for('onConnection')] = function (client) {
   const { clients, logger } = this;
 
   client.id = this.clients_counter++;
-  client.resolved_ping = 'n/a';
   client.alive = true;
 
   clients.set(client.id, client);
@@ -301,8 +303,9 @@ WebSocket.prototype.sendMessage = function (type, data = {}, cb) {
 };
 
 WebSocket.prototype.ping = function () {
-  this.resolved_ping = false;
-  this.sendMessage('Ping');
+  return new Promise(resolve => {
+    this.sendMessage('Ping', {}, resolve);
+  });
 };
 
 WebSocket.prototype.reply = function (seq, data) {
