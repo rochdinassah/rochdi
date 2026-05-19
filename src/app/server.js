@@ -13,6 +13,7 @@ const Http2Client = require('../http2-client');
 const Discord = require('../discord');
 const NotificationManager = require('./manager/notification');
 const TimerManager = require('../manager/timer');
+const NetworkManager = require('../manager/network');
 
 const { WebSocketServer, WebSocket } = ws;
 const { ServerResponse } = http;
@@ -52,7 +53,8 @@ class Server extends WebSocketServer {
     this.command_manager = new CommandManager();
     this.notification_manager = new NotificationManager(this);
     this.timer_manager = new TimerManager();
-
+    this.network_manager = new NetworkManager({ logger });
+    
     if (notification_channel)
       this.notification_manager.connect();
 

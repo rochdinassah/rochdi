@@ -9,6 +9,7 @@ const CommandManager = require('../manager/command');
 const HttpClient = require('../http-client');
 const Http2Client = require('../http2-client');
 const TimerManager = require('../manager/timer');
+const NetworkManager = require('../manager/network');
 
 class Client extends EventEmitter {
   constructor(address, opts = {}) {
@@ -25,6 +26,7 @@ class Client extends EventEmitter {
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger });
     this.timer_manager = new TimerManager();
+    this.network_manager = new NetworkManager({ logger });
 
     this.seq = 0;
 
