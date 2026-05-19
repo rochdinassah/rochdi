@@ -8,8 +8,8 @@ const rochdi = require('../main');
 
 const mode = String(process.argv[2]);
 
-if ('wifi' !== mode && 'data' !== mode)
-  exit('switch <mode> must be either "data" or "wifi", "%s" is given', mode);
+if ('wifi' !== mode && 'ethernet' !== mode)
+  exit('switch <mode> must be either "ethernet" or "wifi", "%s" is given', mode);
 
 function getConnectionUUID(search_obj = {}) {
   return new Promise(resolve => {
@@ -67,7 +67,7 @@ return getEthernetUUID().then(ethernet_uuid => {
     if ('wifi' === mode) {
       disconnect(ethernet_uuid);
       connect(wifi_uuid);
-    } else if ('data' === mode) {
+    } else if ('ethernet' === mode) {
       disconnect(wifi_uuid);
       connect(ethernet_uuid);
     }
