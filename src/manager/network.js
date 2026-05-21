@@ -116,6 +116,7 @@ class NetworkManager extends StateManager {
 
   rotateAndroid() {
     const { logger } = this;
+    startTimer('Rotation');
     return this.exec('adb shell cmd connectivity airplane-mode').then(async enabled => {
       if (Boolean(Number(enabled)))
         await this.exec('adb shell cmd connectivity airplane-mode disable');
