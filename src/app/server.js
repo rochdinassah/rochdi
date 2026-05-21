@@ -333,6 +333,8 @@ ServerResponse.prototype.send = function (data, headers = {}) {
   if ('object' === typeof data)
     data = JSON.stringify(data);
 
-  this.end(data);
-  return this;
+  return (
+    this.end(),
+    this
+  );
 };

@@ -33,7 +33,7 @@ class NetworkManager extends StateManager {
     return this.exec('nmcli -t -f UUID,TYPE,NAME c s '+args.join(' ')).then(out => {
       if (!out)
         return [];
-      const list = stdout.trim().split(/\n/).map(v => {
+      const list = out.trim().split(/\n/).map(v => {
         const [uuid, type,name] = v.split(':');
         return {
           uuid,
@@ -69,9 +69,9 @@ class NetworkManager extends StateManager {
 
   getState(type = 'wifi') {
     return this.exec('nmcli -t -f TYPE,STATE d s').then(out => {
-      if (out)
+      if (!out)
         return -1;
-      const list = stdout.trim().split(/\n/).map(v => {
+      const list = out.trim().split(/\n/).map(v => {
         const [type, state] = v.split(':');
         return {
           type,
@@ -102,7 +102,7 @@ class NetworkManager extends StateManager {
 
   connect(type = 'wifi') {
     return this.getState(type).then(connected => {
-      if (connected)
+      if (1 === connected)
         return;
       return this._disconnect().then(() => {
         return this.getConnection(type).then(this._connect.bind(this));
