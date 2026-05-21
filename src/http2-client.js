@@ -50,7 +50,7 @@ class Http2Client extends Base {
       sessions.set(session.key, session);
     }
 
-    return session.ready || session.connecting ? Promise.resolve(session) : this.awaitSession(authority);
+    return session.ready ? Promise.resolve(session) : this.awaitSession(authority);
   }
 
   ensureSessions(authorities) {
