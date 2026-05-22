@@ -5,6 +5,7 @@
 const Base = require('./http-client');
 const http2 = require('node:http2');
 const Logger = require('./logger');
+const TimerManager = require('./manager/timer');
 
 const PING_BUFF = Buffer.from('        ');
 
@@ -19,22 +20,28 @@ class Http2Client extends Base {
     this.timeout = timeout;
     this.ping_interval = ping_interval ?? 59e3;
     this.user_agent = user_agent ?? this.user_agent;
+    this.timer_manager = new TimerManager();
 
     this.sessions = new Map();
   }
 
   close() {
-    const { sessions, logger } = this;
+    const { logger, sessions, timer_manager } = this;
+    timer_manager.close();
     for (const session of sessions.values())
       session.destroy();
     logger.verbose('closed');
   }
 
-  ensureSession(authority, opts = {}) {
+  ensureSession(url_string, opts = {}) {
+    const { logger, sessions, timer_manager } = this;
+    const { hostname, protocol } = new URL(url_string);
     const { cipher } = opts;
-    const { sessions } = this;
+
+    const authority = protocol+'//'+hostname;
 
     let session = sessions.get(authority);
+
     if (!session || session.closed || session.destroyed || cipher !== session.cipher) {
       this.updateCipher(cipher);
       this.resetCipher(cipher, void(session = http2.connect(authority)));
@@ -50,20 +57,51 @@ class Http2Client extends Base {
       sessions.set(session.key, session);
     }
 
-    return session.ready ? Promise.resolve(session) : this.awaitSession(authority);
+    if (session.ready)
+      return Promise.resolve(session);
+
+    timer_manager.setInterval('SessionInsurance::'+authority+'::'+cipher, () => {
+      session = sessions.get(authority);
+
+      log('called');
+
+      if (session) {
+        session.removeAllListeners();
+        session.destroy();
+        sessions.delete(session.key);
+      }
+
+      this.updateCipher(cipher);
+      this.resetCipher(cipher, void(session = http2.connect(authority)));
+
+      session.on('error', noop);
+      session.on('connect', this.onSessionConnect.bind(this, session));
+      session.on('connect', () => {
+        session.on('error', this.onSessionError.bind(this, session));
+        session.on('close', this.onSessionClose.bind(this, session));
+      });
+
+      session.cipher = cipher;
+      session.key = authority;
+      session.authority = authority;
+
+      sessions.set(session.key, session);
+    }, 2**13);
+
+    return this.awaitSession(authority, cipher);
   }
 
   ensureSessions(authorities) {
     return Promise.all(authorities.map(this.ensureSession.bind(this)));;
   }
 
-  awaitSession(authority) {
-    return new Promise(resolve => this.once('SessionConnect::'+authority, resolve));
+  awaitSession(authority, cipher) {
+    return new Promise(resolve => this.once('SessionConnect::'+authority+'::'+cipher, resolve));
   }
 
   _request(method, url_string, opts = {}) {
     return new Promise((resolve, reject) => {
-      const { protocol, hostname, pathname, search } = new URL(url_string);
+      const { pathname, search } = new URL(url_string);
       const { body, cipher } = opts;
 
       const path = pathname+search;
@@ -71,10 +109,8 @@ class Http2Client extends Base {
       let headers = { ...opts.headers };
       
       this._parseUserAgent(headers);
-      
-      const authority = protocol+'//'+hostname;
 
-      this.ensureSession(authority, { cipher }).then(session => {
+      this.ensureSession(url_string, { cipher }).then(session => {
         try {
           var stream = session.request({ ':method': method, ':path': path, ...headers });
         } catch {
@@ -115,13 +151,17 @@ class Http2Client extends Base {
       return promise.reject('request error: "%s", '+error.code, args[1]);
 
     const { logger } = this;
-    const { ready, closed, destroyed, authority } = session;
+    const { ready, closed, destroyed, authority, cipher } = session;
 
     const retry = () => promise.resolve(this._request(...args));
 
     logger.warn('request error: "%s", retrying...', args[1]);
 
-    asyncDelay(rand(2**12, 2**13)).then(retry.bind(this));
+    session.close();
+    awaitInternet().then(() => {
+      this.ensureSession(args[1], cipher);
+      asyncDelay(2**11, 2**12).then(retry.bind(this));
+    });
   }
 
   onSessionError(session, error) {
@@ -140,17 +180,18 @@ class Http2Client extends Base {
   }
 
   onSessionConnect(session) {
-    const { authority } = session;
-    const { logger, ping_interval } = this;
+    const { authority, cipher } = session;
+    const { logger, ping_interval, timer_manager } = this;
 
     if (ping_interval)
       session.ping_interval_id = setInterval(this.pingSession.bind(this, session), ping_interval);
 
     session.ctime = new Date();
     session.ready = true;
-
+    
+    timer_manager.cancel('SessionInsurance::'+authority+'::'+cipher);
     logger.debug('session connect:', authority);
-    this.emit('SessionConnect::'+authority, session);
+    this.emit('SessionConnect::'+authority+'::'+cipher, session);
   }
 
   pingSession(session) {
