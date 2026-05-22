@@ -22,6 +22,8 @@ class HttpClient extends EventEmitter {
     this.retry_on_error = retry_on_error ?? true;
     this.timeout = timeout ?? 2**13;
     this.user_agent = user_agent ?? DEFAULT_USER_AGENT;
+
+    this.setMaxListeners(1/0);
   }
 
   close() {
