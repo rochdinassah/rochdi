@@ -27,7 +27,7 @@ class HttpClient extends EventEmitter {
   }
 
   close() {
-    this.logger.verbose('closed');
+    this.logger.verbose('http_client closed');
   }
 
   updateCipher(cipher) {

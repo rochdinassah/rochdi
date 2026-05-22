@@ -30,7 +30,7 @@ class Http2Client extends Base {
     timer_manager.close();
     for (const session of sessions.values())
       session.destroy();
-    logger.verbose('closed');
+    logger.verbose('http2_client closed');
   }
 
   ensureSession(url_string, opts = {}) {
