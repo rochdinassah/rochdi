@@ -62,9 +62,7 @@ class Http2Client extends Base {
 
     timer_manager.setInterval('SessionInsurance::'+authority+'::'+cipher, () => {
       session = sessions.get(authority);
-
-      log('called');
-
+      
       if (session) {
         session.removeAllListeners();
         session.destroy();
