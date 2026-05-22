@@ -334,7 +334,7 @@ ServerResponse.prototype.send = function (data, headers = {}) {
     data = JSON.stringify(data);
 
   return (
-    this.end(),
+    this.end(data),
     this
   );
 };
