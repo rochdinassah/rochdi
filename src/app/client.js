@@ -17,7 +17,7 @@ class Client extends EventEmitter {
 
     const { ping_interval, reconnect, manual } = opts;
 
-    const logger = this.logger = opts.logger ?? new Logger.SilentLogger();
+    const logger = this.logger = opts.logger ?? new Logger({ prefix: 'client' });
 
     this.ready = false;
     this.ping_interval = ping_interval ?? 2**16;

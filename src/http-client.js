@@ -18,7 +18,7 @@ class HttpClient extends EventEmitter {
 
     const { logger, retry_on_error, timeout, user_agent } = opts;
 
-    this.logger = logger ?? new Logger.SilentLogger();
+    this.logger = logger ?? new Logger({ prefix: 'http-client' });
     this.retry_on_error = retry_on_error ?? true;
     this.timeout = timeout ?? 2**13;
     this.user_agent = user_agent ?? DEFAULT_USER_AGENT;

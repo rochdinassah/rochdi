@@ -19,7 +19,7 @@ class Openai extends EventEmitter {
   constructor(opts = {}) {
     super();
     
-    const logger = this.logger = opts.logger ?? new Logger.SilentLogger();
+    const logger = this.logger = opts.logger ?? new Logger({ prefix: 'openai' });
 
     this.conversation_id = opts.conversation_id ?? conversation_id;
     this.http2_client = new Http2Client({ logger });

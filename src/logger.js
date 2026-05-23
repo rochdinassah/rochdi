@@ -3,32 +3,30 @@
 'use strict';
 
 module.exports = Logger;
-module.exports.SilentLogger = SilentLogger;
 
-const LEVELS = [['error', 31], ['info', 32], ['warn', 93], ['verbose', 94], ['debug', 35]];
-
-for (const [level, color] of LEVELS) {
-  Logger.prototype[level] = function (...args) {
-    const {silent, prefix, transport } = this;
-    if (silent)
-      return;
-    const msg = format(...args);
-    const data = format('\x1b[%dm%s \x1b[0m[%s] %s: %s', color, level.padRight(' '.repeat(7), 7), getTime(true), prefix, msg);
-    transport.write(data);
-  };
-  SilentLogger.prototype[level] = noop;
-}
-
-function SilentLogger() {}
+const LEVELS = [
+  ['debug', 35],
+  ['verbose', 94],
+  ['info', 32],
+  ['warn', 93],
+  ['error', 31]
+];
 
 function Logger(opts = {}) {
-  const { prefix, silent, errcb } = opts;
+  const { prefix, level, silent, errcb } = opts;
 
   this.prefix = prefix;
+  this.level = level ?? 'verbose';
   this.silent = silent;
   this.errcb = errcb;
 
-  this.transport = new Transport();
+  LEVELS.forEach(([l, color], i) => {
+    this[l] = silent || i < LEVELS.findIndex(l => level === l[0]) ? noop : function (...args) {
+      const msg = format(...args);
+      const data = format('\x1b[%dm%s \x1b[0m[%s] %s: %s', color, l.padRight(' '.repeat(7), 7), getTime(true), prefix, msg);
+      console.log(data);
+    }
+  });
 
   if (errcb)
     process.on('uncaughtException', this.onUncaughtException.bind(this));
@@ -51,9 +49,4 @@ Logger.prototype.onUncaughtException = function (err) {
   this.error('file: '+file);
 
   errcb(err);
-};
-
-function Transport() {}
-Transport.prototype.write = function (msg) {
-  console.log(msg);
 };

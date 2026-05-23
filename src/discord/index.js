@@ -34,7 +34,7 @@ class Discord extends EventEmitter {
     this.application_id = this.user_id;
     this.state = 'CLOSED';
 
-    this.logger = logger ?? new Logger.SilentLogger();
+    this.logger = logger ?? new Logger({ prefix: 'discord' });
 
     this.connection_manager = new ConnectionManager(this);
     this.api_manager = new ApiManager(this);

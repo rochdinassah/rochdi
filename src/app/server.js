@@ -32,7 +32,7 @@ class Server extends WebSocketServer {
 
     const { port, notification_channel, ping_interval, states } = opts;
 
-    const logger = this.logger = opts.logger || new Logger.SilentLogger();
+    const logger = this.logger = opts.logger || new Logger({ prefix: 'server' });
     
     this.port = port;
     this.notification_channel = notification_channel;

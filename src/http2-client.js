@@ -15,7 +15,7 @@ class Http2Client extends Base {
 
     const { logger, retry_on_error, timeout, ping_interval, user_agent } = opts;
 
-    this.logger = logger ?? new Logger.SilentLogger();
+    this.logger = logger ?? new Logger({ prefix: 'http2-client' });
     this.retry_on_error = retry_on_error ?? this.retry_on_error;
     this.timeout = timeout;
     this.ping_interval = ping_interval ?? 59e3;
