@@ -117,24 +117,34 @@ class NetworkManager extends StateManager {
   connect(type = 'wifi') {
     return this.getConnection('wifi' === type ? 'ethernet' : 'wifi').then(connection => {
       return this._disconnect(connection).then(() => {
-        return this.getConnection(type).then(this._connect.bind(this));
+        return this.getConnection(type).then(this._connect.bind(this)).then(async () => {
+          const unwanted_connection = await this.getConnection('wifi' === type ? 'ethernet' : 'wifi');
+          const wanted_connection = await this.getConnection(type);
+          if (!wanted_connection.active || unwanted_connection.active)
+            return this.connect(type);
+        });
       });
     });
   }
 
   rotateAndroid() {
     const { logger } = this;
+
     startTimer('Rotation');
-    return this.exec('adb shell cmd connectivity airplane-mode').then(async enabled => {
-      if (Boolean(Number(enabled)))
-        await this.exec('adb shell cmd connectivity airplane-mode disable');
-      return this.exec('adb shell settings get global mobile_data').then(async enabled => {
-        if (!Boolean(Number(enabled)))
-          await this.exec('adb shell settings put global mobile_data 1');
-        return this.exec('adb shell cmd connectivity airplane-mode enable').then(() => {
-          return this.exec('adb shell cmd connectivity airplane-mode disable').then(() => {
-            return asyncDelay(2**10).then(awaitInternet).then(() => {
-              logger.info('rotation ok | %s', endTimer('Rotation'));
+    logger.verbose('rotating android...');
+
+    return this.connect('ethernet').then(() => {
+      return this.exec('adb shell cmd connectivity airplane-mode').then(async enabled => {
+        if (Boolean(Number(enabled)))
+          await this.exec('adb shell cmd connectivity airplane-mode disable');
+        return this.exec('adb shell settings get global mobile_data').then(async enabled => {
+          if (!Boolean(Number(enabled)))
+            await this.exec('adb shell settings put global mobile_data 1');
+          return this.exec('adb shell cmd connectivity airplane-mode enable').then(() => {
+            return this.exec('adb shell cmd connectivity airplane-mode disable').then(() => {
+              return asyncDelay(2**10).then(awaitInternet).then(() => {
+                logger.info('android rotation ok | %s', endTimer('Rotation'));
+              });
             });
           });
         });
