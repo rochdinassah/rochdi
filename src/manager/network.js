@@ -22,23 +22,17 @@ class NetworkManager extends StateManager {
     });
   }
 
-  getConnections(opts = {}) {
-    const { active } = opts;
-
-    const args = [];
-
-    if (active)
-      args.push('--active');
-
-    return this.exec('nmcli -t -f UUID,TYPE,NAME c s '+args.join(' ')).then(out => {
+  getConnections(opts = {}) {    
+    return this.exec('nmcli -t -f UUID,TYPE,NAME,ACTIVE c s').then(out => {
       if (!out)
         return [];
       const list = out.trim().split(/\n/).map(v => {
-        const [uuid, type,name] = v.split(':');
+        const [uuid, type, name, active] = v.split(':');
         return {
           uuid,
           type,
-          name
+          name,
+          active: 'yes' === active
         }
       });
       return list.filter(connection => 'loopback' !== connection.type);
@@ -46,7 +40,11 @@ class NetworkManager extends StateManager {
   }
 
   getActiveConnections() {
-    return this.getConnections({ active: true });
+    return this.getConnections().then(connections => connections.filter(connection => connection.active));
+  }
+
+  getInactiveConnections() {
+    return this.getConnections().then(connections => connections.filter(connection => !connection.active));
   }
 
   getWifiConnection() {
@@ -61,57 +59,67 @@ class NetworkManager extends StateManager {
     });
   }
 
-  getConnection(type = 'wifi') {
-    if ('ethernet' === type)
-      return this.getEthernetConnection();
-    return this.getWifiConnection();
-  }
-
-  getState(type = 'wifi') {
-    return this.exec('nmcli -t -f TYPE,STATE d s').then(out => {
-      if (!out)
-        return -1;
-      const list = out.trim().split(/\n/).map(v => {
-        const [type, state] = v.split(':');
-        return {
-          type,
-          state
-        };
-      });
-      const connection = list.find(connection => type === connection.type);
-      const state = connection ? 'connected' === connection.state ? 1 : 0 : -1;
-      return state;
-    });
+  async getConnection(type = 'wifi') {
+    const connection = 'ethernet' === type ? await this.getEthernetConnection() : await this.getWifiConnection();
+    if (!connection)
+      return asyncDelay(2**12).then(this.getConnection.bind(this, type));
+    return connection;
   }
 
   _connect(connection) {
+    const { logger } = this;
+    
+    if (!connection || connection.active)
+      return Promise.resolve();
+
     return new Promise(resolve => {
-      exec(format('nmcli c u %s', connection.uuid), resolve);
+      logger.verbose('connecting to "%s"...', connection.type);
+      exec(format('nmcli c u %s', connection.uuid), () => {
+        logger.verbose('connected to "%s"', connection.type);
+        resolve();
+      });
     });
   }
 
-  _disconnect() {
-    return this.getActiveConnections().then(connections => {
-      return Promise.all(connections.map(connection => {
-        return new Promise(resolve => {
-          exec(format('nmcli c d %s', connection.uuid), resolve);
-        });
-      }));
+  _disconnect(connection) {
+    const { logger } = this;
+
+    if (!connection || !connection.active)
+      return Promise.resolve();
+
+    return new Promise(resolve => {
+      logger.verbose('disconnecting from "%s"...', connection.type);
+      exec(format('nmcli c d %s', connection.uuid), () => {
+        logger.verbose('disconnected from "%s"', connection.type);
+        resolve();
+      });
+    });
+  }
+
+  disconnect(type) {
+    const { logger } = this;
+
+    return this.getActiveConnections().then(async active_connections => {
+      if (!active_connections.length)
+        return;
+
+      const connections = !type ? active_connections : [];
+
+      if ('wifi' === type)
+        connections.push(await this.getWifiConnection());
+      else if ('ethernet' === type)
+        connections.push(await this.getEthernetConnection());
+
+      return Promise.all(connections.map(this._disconnect.bind(this)));
     });
   }
 
   connect(type = 'wifi') {
-    return this.getState(type).then(connected => {
-      if (1 === connected)
-        return;
-      return this._disconnect().then(() => {
+    return this.getConnection('wifi' === type ? 'ethernet' : 'wifi').then(connection => {
+      return this._disconnect(connection).then(() => {
         return this.getConnection(type).then(this._connect.bind(this));
       });
     });
-  }
-
-  disconnect() {
-    return this._disconnect();
   }
 
   rotateAndroid() {

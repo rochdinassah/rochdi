@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+
+'use strict';
+
+const rochdi = require('../main');
+
+const { NetworkManager } = rochdi;
+
+const mode = String(process.argv[2]);
+const network_manager = new NetworkManager();
+
+if ('wifi' === mode || 'ethernet' === mode)
+  network_manager.connect(mode);
+else
+  network_manager.disconnect();
