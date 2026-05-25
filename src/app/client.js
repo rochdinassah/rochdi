@@ -149,6 +149,26 @@ class Client extends EventEmitter {
   onStopRequestMessage(data) {
     this.stop(data.reason, data.delay);
   }
+
+  notify(content, opts) {
+    const { logger } = this;
+    return new Promise(resolve => {
+      this.sendMessage('NotificationRequestMessage', { content, opts }, reply => {
+        logger.verbose('notification sent');
+        resolve();
+      });
+    });
+  }
+
+  triggerNotification(content, opts) {
+    const { logger } = this;
+    return new Promise(resolve => {
+      this.sendMessage('TriggerNotificationRequestMessage', { content, opts }, reply => {
+        logger.verbose('notification triggered');
+        resolve();
+      });
+    });
+  }
 };
 
 module.exports = Client;

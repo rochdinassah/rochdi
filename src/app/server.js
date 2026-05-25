@@ -59,10 +59,16 @@ class Server extends WebSocketServer {
       this.notification_manager.connect();
 
     this.on('connection', this[Symbol.for('onConnection')]);
-    this.on('EchoRequestMessage', this.onEchoRequestMessage);
     this.on('Ping', this.onPing);
 
+    this.registerClientListeners();
     this.initCache();
+  }
+
+  registerClientListeners() {
+    this.on('EchoRequestMessage', this.onEchoRequestMessage);
+    this.on('NotificationRequestMessage', this.onNotificationRequestMessage);
+    this.on('TriggerNotificationRequestMessage', this.onTriggerNotificationRequestMessage);
   }
 
   onEchoRequestMessage(client, data) {
@@ -70,6 +76,17 @@ class Server extends WebSocketServer {
     client.sendMessage('EchoRequestMessage', { value: randomString(4) }, reply => {
       log('client reply:', reply);
     });
+  }
+
+  onNotificationRequestMessage(client, data) {
+    const { seq, content, opts } = data;
+    this.notify(content, opts).then(() => client.reply(seq));
+  }
+
+  onTriggerNotificationRequestMessage(client, data) {
+    const { timer_manager } = this;
+    const { seq, content, opts } = data;
+    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, content, opts), 2**12);
   }
 
   onPing(client, data) {
