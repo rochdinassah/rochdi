@@ -49,11 +49,7 @@ class NetworkManager extends StateManager {
 
   getWifiConnection() {
     return this.getConnections().then(connections => {
-      return connections.find(connection => [
-        'Fibre_MarocTelecom-0966-5GHz',
-        'Cafe COINOLA5G',
-        'Cafesalama'
-      ].includes(connection.name));
+      return connections.find(connection => 'Fibre_MarocTelecom-0966-5GHz' === connection.name);
     });
   }
 
@@ -117,7 +113,7 @@ class NetworkManager extends StateManager {
       return Promise.all(connections.map(this._disconnect.bind(this)));
     });
   }
-
+  
   connect(type = 'wifi') {
     return this.getConnection('wifi' === type ? 'ethernet' : 'wifi').then(connection => {
       return this._disconnect(connection).then(() => {
