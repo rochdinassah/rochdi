@@ -61,11 +61,11 @@ class Server extends WebSocketServer {
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Ping', this.onPing);
 
-    this.registerClientListeners();
+    this[Symbol.for('registerClientListeners')]();
     this.initCache();
   }
 
-  registerClientListeners() {
+  [Symbol.for('registerClientListeners')]() {
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
     this.on('NotificationRequestMessage', this.onNotificationRequestMessage);
     this.on('TriggerNotificationRequestMessage', this.onTriggerNotificationRequestMessage);
