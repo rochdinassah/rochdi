@@ -285,12 +285,12 @@ Server.prototype.notifyError = function (content, opts = {}) {
   return this.notification_manager.notify(content, { ...opts, level: 'error' });
 };
 
-Server.prototype.notifyInfo = function (content, opts = {}) {
-  return this.notification_manager.notify(content, { ...opts, level: 'info' });
-};
-
 Server.prototype.notifyWarn = function (content, opts = {}) {
   return this.notification_manager.notify(content, { ...opts, level: 'warn' });
+};
+
+Server.prototype.notifyInfo = function (content, opts = {}) {
+  return this.notification_manager.notify(content, { ...opts, level: 'info' });
 };
 
 Server.prototype.notifyVerbose = function (content, opts = {}) {

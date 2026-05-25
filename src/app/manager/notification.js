@@ -4,8 +4,8 @@
 
 const levels = {
   error: 0xE60B0B,
-  info: 0x02F00E,
   warn: 0xD0F002,
+  info: 0x02F00E,
   verbose: 0x0289F0
 };
 
