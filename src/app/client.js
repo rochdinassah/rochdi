@@ -71,13 +71,13 @@ class Client extends EventEmitter {
   }
   
   onError(err) {
-    this.logger.warn('connection error, code: %s', err.code);
+    // this.logger.debug('connection error, code: %s', err.code);
     this.emit('Error');
   }
 
   onClose(code, buff) {
     this.ready = false;
-    this.logger.verbose('connection close, code: %d, buff: %s', code, !buff.length ? 'unknown' : buff);
+    // this.logger.debug('connection close, code: %d, buff: %s', code, !buff.length ? 'unknown' : buff);
 
     if (![1000, 1001].includes(code) && this.reconnect)
       setTimeout(this.run.bind(this), rand(1e3, 3e3));
@@ -86,10 +86,10 @@ class Client extends EventEmitter {
   }
 
   onOpen() {
-    const { timer_manager, ping_interval } = this;
-    timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
+    const { logger, timer_manager, ping_interval } = this;
     this.ready = true;
-    this.logger.verbose('connection open');
+    timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
+    logger.verbose('connection open');
     this.emit('Open');
   }
 
