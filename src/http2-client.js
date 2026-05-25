@@ -174,7 +174,7 @@ class Http2Client extends Base {
     session.ready = false;
     
     clearInterval(ping_interval_id);
-    logger.debug('session close: %s', formatDuration(new Date()-(ctime ?? new Date()-1)));
+    logger.debug('session close (%s) | %s', authority, formatDuration(new Date()-(ctime ?? new Date()-1)));
   }
 
   onSessionConnect(session) {
