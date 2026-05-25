@@ -86,7 +86,7 @@ class Server extends WebSocketServer {
   onTriggerNotificationRequestMessage(client, data) {
     const { timer_manager } = this;
     const { seq, content, opts } = data;
-    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, content, opts), 2**12);
+    this.triggerNotification(content, opts).then(() => client.reply(seq));
   }
 
   onPing(client, data) {
@@ -273,9 +273,12 @@ Server.prototype.awaitNotificationReady = function () {
   return new Promise(resolve => this.once('NotificationReady', resolve));
 };
 
-// issue notification
 Server.prototype.notify = function (content, opts = {}) {
-  return this.notification_manager.notify(content, opts);
+  return this.notification_manager.notify(content, { level: 'verbose', ...opts });
+};
+
+Server.prototype.triggerNotification = function (content, opts = {}) {
+  return this.notification_manager.triggerNotification(content, { level: 'verbose', ...opts });
 };
 
 Server.prototype.notifyError = function (content, opts = {}) {

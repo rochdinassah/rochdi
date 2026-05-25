@@ -87,6 +87,13 @@ class NotificationManager {
     return channel.sendMessage(content, message_opts);
   }
 
+  triggerNotification(content, opts = {}) {
+    const { app } = this;
+    const { timer_manager } = app;
+    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, content, opts), 2**12);
+    return Promise.resolve();
+  }
+
   async onDiscordReady() {
     const { discord, app } = this;
     const { notification_channel } = app;
