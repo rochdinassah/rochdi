@@ -150,11 +150,21 @@ class Client extends EventEmitter {
     this.stop(data.reason, data.delay);
   }
 
-  notify(content, opts) {
+  notify(content, opts = {}) {
     const { logger } = this;
+    const { table } = opts;
+
+    const content_present = String(content).length && String(void 0) !== String(content) || String(void 0) === content;
+    if (!content_present && table)
+      log(table);
+    else if (content_present && !table)
+      logger.verbose(content);
+    else if (content_present && table)
+      log(content+':', table);
+
     return new Promise(resolve => {
       this.sendMessage('NotificationRequestMessage', { content, opts }, reply => {
-        logger.verbose('notification sent');
+        // logger.verbose('notification sent');
         resolve();
       });
     });

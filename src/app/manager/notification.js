@@ -30,23 +30,20 @@ class NotificationManager {
 
   notify(content, opts = {}) {
     const { logger, discord } = this;
-    const { level, bold, skip_log, table, mention } = opts;
+    const { level, bold, table, mention } = opts;
 
     const channel = opts.channel ?? discord.channel;
 
     if ((!String(content).length || void 0 === content) && !table)
       return Promise.resolve(false);
     
-    if (!skip_log) {
-      const content_present = String(content).length && String(void 0) !== String(content) || String(void 0) === content;
-
-      if (!content_present && table)
-        log(table);
-      else if (content_present && !table)
-        logger.verbose(content);
-      else if (content_present && table)
-        log(content+':', table);
-    }
+    const content_present = String(content).length && String(void 0) !== String(content) || String(void 0) === content;
+    if (!content_present && table)
+      log(table);
+    else if (content_present && !table)
+      logger.verbose(content);
+    else if (content_present && table)
+      log(content+':', table);
 
     if (!discord || !discord.ready || !channel)
       return Promise.resolve(false);
@@ -90,7 +87,7 @@ class NotificationManager {
   triggerNotification(content, opts = {}) {
     const { app } = this;
     const { timer_manager } = app;
-    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, content, opts), 2**12);
+    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, content, opts), 2**14);
     return Promise.resolve();
   }
 
