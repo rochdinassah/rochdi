@@ -27,7 +27,7 @@ class HttpClient extends EventEmitter {
   }
 
   close() {
-    this.logger.debug('http_client closed');
+    // this.logger.debug('http_client closed');
   }
 
   updateCipher(cipher) {
