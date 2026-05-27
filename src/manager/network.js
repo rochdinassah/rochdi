@@ -49,7 +49,7 @@ class NetworkManager extends StateManager {
 
   getWifiConnection() {
     return this.getConnections().then(connections => {
-      return connections.find(connection => 'Fibre_MarocTelecom-0966-5GHz' === connection.name);
+      return connections.find(connection => 'FO_5G' === connection.name);
     });
   }
 
