@@ -65,6 +65,8 @@ global.probabilityCallback = function (percentage, callback, ...args) {
 const TIMEOUT_MAX_VAL = 2**32/2-1;
 
 global.asyncDelay = function (ms) {
+  if (Array.isArray(ms))
+    ms = rand(ms[0], ms[1]);
   if ('number' !== typeof ms || 1 > ms)
     return Promise.resolve();
   return new Promise(resolve => setTimeout(resolve, Math.min(ms, TIMEOUT_MAX_VAL)));
