@@ -1,6 +1,6 @@
 {
-  "name": "rochdi",
-  "version": "1.0.0",
+  "name": "lumino",
+  "version": "2.0.0",
   "main": "main.js",
   "scripts": {
     "server": "node --env-file=.env app/server",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rochdinassah/rochdi.git"
+    "url": "git+https://github.com/lumino64/lumino.git"
   },
   "author": "Rochdi Nassah <rochdinassah1998@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/rochdinassah/rochdi/issues"
+    "url": "https://github.com/lumino64/lumino/issues"
   },
-  "homepage": "https://github.com/rochdinassah/rochdi#readme",
+  "homepage": "https://github.com/lumino64/lumino#readme",
   "dependencies": {
     "ws": "8.18.3"
   }
