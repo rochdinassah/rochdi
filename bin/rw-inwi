@@ -4,9 +4,9 @@
 
 'use strict';
 
-const rochdi = require('../main');
+const lumino = require('../main');
 
-const { Http2Client, HttpClient, Logger } = rochdi;
+const { Http2Client, HttpClient, Logger } = lumino;
 const { env } = process;
 
 const logger = new Logger({ prefix: 'restart-wifi', errcb: (err) => process.exit(1)});

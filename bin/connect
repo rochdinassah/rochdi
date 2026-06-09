@@ -4,9 +4,9 @@
 
 'use strict';
 
-const rochdi = require('../main');
+const lumino = require('../main');
 
-const { NetworkManager } = rochdi;
+const { NetworkManager } = lumino;
 
 const mode = String(process.argv[2]);
 const network_manager = new NetworkManager();

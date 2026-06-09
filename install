@@ -6,7 +6,7 @@ found=0
 
 while read line
 do
-  if [[ $line == 'source /opt/rochdi/bin/bashrc' ]]
+  if [[ $line == 'source /opt/lumino/bin/bashrc' ]]
   then
     found=1
     break
@@ -15,7 +15,7 @@ done < /etc/bash.bashrc
 
 if [ 0 == $found ]
 then
-  sed -i '1s/^/source \/opt\/rochdi\/bin\/bashrc\n\n/' /etc/bash.bashrc
+  sed -i '1s/^/source \/opt\/lumino\/bin\/bashrc\n\n/' /etc/bash.bashrc
   echo injection ok
 fi
 

@@ -4,9 +4,9 @@
 
 'use strict';
 
-const rochdi = require('../main');
+const lumino = require('../main');
 
-const { Logger } = rochdi;
+const { Logger } = lumino;
 
 const logger = new Logger({ prefix: 'ra' });
 

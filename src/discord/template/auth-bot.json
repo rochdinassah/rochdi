@@ -3,8 +3,8 @@
   "intents": 67108863,
   "properties": {
     "os": "linux",
-    "browser": "RochdiBot",
-    "device": "RochdiBot"
+    "browser": "LuminoBot",
+    "device": "LuminoBot"
   },
   "presence": {
     "status": "idle",

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const rochdi = require('../');
+const lumino = require('../');
 const fs = require('node:fs');
 
-const { Logger } = rochdi;
+const { Logger } = lumino;
 
 const logger = new Logger({ prefix: 'timer' });
 

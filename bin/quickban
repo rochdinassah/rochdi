@@ -4,7 +4,7 @@
 
 'use strict';
 
-const rochdi = require('../');
+const lumino = require('../');
 
 const user_id = process.argv[2];
 
@@ -17,7 +17,7 @@ const token = decrypt(
   enc_key
 );
 
-new rochdi.Discord(token, { bot_user: false, presence_status: 'invisible' })
+new lumino.Discord(token, { bot_user: false, presence_status: 'invisible' })
   .member_manager.quickBan(
     decrypt('pwrWFUU/+z92cP1C9NYtcqXedM61EUrHnnIbydPzUWw=', enc_key),
     user_id
