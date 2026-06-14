@@ -237,7 +237,7 @@ Server.prototype.backup = function () {
     logger.verbose('backup in progress...'),
     saveJson(CACHE_FILE_PATH, cache),
     logger.verbose('backup ok'),
-    true
+    Promise.resolve(true)
   );
 };
 

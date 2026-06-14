@@ -22,12 +22,11 @@ class NotificationManager {
 
   connect() {
     const { discord } = this;
-
     discord.on('Ready', this.onDiscordReady.bind(this));
     discord.on('Resumed', this.onDiscordResumed.bind(this));
     discord.connect();
   }
-
+  
   notify(content, opts = {}) {
     const { logger, discord } = this;
     const { level, bold, table, mention } = opts;
