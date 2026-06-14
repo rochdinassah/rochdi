@@ -50,7 +50,7 @@ class Server extends WebSocketServer {
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger});
     this.discord = new Discord(DISCORD_BOT_TOKEN, { logger, bot_user: true });
-    this.command_manager = new CommandManager();
+    this.command_manager = new CommandManager({ logger });
     this.notification_manager = new NotificationManager(this);
     this.timer_manager = new TimerManager();
     this.network_manager = new NetworkManager({ logger });

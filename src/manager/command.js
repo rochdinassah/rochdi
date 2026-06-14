@@ -8,8 +8,12 @@ const readline = require('node:readline');
 const { stdin, stdout } = process;
 
 class CommandManager extends EventEmitter {
-  constructor() {
+  constructor(opts = {}) {
     super();
+
+    const { logger } = opts;
+
+    this.logger = logger;
   }
 }
 
