@@ -39,7 +39,7 @@ class Server extends WebSocketServer {
     this.http_server = http_server;
     this.guild_id = guild_id;
     this.channel_id = channel_id;
-
+    
     this.routes = [];
 
     this.clients = new Map();
