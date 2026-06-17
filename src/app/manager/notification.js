@@ -31,7 +31,7 @@ class NotificationManager {
     const { logger, discord, app, guild_id } = this;
     const { guild } = discord;
     const { level, bold, table, mention } = opts;
-
+    
     let channel;
     if (discord.ready) {
       channel = guild.getChannel(channel_id);
