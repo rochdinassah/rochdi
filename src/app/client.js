@@ -15,7 +15,7 @@ class Client extends EventEmitter {
   constructor(address, opts = {}) {
     super();
 
-    const { ping_interval, reconnect, manual } = opts;
+    const { ping_interval, reconnect, manual, namespace } = opts;
 
     const logger = this.logger = opts.logger ?? new Logger({ prefix: 'client' });
 
@@ -23,6 +23,7 @@ class Client extends EventEmitter {
     this.ping_interval = ping_interval ?? 2**16;
     this.reconnect = reconnect ?? true;
     this.address = address;
+    this.namespace = namespace;
     this.command_manager = new CommandManager();
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger });
@@ -86,11 +87,21 @@ class Client extends EventEmitter {
   }
 
   onOpen() {
-    const { logger, timer_manager, ping_interval } = this;
-    this.ready = true;
+    const { logger, timer_manager, ping_interval, namespace } = this;
     timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
     logger.verbose('connection open');
     this.emit('Open');
+
+    const machine_id = getMachineId();
+
+    this.sendMessage('ConnectingRequestMessage', {
+      namespace,
+      machine_id
+    }, reply => {
+      this.ready = true;
+      logger.debug('connection accepted');
+      this.emit('Ready');
+    });
   }
 
   onMessage(msg) {
@@ -150,7 +161,7 @@ class Client extends EventEmitter {
     this.stop(data.reason, data.delay);
   }
 
-  notify(content, opts = {}) {
+  notify(channel_id, content, opts = {}) {
     const { logger } = this;
     const { table } = opts;
 
@@ -162,12 +173,7 @@ class Client extends EventEmitter {
     else if (content_present && table)
       log(content+':', table);
 
-    return new Promise(resolve => {
-      this.sendMessage('NotificationRequestMessage', { content, opts }, reply => {
-        // logger.verbose('notification sent');
-        resolve();
-      });
-    });
+    return new Promise(resolve => this.sendMessage('NotificationRequestMessage', { content, opts }, resolve));
   }
 
   triggerNotification(content, opts) {

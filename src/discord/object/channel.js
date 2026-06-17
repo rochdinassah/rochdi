@@ -19,6 +19,7 @@ class ChannelObject extends EventEmitter {
     this.last_message_id = last_message_id;
     this.id = id;
     this.flags = flags;
+    this.is_category = 4 === type;
 
     this.manager = manager;
   }

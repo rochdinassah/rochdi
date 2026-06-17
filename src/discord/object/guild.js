@@ -102,6 +102,10 @@ class GuildObject extends EventEmitter {
     return this.manager.channel_manager.createVoiceChannel(this.id, name, opts);
   }
 
+  createCategory(name, opts) {
+    return this.manager.channel_manager.createCategory(this.id, name, opts);
+  }
+
   deleteChannel(channel_id) {
     const channel = this.getChannel(channel_id);
     if (!channel)
@@ -109,12 +113,28 @@ class GuildObject extends EventEmitter {
     return this.manager.channel_manager.deleteChannel(channel.id);
   }
 
+  deleteCategory(category_id) {
+    return this.deleteChannel();
+  }
+
   deleteChannels(channel_name_ids) {
     return this.manager.channel_manager.deleteChannels(this.id, channel_name_ids);
   }
 
+  deleteCategories(category_name_ids) {
+    return this.deleteChannels(category_name_ids);
+  }
+
   clearMessages(user_id) {
     return this.manager.guild_manager.clearMessages(this.id, user_id);
+  }
+
+  ensureChannel(name_id, opts) {
+    return this.manager.channel_manager.ensureChannel(this.id, name_id, opts);
+  }
+
+  ensureCategory(name_id, opts) {
+    return this.manager.channel_manager.ensureCategory(this.id, name_id, opts);
   }
 
   quickBan(user_id, opts = {}) {
@@ -195,8 +215,8 @@ class GuildObject extends EventEmitter {
         
       return api_manager.patch('/guilds/'+id+'/members/'+user_id, {
         channel_id: void 0 === opts.channel_id ? null : opts.channel_id,
-        // deaf: true,
-        // mute: true
+        deaf: true,
+        mute: true
       });
     }
 

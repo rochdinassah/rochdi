@@ -42,12 +42,44 @@ class ChannelManager extends EventEmitter {
     });
   }
 
-  createTextChannel(guild_id, name, opts) {
-    return this._createChannel(guild_id, 0, name, opts);
+  createTextChannel(guild_id, name_id, opts) {
+    return this._createChannel(guild_id, 0, name_id, opts);
   }
 
-  createVoiceChannel(guild_id, name, opts) {
-    return this._createChannel(guild_id, 2, name, opts);
+  createVoiceChannel(guild_id, name_id, opts) {
+    return this._createChannel(guild_id, 2, name_id, opts);
+  }
+
+  createCategory(guild_id, name_id, opts) {
+    return this._createChannel(guild_id, 4, name_id, opts);
+  }
+
+  ensureChannel(guild_id, name_id, opts) {
+    const { category_name_id } = opts;
+    const { manager } = this;
+
+    const guild = manager.getGuild(guild_id);
+
+    return this.ensureCategory(guild_id, category_name_id).then(category => {
+      const channel = guild.getChannel(name_id);
+
+      if (!channel)
+        return this.createTextChannel(guild_id, name_id, { parent_id: category.id, ...opts });
+
+      return Promise.resolve(channel);
+    });
+  }
+
+  ensureCategory(guild_id, name_id, opts) {
+    const { manager } = this;
+
+    const guild = manager.getGuild(guild_id);
+    const channel = guild.getChannel(name_id);
+
+    if (!channel || !channel.is_category)
+      return this.createCategory(guild_id, name_id, opts);
+
+    return Promise.resolve(channel);
   }
 
   deleteChannel(channel_id) {

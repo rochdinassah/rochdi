@@ -27,12 +27,16 @@ class NotificationManager {
     discord.connect();
   }
   
-  notify(content, opts = {}) {
-    const { logger, discord } = this;
+  notify(channel_id, content, opts = {}) {
+    const { logger, discord, app } = this;
+    const { guild } = discord;
     const { level, bold, table, mention } = opts;
 
-    const channel = opts.channel ?? discord.channel;
+    const channel = guild.getChannel(channel_id);
 
+    if (!channel)
+      exit('CHANNEL_NOT_FOUND');
+    
     if ((!String(content).length || void 0 === content) && !table)
       return Promise.resolve(false);
     
@@ -92,19 +96,15 @@ class NotificationManager {
 
   async onDiscordReady() {
     const { discord, app } = this;
-    const { notification_channel } = app;
+    const { guild_id } = app;
 
-    const guild = discord.getGuild('console');
+    const guild = discord.getGuild(guild_id);
 
     if (!guild)
-      exit('NotificationManager.onDiscordReady: "console" guild missing');
+      exit('NotificationManager.onDiscordReady: "%s" guild missing', guild_id);
 
-    if (!guild.hasChannel(notification_channel))
-      await guild.createTextChannel(notification_channel);
+    discord.guild = guild;
     
-    const channel = guild.getChannel(notification_channel);
-    channel.on('Message', this.onDiscordMessage.bind(this));
-    discord.channel = channel;
     app.emit('NotificationReady');
   }
 
@@ -115,6 +115,7 @@ class NotificationManager {
   onDiscordMessage(msg) {
     const { app, discord } = this;
     const { command_manager } = app;
+    const { guild } = discord;
     const { author, content, channel_id, guild_id } = msg;
     
     if (discord.user.id === author.id)
@@ -127,6 +128,8 @@ class NotificationManager {
 
     const cmd = match[0].shift().toLowerCase();
     const args = match.map(m => m[1]).filter(v => v);
+
+    log(cmd, args);
     
     if (command_manager.eventNames().includes(cmd))
       discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));

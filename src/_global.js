@@ -22,6 +22,10 @@ global.existsSync = existsSync;
 global.unlinkSync = unlinkSync;
 global.mkdirSync = mkdirSync;
 
+global.getMachineId = function () {
+  return String(readFileSync('/etc/machine-id')).trim();
+};
+ 
 global.saveJson = function (path, object) {
   writeFileSync(path, JSON.stringify(object, null, 2), { flag: 'w+' });
 };

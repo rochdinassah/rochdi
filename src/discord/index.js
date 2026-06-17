@@ -43,7 +43,7 @@ class Discord extends EventEmitter {
     this.message_manager = new MessageManager(this);
     this.channel_manager = new ChannelManager(this);
     this.role_manager = new RoleManager(this);
-
+    
     this.startListen(this.connection_manager);
   }
 
