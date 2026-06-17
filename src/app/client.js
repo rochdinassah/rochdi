@@ -49,8 +49,7 @@ class Client extends EventEmitter {
       const conn = this.connection = new WebSocket(this.address);
 
       conn.once('close', resolve);
-      // conn.once('open', resolve);
-
+      
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
       conn.on('open', this.onOpen.bind(this));

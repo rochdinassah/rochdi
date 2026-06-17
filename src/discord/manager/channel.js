@@ -63,7 +63,7 @@ class ChannelManager extends EventEmitter {
     return this.ensureCategory(guild_id, category_name_id).then(category => {
       const channel = guild.getChannel(name_id);
 
-      if (!channel)
+      if (!channel || category.id !== channel.parent_id)
         return this.createTextChannel(guild_id, name_id, { parent_id: category.id, ...opts });
 
       return Promise.resolve(channel);
