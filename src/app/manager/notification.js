@@ -87,10 +87,10 @@ class NotificationManager {
     return channel.sendMessage(content, message_opts);
   }
 
-  triggerNotification(content, opts = {}) {
+  triggerNotification(channel_id, content, opts = {}) {
     const { app } = this;
     const { timer_manager } = app;
-    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, content, opts), 2**14);
+    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, channel_id, content, opts), 2**14);
     return Promise.resolve();
   }
 

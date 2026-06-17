@@ -77,15 +77,17 @@ class Server extends WebSocketServer {
       log('client reply:', reply);
     });
   }
-
+  
   onNotificationRequestMessage(client, data) {
     const { seq, content, opts } = data;
+    const { channel_id } = client;
     this.notify(channel_id, content, opts).then(() => client.reply(seq));
   }
 
   onTriggerNotificationRequestMessage(client, data) {
     const { timer_manager } = this;
     const { seq, content, opts } = data;
+    const { channel_id } = client;
     this.triggerNotification(channel_id, content, opts).then(() => client.reply(seq));
   }
 
@@ -94,7 +96,7 @@ class Server extends WebSocketServer {
     const { namespaces } = cache;
     const { namespace, machine_id, seq } = data;
 
-    client.namespace = namespace+' 🚨';
+    client.namespace = namespace.toUpperCase()+' 🚨';
     client.machine_id = machine_id;
     client.uid = format('%s::%s', namespace.toLowerCase(), machine_id);
 
@@ -106,7 +108,8 @@ class Server extends WebSocketServer {
     if (!namespace_obj[machine_id])
       namespace_obj[machine_id] = 'pc'+(++namespace_obj.counter);
 
-    return discord.guild.ensureChannel(namespace_obj[machine_id], { category_name_id: client.namespace }).then(() => {
+    return discord.guild.ensureChannel(namespace_obj[machine_id], { category_name_id: client.namespace }).then(channel => {
+      client.channel_id = channel.id;
       client.reply(seq);
     });
   }
@@ -303,8 +306,8 @@ Server.prototype.notify = function (channel_id, content, opts = {}) {
   return this.notification_manager.notify(channel_id, content, { level: 'verbose', ...opts });
 };
 
-Server.prototype.triggerNotification = function (content, opts = {}) {
-  return this.notification_manager.triggerNotification(content, { level: 'verbose', ...opts });
+Server.prototype.triggerNotification = function (channel_id, content, opts = {}) {
+  return this.notification_manager.triggerNotification(channel_id, content, { level: 'verbose', ...opts });
 };
 
 Server.prototype.notifyError = function (channel_id, content, opts = {}) {

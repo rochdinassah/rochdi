@@ -47,13 +47,15 @@ class Client extends EventEmitter {
     return new Promise(resolve => {
       const conn = this.connection = new WebSocket(this.address);
 
-      conn.once('close', resolve);
-      conn.once('open', resolve);
+      // conn.once('close', resolve);
+      // conn.once('open', resolve);
 
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
+
+      this.once('Ready', resolve);
     });
   }
 
@@ -99,7 +101,6 @@ class Client extends EventEmitter {
       machine_id
     }, reply => {
       this.ready = true;
-      logger.debug('connection accepted');
       this.emit('Ready');
     });
   }
@@ -161,7 +162,7 @@ class Client extends EventEmitter {
     this.stop(data.reason, data.delay);
   }
 
-  notify(channel_id, content, opts = {}) {
+  notify(content, opts = {}) {
     const { logger } = this;
     const { table } = opts;
 
