@@ -55,12 +55,16 @@ class MessageManager extends EventEmitter {
 
     if (0 !== channel_type && 2 !== channel_type)
       return;
-    
-    const message = new MessageObject(manager, infos);
 
     const guild = guild_manager.getGuild(guild_id);
     const channel = guild.getChannel(channel_id);
+
+    infos.guild = guild;
+    infos.channel = channel;
+
+    const message = new MessageObject(manager, infos);
     
+    guild.emit('Message', message);
     channel.emit('Message', message);
     this.emit('Message', message);
   }

@@ -104,6 +104,7 @@ class NotificationManager {
       exit('NotificationManager.onDiscordReady: "%s" guild missing', guild_id);
 
     discord.guild = guild;
+    guild.on('Message', this.onDiscordMessage.bind(this));
     
     app.emit('NotificationReady');
   }
@@ -117,7 +118,7 @@ class NotificationManager {
     const { command_manager } = app;
     const { guild } = discord;
     const { author, content, channel_id, guild_id } = msg;
-    
+
     if (discord.user.id === author.id)
       return;
 
@@ -128,11 +129,16 @@ class NotificationManager {
 
     const cmd = match[0].shift().toLowerCase();
     const args = match.map(m => m[1]).filter(v => v);
+    const opts = {
+      cmd,
+      args,
+      channel_id: channel_id,
+    };
 
-    log(cmd, args);
-    
-    if (command_manager.eventNames().includes(cmd))
-      discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(() => command_manager.emit(cmd, ...args));
+    app.emitCommand(opts).then(ok => {
+      if (ok)
+        discord.api_manager.post(format('/channels/%s/typing', channel_id));
+    });
   }
 }
 

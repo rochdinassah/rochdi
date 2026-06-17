@@ -35,6 +35,7 @@ class Client extends EventEmitter {
     this.on('Ping', this.onPing);
     this.on('RestartRequestMessage', this.onRestartRequestMessage);
     this.on('StopRequestMessage', this.onStopRequestMessage);
+    this.on('CommandMessage', this.onCommandMessage);
 
     if (false === manual)
       this.run();
@@ -160,6 +161,12 @@ class Client extends EventEmitter {
 
   onStopRequestMessage(data) {
     this.stop(data.reason, data.delay);
+  }
+
+  onCommandMessage(data) {
+    const { cmd, args, seq } = data;
+    const { command_manager } = this;
+    this.reply(seq, { ok: command_manager.emit(cmd, ...args) });
   }
 
   notify(content, opts = {}) {

@@ -8,7 +8,8 @@ class MessageObject extends EventEmitter {
   constructor(manager, infos) {
     super();
         
-    const { timestamp, mentions, member, id, embeds, content, channel_type, channel_id, author, attachments, guild_id } = infos;
+    const { timestamp, mentions, member, id, embeds, content, channel_type } = infos;
+    const { channel_id, author, attachments, guild_id, guild, channel } = infos;
         
     this.timestamp = timestamp;
     this.mentions = mentions;
@@ -21,6 +22,8 @@ class MessageObject extends EventEmitter {
     this.author = author;
     this.attachments = attachments;
     this.guild_id = guild_id;
+    this.guild = guild;
+    this.channel = channel;
 
     this.manager = manager;
   }
