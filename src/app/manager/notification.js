@@ -28,14 +28,17 @@ class NotificationManager {
   }
   
   notify(channel_id, content, opts = {}) {
-    const { logger, discord, app } = this;
+    const { logger, discord, app, guild_id } = this;
     const { guild } = discord;
     const { level, bold, table, mention } = opts;
 
-    const channel = guild.getChannel(channel_id);
+    let channel;
+    if (discord.ready) {
+      channel = guild.getChannel(channel_id);
 
-    if (!channel)
-      exit('CHANNEL_NOT_FOUND');
+      if (!channel)
+        exit('CHANNEL_NOT_FOUND');
+    }
     
     if ((!String(content).length || void 0 === content) && !table)
       return Promise.resolve(false);

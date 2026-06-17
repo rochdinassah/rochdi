@@ -30,7 +30,7 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    const { port, ping_interval, states, guild_id } = opts;
+    const { port, ping_interval, states, guild_id, channel_id } = opts;
 
     const logger = this.logger = opts.logger || new Logger({ prefix: 'server' });
     
@@ -38,6 +38,7 @@ class Server extends WebSocketServer {
     this.ping_interval = ping_interval ?? 2**15;
     this.http_server = http_server;
     this.guild_id = guild_id;
+    this.channel_id = channel_id;
 
     this.routes = [];
 
@@ -54,8 +55,9 @@ class Server extends WebSocketServer {
     this.notification_manager = new NotificationManager(this);
     this.timer_manager = new TimerManager();
     this.network_manager = new NetworkManager({ logger });
-    
-    this.notification_manager.connect();
+
+    if (void 0 !== guild_id && void 0 !== channel_id)
+      this.notification_manager.connect();
 
     this.on('connection', this[Symbol.for('onConnection')]);
     this.on('Ping', this.onPing);
@@ -337,9 +339,13 @@ Server.prototype.notifyVerbose = function (channel_id, content, opts = {}) {
 };
 
 Server.prototype.awaitReady = function () {
-  return Promise.all([
-    this.awaitNotificationReady()
-  ]);
+  const { guild_id, channel_id } = this;
+  if (void 0 !== guild_id && void 0 !== channel_id) {
+    return Promise.all([
+      this.awaitNotificationReady()
+    ]);
+  }
+  return Promise.resolve();
 };
 
 module.exports = Server;
