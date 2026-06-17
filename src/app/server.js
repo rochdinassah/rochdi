@@ -37,7 +37,7 @@ class Server extends WebSocketServer {
     this.port = port;
     this.ping_interval = ping_interval ?? 2**15;
     this.http_server = http_server;
-    this.guild_id = guild_id ?? '1026570183051063496';
+    this.guild_id = guild_id;
 
     this.routes = [];
 
@@ -81,14 +81,14 @@ class Server extends WebSocketServer {
   onNotificationRequestMessage(client, data) {
     const { seq, content, opts } = data;
     const { channel_id } = client;
-    this.notify(channel_id, content, opts).then(() => client.reply(seq));
+    this.notification_manager.notify(channel_id, content, opts).then(() => client.reply(seq));
   }
 
   onTriggerNotificationRequestMessage(client, data) {
     const { timer_manager } = this;
     const { seq, content, opts } = data;
     const { channel_id } = client;
-    this.triggerNotification(channel_id, content, opts).then(() => client.reply(seq));
+    this.notification_manager.triggerNotification(channel_id, content, opts).then(() => client.reply(seq));
   }
 
   onConnectingRequestMessage(client, data) {
@@ -312,28 +312,28 @@ Server.prototype.awaitNotificationReady = function () {
   return new Promise(resolve => this.once('NotificationReady', resolve));
 };
 
-Server.prototype.notify = function (channel_id, content, opts = {}) {
-  return this.notification_manager.notify(channel_id, content, { level: 'verbose', ...opts });
+Server.prototype.notify = function (content, opts = {}) {
+  return this.notification_manager.notify(this.channel_id, content, { level: 'verbose', ...opts });
 };
 
-Server.prototype.triggerNotification = function (channel_id, content, opts = {}) {
-  return this.notification_manager.triggerNotification(channel_id, content, { level: 'verbose', ...opts });
+Server.prototype.triggerNotification = function (content, opts = {}) {
+  return this.notification_manager.triggerNotification(this.channel_id, content, { level: 'verbose', ...opts });
 };
 
-Server.prototype.notifyError = function (channel_id, content, opts = {}) {
-  return this.notification_manager.notify(channel_id, content, { ...opts, level: 'error' });
+Server.prototype.notifyError = function (content, opts = {}) {
+  return this.notify(content, { ...opts, level: 'error' });
 };
 
-Server.prototype.notifyWarn = function (channel_id, content, opts = {}) {
-  return this.notification_manager.notify(channel_id, content, { ...opts, level: 'warn' });
+Server.prototype.notifyWarn = function (content, opts = {}) {
+  return this.notify(content, { ...opts, level: 'warn' });
 };
 
-Server.prototype.notifyInfo = function (channel_id, content, opts = {}) {
-  return this.notification_manager.notify(channel_id, content, { ...opts, level: 'info' });
+Server.prototype.notifyInfo = function (content, opts = {}) {
+  return this.notify(content, { ...opts, level: 'info' });
 };
 
 Server.prototype.notifyVerbose = function (channel_id, content, opts = {}) {
-  return this.notification_manager.notify(channel_id, content, { ...opts, level: 'verbose' });
+  return this.notify(channel_id, content, { ...opts, level: 'verbose' });
 };
 
 Server.prototype.awaitReady = function () {
