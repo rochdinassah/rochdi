@@ -41,11 +41,19 @@ class Client extends EventEmitter {
       this.run();
   }
 
-  run() {
+  awaitReady() {
     if (this.ready)
       return Promise.resolve();
-    
+    return new Promise(resolve => this.once('Ready', resolve));
+  }
+
+  run() {
     return new Promise(resolve => {
+      const { connection } = this;
+
+      if (connection)
+        connection.close(1001);
+
       const conn = this.connection = new WebSocket(this.address);
 
       conn.once('close', resolve);
