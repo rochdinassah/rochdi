@@ -58,10 +58,9 @@ class Client extends EventEmitter {
 
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
+      conn.on('open', resolve);
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
-      
-      this.once('Ready', resolve);
     });
   }
 
