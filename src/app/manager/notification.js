@@ -130,7 +130,7 @@ class NotificationManager {
     if (!match.length)
       return;
 
-    const cmd = match[0].shift().toLowerCase();
+    const cmd = match[0].shift();
     const args = match.map(m => m[1]).filter(v => v);
     const opts = {
       cmd,
