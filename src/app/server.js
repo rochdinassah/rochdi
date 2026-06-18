@@ -124,11 +124,11 @@ class Server extends WebSocketServer {
   onPing(client, data) {
     client.reply(data.seq);
   }
-
+  
   emitCommand(opts) {
     const { cmd, args, channel_id } = opts;
     const { clients, command_manager } = this;
-    log(opts);
+    log(Array.from(clients.values()).map(c => c.channel_id));
     for (const client of clients.values())
       if (channel_id === client.channel_id)
         return new Promise(resolve => client.sendMessage('CommandMessage', { cmd, args }, reply => resolve(reply.ok)));

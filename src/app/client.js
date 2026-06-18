@@ -36,7 +36,7 @@ class Client extends EventEmitter {
     this.on('RestartRequestMessage', this.onRestartRequestMessage);
     this.on('StopRequestMessage', this.onStopRequestMessage);
     this.on('CommandMessage', this.onCommandMessage);
-
+    
     if (false === manual)
       this.run();
   }
@@ -173,6 +173,7 @@ class Client extends EventEmitter {
   onCommandMessage(data) {
     const { cmd, args, seq } = data;
     const { command_manager } = this;
+    log(data);
     this.emit('Command', cmd, args);
     this.reply(seq, { ok: command_manager.emit(cmd, ...args) });
   }
