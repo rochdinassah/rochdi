@@ -30,7 +30,7 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    const { port, ping_interval, states, guild_id, channel_id } = opts;
+    const { port, cache_template, ping_interval, states, guild_id, channel_id } = opts;
 
     const logger = this.logger = opts.logger || new Logger({ prefix: 'server' });
     
@@ -39,6 +39,10 @@ class Server extends WebSocketServer {
     this.http_server = http_server;
     this.guild_id = guild_id;
     this.channel_id = channel_id;
+    this.cache_template = {
+      ...cache_template,
+      namespaces: {}
+    };
     
     this.routes = [];
 
@@ -267,9 +271,7 @@ Server.prototype.initCache = function () {
 
   this.cache = require(CACHE_FILE_PATH);
 
-  this.verifyCache({
-    namespaces: {}
-  });
+  this.verifyCache();
 }
 
 Server.prototype.backup = function () {
@@ -287,15 +289,15 @@ Server.prototype.triggerBackup = function () {
   this.backup_triggering_timeout_id = setTimeout(this.backup.bind(this), 2**13);
 };
 
-Server.prototype.verifyCache = function (template = {}) {
-  const { cache } = this;
+Server.prototype.verifyCache = function () {
+  const { cache, cache_template } = this;
   
-  for (const key of Object.keys(template))
-    if (null !== template[key] && getType(cache[key]) !== getType(template[key]))
-      cache[key] = template[key];
+  for (const key of Object.keys(cache_template))
+    if (null !== cache_template[key] && getType(cache[key]) !== getType(cache_template[key]))
+      cache[key] = cache_template[key];
 
   for (const key of Object.keys(cache))
-    if (void 0 === template[key])
+    if (void 0 === cache_template[key])
       delete cache[key];
 };
 
