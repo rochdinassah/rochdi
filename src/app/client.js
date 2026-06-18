@@ -18,7 +18,7 @@ class Client extends EventEmitter {
     const { ping_interval, reconnect, manual, namespace } = opts;
 
     const logger = this.logger = opts.logger ?? new Logger({ prefix: 'client' });
-
+    
     this.ready = false;
     this.ping_interval = ping_interval ?? 2**16;
     this.reconnect = reconnect ?? true;
@@ -104,7 +104,7 @@ class Client extends EventEmitter {
 
     const machine_id = getMachineId();
 
-    this.sendMessage('ConnectingRequestMessage', {
+    this.sendMessage('HelloMessage', {
       namespace,
       machine_id
     }, reply => {

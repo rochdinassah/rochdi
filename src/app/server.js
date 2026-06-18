@@ -74,7 +74,7 @@ class Server extends WebSocketServer {
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
     this.on('NotificationRequestMessage', this.onNotificationRequestMessage);
     this.on('TriggerNotificationRequestMessage', this.onTriggerNotificationRequestMessage);
-    this.on('ConnectingRequestMessage', this.onConnectingRequestMessage);
+    this.on('HelloMessage', this.onHelloMessage);
   }
 
   onEchoRequestMessage(client, data) {
@@ -98,7 +98,7 @@ class Server extends WebSocketServer {
     notification_manager.triggerNotification(channel_id, content, opts).then(() => client.reply(seq));
   }
 
-  onConnectingRequestMessage(client, data) {
+  onHelloMessage(client, data) {
     const { discord, cache } = this;
     const { namespaces } = cache;
     const { namespace, machine_id, seq } = data;
