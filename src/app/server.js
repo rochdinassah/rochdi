@@ -124,7 +124,7 @@ class Server extends WebSocketServer {
   onPing(client, data) {
     client.reply(data.seq);
   }
-
+  
   emitCommand(opts) {
     const { cmd, args, channel_id } = opts;
     const { clients, command_manager } = this;
