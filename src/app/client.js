@@ -56,13 +56,11 @@ class Client extends EventEmitter {
 
       const conn = this.connection = new WebSocket(this.address);
 
-      conn.once('close', resolve);
-      
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
-
+      
       this.once('Ready', resolve);
     });
   }
@@ -73,6 +71,9 @@ class Client extends EventEmitter {
     this.sendMessage('HelloMessage', {
       namespace,
       machine_id
+    }, reply => {
+      this.ready = true;
+      this.emit('Ready');
     });
   }
 
@@ -108,10 +109,8 @@ class Client extends EventEmitter {
   onOpen() {
     const { logger, timer_manager, ping_interval } = this;
     timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
-    this.ready = true;
     logger.verbose('connection open');
     this.emit('Open');
-    this.emit('Ready');
   }
 
   onMessage(msg) {
