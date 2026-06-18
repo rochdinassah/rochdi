@@ -85,16 +85,17 @@ class Server extends WebSocketServer {
   }
   
   onNotificationRequestMessage(client, data) {
+    const { notification_manager } = this;
     const { seq, content, opts } = data;
     const { channel_id } = client;
-    this.notification_manager.notify(channel_id, content, opts).then(() => client.reply(seq));
+    notification_manager.notify(channel_id, content, opts).then(() => client.reply(seq));
   }
 
   onTriggerNotificationRequestMessage(client, data) {
-    const { timer_manager } = this;
+    const { notification_manager } = this;
     const { seq, content, opts } = data;
     const { channel_id } = client;
-    this.notification_manager.triggerNotification(channel_id, content, opts).then(() => client.reply(seq));
+    notification_manager.triggerNotification(channel_id, content, opts).then(() => client.reply(seq));
   }
 
   onConnectingRequestMessage(client, data) {
@@ -131,7 +132,7 @@ class Server extends WebSocketServer {
       if (channel_id === client.channel_id)
         return new Promise(resolve => client.sendMessage('CommandMessage', { cmd, args }, reply => resolve(reply.ok)));
     }
-    return Promise.resolve(command_manager.emit(cmd, ...args));
+    return Promise.resolve(channel_id === this.channel_id && command_manager.emit(cmd, ...args));
   }
 }
 

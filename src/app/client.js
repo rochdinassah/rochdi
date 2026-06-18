@@ -165,7 +165,6 @@ class Client extends EventEmitter {
   onCommandMessage(data) {
     const { cmd, args, seq } = data;
     const { command_manager } = this;
-    log(cmd, args);
     this.emit('Command', cmd, args);
     this.reply(seq, { ok: command_manager.emit(cmd, ...args) });
   }
@@ -182,7 +181,9 @@ class Client extends EventEmitter {
     else if (content_present && table)
       log(content+':', table);
 
-    return new Promise(resolve => this.sendMessage('NotificationRequestMessage', { content, opts }, resolve));
+    return new Promise(resolve => {
+      return this.sendMessage('NotificationRequestMessage', { content, opts: { level: 'verbose', ...opts } }, resolve);
+    });
   }
 
   triggerNotification(content, opts) {
@@ -193,6 +194,22 @@ class Client extends EventEmitter {
         resolve();
       });
     });
+  }
+
+  notifyError(content, opts = {}) {
+    return this.notify(content, { ...opts, level: 'error' });
+  }
+
+  notifyWarn(content, opts = {}) {
+    return this.notify(content, { ...opts, level: 'warn' });
+  }
+
+  notifyInfo(content, opts = {}) {
+    return this.notify(content, { ...opts, level: 'info' });
+  }
+
+  notifyVerbose(content, opts = {}) {
+    return this.notify(content, { ...opts, level: 'verbose' });
   }
 };
 
