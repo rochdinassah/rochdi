@@ -23,7 +23,7 @@ class Client extends EventEmitter {
     this.ping_interval = ping_interval ?? 2**16;
     this.reconnect = reconnect ?? true;
     this.address = address;
-    this.namespace = namespace ?? 'DEFAULT';
+    this.namespace = namespace;
     this.command_manager = new CommandManager();
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger });
@@ -67,6 +67,15 @@ class Client extends EventEmitter {
     });
   }
 
+  connect() {
+    const { namespace } = this;
+    const machine_id = getMachineId();
+    this.sendMessage('HelloMessage', {
+      namespace,
+      machine_id
+    });
+  }
+
   close() {
     const { connection, timer_manager } = this;
 
@@ -97,20 +106,12 @@ class Client extends EventEmitter {
   }
 
   onOpen() {
-    const { logger, timer_manager, ping_interval, namespace } = this;
+    const { logger, timer_manager, ping_interval } = this;
     timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
+    this.ready = true;
     logger.verbose('connection open');
     this.emit('Open');
-    
-    const machine_id = getMachineId();
-
-    this.sendMessage('HelloMessage', {
-      namespace,
-      machine_id
-    }, reply => {
-      this.ready = true;
-      this.emit('Ready');
-    });
+    this.emit('Ready');
   }
 
   onMessage(msg) {
