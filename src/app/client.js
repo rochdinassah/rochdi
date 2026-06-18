@@ -23,7 +23,7 @@ class Client extends EventEmitter {
     this.ping_interval = ping_interval ?? 2**16;
     this.reconnect = reconnect ?? true;
     this.address = address;
-    this.namespace = namespace;
+    this.namespace = namespace ?? 'DEFAULT';
     this.command_manager = new CommandManager();
     this.http_client = new HttpClient({ logger });
     this.http2_client = new Http2Client({ logger });
@@ -101,7 +101,7 @@ class Client extends EventEmitter {
     timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
     logger.verbose('connection open');
     this.emit('Open');
-
+    
     const machine_id = getMachineId();
 
     this.sendMessage('HelloMessage', {
