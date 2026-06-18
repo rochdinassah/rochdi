@@ -311,7 +311,7 @@ Server.prototype.reset = function () {
 };
 
 Server.prototype.awaitNotificationReady = function () {
-  if (this.discord.ready)
+  if (this.discord.ready || void 0 === this.guild_id || void 0 === this.channel_id)
     return Promise.resolve();
   return new Promise(resolve => this.once('NotificationReady', resolve));
 };
