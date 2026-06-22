@@ -63,7 +63,11 @@ class Client extends EventEmitter {
 
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
-      conn.on('open', resolve);
+      conn.on('open', () => {
+        this.ready = true;
+        this.emit('Ready');
+        resolve();
+      });
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
     });
@@ -102,9 +106,7 @@ class Client extends EventEmitter {
     const { logger, timer_manager, ping_interval } = this;
     timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
     logger.verbose('connection open');
-    this.ready = true;
     this.emit('Open');
-    this.emit('Ready');
   }
 
   onMessage(msg) {
