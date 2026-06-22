@@ -48,12 +48,16 @@ class Client extends EventEmitter {
       if (connection)
         connection.close(1001);
 
-      const conn = this.connection = new WebSocket(this.address, {
-        headers: {
+      const opts = {};
+
+      if (namespace) {
+        opts.headers = {
           namespace,
           machine_id: getMachineId()
-        }
-      });
+        };
+      }
+
+      const conn = this.connection = new WebSocket(this.address, opts);
 
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
