@@ -10,8 +10,9 @@ const HttpClient = require('../http-client');
 const Http2Client = require('../http2-client');
 const TimerManager = require('../manager/timer');
 const NetworkManager = require('../manager/network');
+const StateManager = require('../manager/state');
 
-class Client extends EventEmitter {
+class Client extends StateManager {
   constructor(address, opts = {}) {
     super();
 
@@ -60,8 +61,14 @@ class Client extends EventEmitter {
       const conn = this.connection = new WebSocket(this.address, opts);
 
       conn.on('error', this.onError.bind(this));
-      conn.on('close', this.onClose.bind(this));
-      conn.on('open', resolve);
+      conn.on('close', code => {
+        if (![1000, 1001].includes(code) && this.reconnect) {
+          resolve(asyncDelay(rand(2**10, 2**12)).then(() => {
+            return this.run();
+          }));
+        }
+      });
+      this.once('Open', resolve);
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
     });
@@ -89,10 +96,6 @@ class Client extends EventEmitter {
   onClose(code, buff) {
     this.ready = false;
     this.logger.debug('connection close, code: %d, buff: %s', code, !buff.length ? 'unknown' : buff);
-
-    if (![1000, 1001].includes(code) && this.reconnect)
-      setTimeout(this.run.bind(this), rand(1e3, 3e3));
-
     this.emit('Close', code, buff);
   }
 
