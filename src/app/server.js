@@ -74,7 +74,6 @@ class Server extends WebSocketServer {
     this.on('EchoRequestMessage', this.onEchoRequestMessage);
     this.on('NotificationRequestMessage', this.onNotificationRequestMessage);
     this.on('TriggerNotificationRequestMessage', this.onTriggerNotificationRequestMessage);
-    this.on('HelloMessage', this.onHelloMessage);
   }
 
   onEchoRequestMessage(client, data) {
@@ -98,15 +97,14 @@ class Server extends WebSocketServer {
     notification_manager.triggerNotification(channel_id, content, opts).then(() => client.reply(seq));
   }
 
-  onHelloMessage(client, data) {
+  processClientNamespace(client, namespace, machine_id) {
     const { discord, cache } = this;
     const { namespaces } = cache;
-    const { namespace, machine_id, seq } = data;
 
     client.namespace = namespace.toUpperCase()+' 🚨';
     client.machine_id = machine_id;
     client.uid = format('%s::%s', namespace.toLowerCase(), machine_id);
-
+        
     if (!namespaces[namespace])
       namespaces[namespace] = { counter: 0 };
 
@@ -117,7 +115,6 @@ class Server extends WebSocketServer {
 
     return discord.guild.ensureChannel(namespace_obj[machine_id], { category_name_id: client.namespace }).then(channel => {
       client.channel_id = channel.id;
-      client.reply(seq);
     });
   }
 
@@ -224,8 +221,13 @@ Server.prototype[Symbol.for('onRequest')] = function (req, res) {
   res.status(404, 'Not Found').send();
 };
 
-Server.prototype[Symbol.for('onConnection')] = function (client) {
+Server.prototype[Symbol.for('onConnection')] = function (client, req) {
   const { clients, logger } = this;
+  const { headers } = req;
+  const { namespace, machine_id } = headers;
+
+  if (namespace)
+    this.processClientNamespace(client, namespace, machine_id);
 
   client.id = this.clients_counter++;
   client.alive = true;

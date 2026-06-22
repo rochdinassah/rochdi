@@ -49,30 +49,23 @@ class Client extends EventEmitter {
 
   run() {
     return new Promise(resolve => {
-      const { connection } = this;
+      const { connection, namespace } = this;
 
       if (connection)
         connection.close(1001);
 
-      const conn = this.connection = new WebSocket(this.address);
+      const conn = this.connection = new WebSocket(this.address, {
+        headers: {
+          namespace,
+          machine_id: getMachineId()
+        }
+      });
 
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
       conn.on('open', resolve);
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
-    });
-  }
-
-  connect() {
-    const { namespace } = this;
-    const machine_id = getMachineId();
-    this.sendMessage('HelloMessage', {
-      namespace,
-      machine_id
-    }, reply => {
-      this.ready = true;
-      this.emit('Ready');
     });
   }
 
@@ -91,17 +84,17 @@ class Client extends EventEmitter {
   }
   
   onError(err) {
-    // this.logger.debug('connection error, code: %s', err.code);
+    this.logger.debug('connection error, code: %s', err.code);
     this.emit('Error');
   }
 
   onClose(code, buff) {
     this.ready = false;
-    // this.logger.debug('connection close, code: %d, buff: %s', code, !buff.length ? 'unknown' : buff);
+    this.logger.debug('connection close, code: %d, buff: %s', code, !buff.length ? 'unknown' : buff);
 
     if (![1000, 1001].includes(code) && this.reconnect)
       setTimeout(this.run.bind(this), rand(1e3, 3e3));
-    
+
     this.emit('Close', code, buff);
   }
 
@@ -109,7 +102,9 @@ class Client extends EventEmitter {
     const { logger, timer_manager, ping_interval } = this;
     timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
     logger.verbose('connection open');
+    this.ready = true;
     this.emit('Open');
+    this.emit('Ready');
   }
 
   onMessage(msg) {
@@ -143,22 +138,22 @@ class Client extends EventEmitter {
   }
 
   stop(reason, delay) {
-    this._exit(1000, reason, delay);
+    this._stop(1000, reason, delay);
   }
 
   restart(reason, delay) {
-    this._exit(1001, reason, delay);
+    this._stop(1001, reason, delay);
   }
   
-  _exit(code, reason, delay) {
+  _stop(code, reason, delay) {
     const { logger } = this;
     const f = formatDuration;
     if (logger)
       logger.info('(%s) %s : %s', code === 1001 ? 'restart' : 'stop', delay ? format('in %s', f(delay)) : 'immediately', reason ?? 'none');
     if (delay)
-      asyncDelay(delay).then(process.exit.bind(process, code));
+      asyncDelay(delay).then(this.close.bind(this, code, reason));
     else
-      process.exit(code);
+      this.close(code, reason);
   }
 
   onRestartRequestMessage(data) {

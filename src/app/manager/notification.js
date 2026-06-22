@@ -139,8 +139,8 @@ class NotificationManager {
     };
 
     app.emitCommand(opts).then(ok => {
-      if (ok)
-        discord.api_manager.post(format('/channels/%s/typing', channel_id));
+      // if (ok)
+      //   discord.api_manager.post(format('/channels/%s/typing', channel_id));
     });
   }
 }
