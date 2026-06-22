@@ -41,12 +41,6 @@ class Client extends EventEmitter {
       this.run();
   }
 
-  awaitReady() {
-    if (this.ready)
-      return Promise.resolve();
-    return new Promise(resolve => this.once('Ready', resolve));
-  }
-
   run() {
     return new Promise(resolve => {
       const { connection, namespace } = this;
@@ -63,11 +57,7 @@ class Client extends EventEmitter {
 
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
-      conn.on('open', () => {
-        this.ready = true;
-        this.emit('Ready');
-        resolve();
-      });
+      conn.on('open', resolve);
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
     });
