@@ -18,6 +18,8 @@ class NotificationManager {
     this.app = app;
     this.logger = logger;
     this.discord = discord;
+
+    this.notification_triggering_count_map = new Map();
   }
 
   connect() {
@@ -91,9 +93,16 @@ class NotificationManager {
   }
 
   triggerNotification(channel_id, content, opts = {}) {
-    const { app } = this;
+    const { app, notification_triggering_count_map } = this;
     const { timer_manager } = app;
-    timer_manager.setTimeout('NotificationTriggering::'+content, this.notify.bind(this, channel_id, content, opts), 2**14);
+    const { urgent } = opts;
+
+    notification_triggering_count_map.set(content, 1+(notification_triggering_count_map.get(content) ?? 0));
+
+    timer_manager.setTimeout('NotificationTriggering::'+content, () => {
+      this.notify(channel_id, format('%s (%d)', content, notification_triggering_count_map.pull(content)), opts);
+    }, urgent ? 2**10 : 2**13);
+
     return Promise.resolve();
   }
 
