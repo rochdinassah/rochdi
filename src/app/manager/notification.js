@@ -100,7 +100,11 @@ class NotificationManager {
     notification_triggering_count_map.set(content, 1+(notification_triggering_count_map.get(content) ?? 0));
 
     timer_manager.setTimeout('NotificationTriggering::'+content, () => {
-      this.notify(channel_id, format('%s (%d)', content, notification_triggering_count_map.pull(content)), opts);
+      opts.table = {
+        triggering_count: notification_triggering_count_map.pull(content),
+        ...opts.table,
+      };
+      this.notify(channel_id, content, opts);
     }, urgent ? 2**10 : 2**13);
 
     return Promise.resolve();
