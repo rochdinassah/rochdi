@@ -24,7 +24,7 @@ class Discord extends EventEmitter {
 
     const { logger, presence_status, bot_user } = opts;
     
-    this.token = token;
+    this.token = token ?? '';
     this.presence_status = presence_status;
     this.bot_user = bot_user;
     this.user_id = atob(token.split('.')[0]);
