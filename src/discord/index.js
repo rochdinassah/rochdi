@@ -23,9 +23,6 @@ class Discord extends EventEmitter {
     super();
 
     const { logger, presence_status, bot_user } = opts;
-
-    if (!token)
-      throw new Error('Discord.constructor: "token" is required');
     
     this.token = token;
     this.presence_status = presence_status;
