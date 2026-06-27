@@ -113,6 +113,9 @@ class Server extends WebSocketServer {
     if (!namespace_obj[machine_id])
       namespace_obj[machine_id] = 'pc'+(++namespace_obj.counter);
 
+    if (void 0 === discord.guild)
+      return;
+
     return discord.guild.ensureChannel(namespace_obj[machine_id], { category_name_id: client.namespace }).then(channel => {
       client.channel_id = channel.id;
     });
@@ -368,7 +371,10 @@ WebSocket.prototype.sendMessage = function (type, data = {}, cb) {
 
 WebSocket.prototype.ping = function () {
   return new Promise(resolve => {
-    this.sendMessage('Ping', {}, resolve);
+    this.sendMessage('Ping', {}, stats => {
+      this.emit('Pong', stats);
+      resolve(stats);
+    });
   });
 };
 

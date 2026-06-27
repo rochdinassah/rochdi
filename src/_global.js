@@ -76,7 +76,16 @@ global.asyncDelay = function (ms) {
   return new Promise(resolve => setTimeout(resolve, Math.min(ms, TIMEOUT_MAX_VAL)));
 };
 
-global.formatNumber = new Intl.NumberFormat().format;
+let fn = new Intl.NumberFormat().format;
+global.formatNumber = function (number) {
+  if (1e6 > number)
+    return fn(number);
+  if (1e9 <= number)
+    return [Math.floor(number/1e9), Math.floor(number%1e9/1e6)].filter(n => n).join(',')+'B';
+  if (1e6 <= number)
+    return [Math.floor(number/1e6), Math.floor(number%1e6/1e5)].filter(n => n).join(',')+'M';
+};
+
 global.format = util.format;
 
 global.createMd5 = function (data = '') {
