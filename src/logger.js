@@ -14,7 +14,7 @@ const LEVELS = [
 
 function Logger(opts = {}) {
   const { prefix, level, silent, errcb } = opts;
-
+  
   this.prefix = prefix;
   this.level = level ?? 'verbose';
   this.silent = silent;

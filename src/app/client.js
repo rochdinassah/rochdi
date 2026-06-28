@@ -67,6 +67,7 @@ class Client extends StateManager {
 
 
       conn.on('close', code => {
+        this.removeListener('Open', resolve);
         if (![1000, 1001].includes(code) && this.reconnect)
           resolve(asyncDelay(rand(2**10, 2**11)).then(this.run.bind(this)));
       });
