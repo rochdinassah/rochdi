@@ -61,16 +61,16 @@ class Client extends StateManager {
       const conn = this.connection = new WebSocket(this.address, opts);
 
       conn.on('error', this.onError.bind(this));
-      conn.on('close', code => {
-        if (![1000, 1001].includes(code) && this.reconnect) {
-          resolve(asyncDelay(rand(2**10, 2**12)).then(() => {
-            return this.run();
-          }));
-        }
-      });
-      this.once('Open', resolve);
+      conn.on('close', this.onClose.bind(this));
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
+
+
+      conn.on('close', code => {
+        if (![1000, 1001].includes(code) && this.reconnect)
+          resolve(asyncDelay(rand(2**10, 2**11)).then(this.run.bind(this)));
+      });
+      this.once('Open', resolve);
     });
   }
 
@@ -102,7 +102,7 @@ class Client extends StateManager {
   onOpen() {
     const { logger, timer_manager, ping_interval } = this;
     timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
-    logger.verbose('connection open');
+    logger.debug('app connection open');
     this.emit('Open');
   }
 
