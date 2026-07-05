@@ -33,7 +33,7 @@ class GuildObject extends EventEmitter {
       if (new RegExp(name_id, 'i').test(channel.name))
         return channel;
   }
-
+  
   getChannel(channel_id) {
     if (!/[a-z]/i.test(channel_id))
       return this.channels.get(channel_id);

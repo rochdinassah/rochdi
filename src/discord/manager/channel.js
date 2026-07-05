@@ -34,7 +34,7 @@ class ChannelManager extends EventEmitter {
       {
         id: guild_id,
         type: 0,
-        allow: "0",
+        allow: '0',
         deny: 4 === type ? "1049600" : 0 === type ? "1049600" : "1024"
       }
     ];
@@ -69,12 +69,10 @@ class ChannelManager extends EventEmitter {
     const guild = manager.getGuild(guild_id);
 
     return this.ensureCategory(guild_id, category_name_id).then(category => {
-      const channel = guild.getChannel(name_id);
-
-      if (!channel || category.id !== channel.parent_id)
-        return this.createTextChannel(guild_id, name_id, { parent_id: category.id, ...opts });
-
-      return Promise.resolve(channel);
+      for (const channel of guild.channels.values())
+        if (category.id === channel.parent_id && (name_id === channel.name || name_id === channel.id))
+          return Promise.resolve(channel);
+      return this.createTextChannel(guild_id, name_id, { parent_id: category.id, ...opts });
     });
   }
 

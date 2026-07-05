@@ -43,7 +43,7 @@ class Server extends WebSocketServer {
       ...cache_template,
       namespaces: {}
     };
-    
+
     this.routes = [];
 
     this.clients = new Map();
@@ -126,16 +126,20 @@ class Server extends WebSocketServer {
   }
   
   emitCommand(opts) {
-    // const { cmd, args, channel_id } = opts;
-    // const { clients, command_manager } = this;
-    // for (const client of clients.values()) {
-    //   if (channel_id === client.channel_id) {
-    //     return new Promise(resolve => client.sendMessage('ProbeCommandMessage', { cmd }, reply => {
-    //       resolve(reply.ok ? () => client.sendMessage('CommandMessage', { cmd, args }));
-    //     }));
-    //   }
-    // }
-    // return Promise.resolve(channel_id === this.channel_id && command_manager.eventNames().includes(cmd) && () => command_manager.emit(cmd, ...args));
+    const { cmd, args, channel_id } = opts;
+    const { clients, command_manager } = this;
+    for (const client of clients.values()) {
+      if (channel_id === client.channel_id) {
+        return new Promise(resolve => client.sendMessage('LookupCommandMessage', { cmd }, reply => {
+          resolve(reply.ok ? () => client.sendMessage('CommandMessage', { cmd, args }) : void 0);
+        }));
+      }
+    }
+    return Promise.resolve(
+      channel_id === this.channel_id &&
+      command_manager.eventNames().includes(cmd) &&
+      (() => command_manager.emit(cmd, ...args))
+    );
   }
 }
 
