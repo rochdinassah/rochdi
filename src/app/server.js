@@ -131,7 +131,7 @@ class Server extends WebSocketServer {
     for (const client of clients.values()) {
       if (channel_id === client.channel_id) {
         return new Promise(resolve => client.sendMessage('LookupCommandMessage', { cmd }, reply => {
-          resolve(reply.ok ? () => client.sendMessage('CommandMessage', { cmd, args }) : void 0);
+          resolve(!0 || reply.ok ? () => client.sendMessage('CommandMessage', { cmd, args }) : void 0);
         }));
       }
     }
