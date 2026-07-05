@@ -133,7 +133,7 @@ class NetworkManager extends StateManager {
     startTimer('Rotation');
     logger.verbose('rotating android...');
 
-    return this.connect('ethernet').then(() => {
+    // return this.connect('ethernet').then(() => {
       return this.exec('adb shell cmd connectivity airplane-mode').then(async enabled => {
         if (Boolean(Number(enabled)))
           await this.exec('adb shell cmd connectivity airplane-mode disable');
@@ -142,14 +142,14 @@ class NetworkManager extends StateManager {
             await this.exec('adb shell settings put global mobile_data 1');
           return this.exec('adb shell cmd connectivity airplane-mode enable').then(() => {
             return this.exec('adb shell cmd connectivity airplane-mode disable').then(() => {
-              return asyncDelay(2**10).then(awaitInternet).then(() => {
+              return asyncDelay(2**11).then(awaitInternet).then(() => {
                 logger.info('android rotation ok | %s', endTimer('Rotation'));
               });
             });
           });
         });
       });
-    });
+    // });
   }
 }
 

@@ -151,9 +151,9 @@ class NotificationManager {
       channel_id: channel_id,
     };
 
-    app.emitCommand(opts).then(ok => {
-      // if (ok)
-      //   discord.api_manager.post(format('/channels/%s/typing', channel_id));
+    app.emitCommand(opts).then(cb => {
+      if (cb)
+        discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(cb);
     });
   }
 }
