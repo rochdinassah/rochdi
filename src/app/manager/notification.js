@@ -37,9 +37,9 @@ class NotificationManager {
   }
   
   notify(channel_id, content, opts = {}) {
-    const { logger, discord, app, guild_id } = this;
+    const { logger, discord, app, guild_id, last_command_infos } = this;
     const { guild } = discord;
-    const { level, bold, table, mention, message_id } = opts;
+    const { level, bold, table, mention } = opts;
     
     let channel;
     if (discord.ready) {
@@ -70,11 +70,12 @@ class NotificationManager {
       embeds: []
     };
 
-    if (message_id) {
+    if (last_command_infos && last_command_infos.mentionable) {
+      last_command_infos.mentionable = false;
       message_opts.message_reference = {
         guild_id,
         channel_id,
-        message_id
+        message_id: last_command_infos.message_id
       };
     }
 
@@ -83,11 +84,13 @@ class NotificationManager {
 
       if (table) {
         Object.keys(table).forEach(key => {
-          fields.push({
-            name: key,
-            value: table[key],
-            inline: false
-          });
+          if (void 0 !== table[key]) {
+            fields.push({
+              name: key,
+              value: table[key],
+              inline: false
+            });
+          }
         });
       }
 
@@ -125,6 +128,24 @@ class NotificationManager {
     return Promise.resolve();
   }
 
+  react(reaction_id, opts = {}) {
+    const { discord, last_command_infos } = this;
+    const { api_manager } = discord;
+
+    if (last_command_infos && last_command_infos.reactable) {
+      last_command_infos.reactable = false;
+      opts.channel_id = last_command_infos.channel_id;
+      opts.message_id = last_command_infos.message_id;
+    }
+
+    const { channel_id, message_id } = opts;
+
+    if (void 0 === channel_id || void 0 === message_id)
+      return Promise.resolve(false);
+
+    return api_manager.put('/channels/'+channel_id+'/messages/'+message_id+'/reactions/'+REACTION_IDS[reaction_id]+'/%40me');
+  }
+
   async onDiscordReady() {
     const { discord, app } = this;
     const { guild_id } = app;
@@ -140,12 +161,6 @@ class NotificationManager {
     app.emit('NotificationReady');
   }
 
-  react(channel_id, message_id, reaction_id) {
-    const { discord } = this;
-    const { api_manager } = discord;
-    return api_manager.put('/channels/'+channel_id+'/messages/'+message_id+'/reactions/'+REACTION_IDS[reaction_id]+'/%40me');
-  }
-
   onDiscordResumed() {
     this.notifyVerbose('discord session resumed');
   }
@@ -155,8 +170,8 @@ class NotificationManager {
     const { command_manager } = app;
     const { guild } = discord;
     const { author, content, channel_id, guild_id, id } = msg;
-
-    if (discord.user.id === author.id)
+    
+    if (discord.user.id === author.id || author.bot)
       return;
 
     const match = Array.from(/([a-z0-9.+_-]+)/ig[Symbol.matchAll](content));
@@ -170,17 +185,29 @@ class NotificationManager {
     const opts = {
       cmd,
       args,
-      channel_id: channel_id,
-      message: {
-        guild_id,
-        channel_id,
-        id
-      }
+      channel_id: channel_id
     };
 
+    this.last_command_infos = void 0;
+
     app.emitCommand(opts).then(cb => {
-      if (cb)
-        discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(cb);
+      if (cb) {
+        this.last_command_infos = {
+          reactable: true,
+          mentionable: true,
+          channel_id,
+          message_id: id,
+        };
+        cb();
+        // discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(cb);
+      } else if (channel_id === app.channel_id && !/http(s?)\:\/\//i.test(content)) {
+        guild.getChannel(channel_id).sendMessage([
+          'https://static.klipy.com/ii/935d7ab9d8c6202580a668421940ec81/10/55/47koFZIw.webp',
+          'https://static.klipy.com/ii/c3a19a0b747a76e98651f2b9a3cca5ff/16/ac/2xwVpTIi.webp?animated=true',
+          'https://media.tenor.com/LAKc6TKPhWcAAAA1/head-deformed.webp',
+          'https://static.klipy.com/ii/4e7bea9f7a3371424e6c16ebc93252fe/5f/0b/HABp3bKwzH3c5K11.webp'
+        ].rand(), { message_reference: { guild_id, channel_id, message_id: id }});
+      }
     });
   }
 }

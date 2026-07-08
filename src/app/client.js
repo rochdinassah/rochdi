@@ -172,16 +172,8 @@ class Client extends StateManager {
   onCommandMessage(data) {
     const { cmd, args, message, seq } = data;
     const { command_manager } = this;
-    this.emit('Command', cmd, {
-      args,
-      notify: (content, opts) => this.notify(content, { ...opts, message_id: message.id }),
-      react: reaction_id => this.react(message.channel_id, message.id, reaction_id)
-    });
-    command_manager.emit(cmd, {
-      args,
-      notify: (content, opts) => this.notify(content, { ...opts, message_id: message.id }),
-      react: reaction_id => this.react(message.channel_id, message.id, reaction_id)
-    });
+    this.emit('Command', cmd, args);
+    command_manager.emit(cmd, ...args);
   }
 
   notify(content, opts = {}) {
@@ -198,12 +190,6 @@ class Client extends StateManager {
 
     return new Promise(resolve => {
       this.sendMessage('NotificationRequestMessage', { content, opts: { level: 'verbose', ...opts } }, resolve);
-    });
-  }
-
-  react(channel_id, message_id, reaction_id) {
-    return new Promise(resolve => {
-      this.sendMessage('ReactionRequestMessage', { channel_id, message_id, reaction_id }, resolve);
     });
   }
 
@@ -231,6 +217,12 @@ class Client extends StateManager {
 
   notifyVerbose(content, opts = {}) {
     return this.notify(content, { ...opts, level: 'verbose' });
+  }
+
+  react(reaction_id, opts = {}) {
+    return new Promise(resolve => {
+      this.sendMessage('ReactionRequestMessage', { reaction_id, opts }, resolve);
+    });
   }
 };
 

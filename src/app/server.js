@@ -99,10 +99,8 @@ class Server extends WebSocketServer {
   }
 
   onReactionRequestMessage(client, data) {
-    const { notification_manager } = this;
-    const { channel_id, message_id, reaction_id, seq } = data;
-    notification_manager.react(channel_id, message_id, reaction_id).then(() => {
-      client.reply(seq);
+    this.react(data.reaction_id).then(() => {
+      client.reply(data.seq);
     });
   }
 
@@ -137,21 +135,19 @@ class Server extends WebSocketServer {
   emitCommand(opts) {
     const { cmd, args, channel_id, message } = opts;
     const { clients, command_manager, notification_manager } = this;
+
     for (const client of clients.values()) {
       if (channel_id === client.channel_id) {
         return new Promise(resolve => client.sendMessage('LookupCommandMessage', { cmd }, reply => {
-          resolve(!0 || reply.ok ? () => client.sendMessage('CommandMessage', { cmd, args, message }) : void 0);
+          resolve(!0 || reply.ok ? () => client.sendMessage('CommandMessage', { cmd, args }) : void 0);
         }));
       }
     }
+
     return Promise.resolve(
       channel_id === this.channel_id &&
       command_manager.eventNames().includes(cmd) &&
-      (() => command_manager.emit(cmd, {
-        args,
-        notify: (content, opts) => this.notify(content, { ...opts, message_id: message.id }),
-        react: reaction_id => this.notification_manager.react(channel_id, message.id, reaction_id)
-      }))
+      (() => command_manager.emit(cmd, ...args))
     );
   }
 }
@@ -364,6 +360,10 @@ Server.prototype.notifyInfo = function (content, opts = {}) {
 
 Server.prototype.notifyVerbose = function (channel_id, content, opts = {}) {
   return this.notify(channel_id, content, { ...opts, level: 'verbose' });
+};
+
+Server.prototype.react = function (reaction_id, opts = {}) {
+  return this.notification_manager.react(reaction_id, opts);
 };
 
 Server.prototype.awaitReady = function () {
