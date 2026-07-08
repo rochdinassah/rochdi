@@ -11,6 +11,13 @@ const levels = {
 
 const default_level = 0x0289F0;
 
+const REACTION_IDS = {
+  ok: '%E2%9C%85',
+  error: '%E2%9D%8C',
+  note: '%F0%9F%93%9D',
+  wave: '%F0%9F%91%8B'
+};
+
 class NotificationManager {
   constructor(app) {
     const { logger, discord } = app;
@@ -32,7 +39,7 @@ class NotificationManager {
   notify(channel_id, content, opts = {}) {
     const { logger, discord, app, guild_id } = this;
     const { guild } = discord;
-    const { level, bold, table, mention } = opts;
+    const { level, bold, table, mention, message_id } = opts;
     
     let channel;
     if (discord.ready) {
@@ -62,6 +69,14 @@ class NotificationManager {
     const message_opts = {
       embeds: []
     };
+
+    if (message_id) {
+      message_opts.message_reference = {
+        guild_id,
+        channel_id,
+        message_id
+      };
+    }
 
     if (level || table) {
       const fields = [];
@@ -125,6 +140,12 @@ class NotificationManager {
     app.emit('NotificationReady');
   }
 
+  react(channel_id, message_id, reaction_id) {
+    const { discord } = this;
+    const { api_manager } = discord;
+    return api_manager.put('/channels/'+channel_id+'/messages/'+message_id+'/reactions/'+REACTION_IDS[reaction_id]+'/%40me');
+  }
+
   onDiscordResumed() {
     this.notifyVerbose('discord session resumed');
   }
@@ -133,7 +154,7 @@ class NotificationManager {
     const { app, discord } = this;
     const { command_manager } = app;
     const { guild } = discord;
-    const { author, content, channel_id, guild_id } = msg;
+    const { author, content, channel_id, guild_id, id } = msg;
 
     if (discord.user.id === author.id)
       return;
@@ -145,10 +166,16 @@ class NotificationManager {
 
     const cmd = match[0].shift();
     const args = match.map(m => m[1]).filter(v => v);
+
     const opts = {
       cmd,
       args,
       channel_id: channel_id,
+      message: {
+        guild_id,
+        channel_id,
+        id
+      }
     };
 
     app.emitCommand(opts).then(cb => {
