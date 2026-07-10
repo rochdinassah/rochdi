@@ -206,6 +206,7 @@ global.formatDuration = function (milliseconds) {
     if (2 === result.push(val+label+(0 < val && 'ms' !== label ? 's' : '')))
       break;
   }
+  
   if (result.length)
     return result.join(', ');
 };
