@@ -149,11 +149,9 @@ global.endTimer = function (label, format = true) {
 };
 
 global.getTimer = function (label, format = true) {
-  if (timer_map.has(label)) {
-    const timer = timer_map.get(label);
-    const diff = new Date()-timer;
-    return format ? formatDuration(diff) : diff;
-  }
+  const timer = timer_map.get(label) ?? new Date();
+  const diff = new Date()-timer;
+  return format ? formatDuration(diff) : diff;
 };
 
 global.getTime = function (with_seconds = false) {
@@ -195,13 +193,17 @@ const DURATION_UNITS = [
 ];
 global.formatDuration = function (milliseconds) {
   milliseconds = parseInt(milliseconds);
+
+  if (!milliseconds)
+    return '0ms';
+
   for (var result = [], divider, label, rem = milliseconds, val, i = 0; DURATION_UNITS.length > i && !Number.isNaN(rem); ++i) {
     [divider, label] = DURATION_UNITS[i];
     if (divider > rem)
       continue;
     val = Math.floor(rem/divider);
     rem %= divider;
-    if (2 === result.push(val+label+(1 < val && 'ms' !== label ? 's' : '')))
+    if (2 === result.push(val+label+(0 < val && 'ms' !== label ? 's' : '')))
       break;
   }
   if (result.length)
