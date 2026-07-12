@@ -123,7 +123,7 @@ class NotificationManager {
         ...opts.table,
       };
       this.notify(channel_id, content, opts);
-    }, urgent ? 2**10 : 2**13);
+    }, urgent ? 2**10 : 2**12);
 
     return Promise.resolve();
   }
