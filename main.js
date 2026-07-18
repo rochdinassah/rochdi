@@ -8,6 +8,7 @@ require('./src/_global');
 global.exit = (...args) => void 0 !== args[0] && console.log(...args) || process.exit();
 global.log = console.log.bind(console);
 global.noop = Function.prototype;
+global.asyncNoop = Promise.resolve();
 
 module.exports = {
   NetworkManager: require('./src/manager/network'),
