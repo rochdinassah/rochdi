@@ -26,6 +26,7 @@ fi
 
 node_which=$(which node)
 npm_which=$(which npm)
+play_which=$(which play)
 
 if [ 0 == ${#node_which} ] || [ 0 == ${#npm_which} ]
 then
@@ -38,4 +39,11 @@ then
   sudo mv ./node-v24.13.0-linux-x64/lib/* /usr/lib &> /dev/null
   echo NodeJS: $(node -v)
   echo npm: $(npm -v)
+fi
+
+if [ 0 == ${#play_which} ]
+then
+  echo sox is missing, installing...
+  sudo apt install sox &> /dev/null &&
+  echo sox installed
 fi

@@ -49,7 +49,7 @@ global.getType = function (val) {
   return 'object' !== typeof val ? typeof val : null === val ? 'null' : Array.isArray(val) ? 'array' : 'object';
 };
 
-global.siren = function (name_id, volume) {
+global.siren = function (name_id = 'warn', volume) {
   const curr_volume = /Volume: front-left:\s{1,}\d{1,} \/\s{1,}(\d{1,}%)/.exec(execSync('pactl get-sink-volume 0'))[1];
 
   if (volume && !Number.isNaN(parseInt(volume)))
