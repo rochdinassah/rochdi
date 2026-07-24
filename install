@@ -15,13 +15,13 @@ done < /etc/bash.bashrc
 
 if [ 0 == $found ]
 then
-  sed -i '1s/^/source \/opt\/lumino\/bin\/bashrc\n\n/' /etc/bash.bashrc
+  sudo sed -i '1s/^/source \/opt\/lumino\/bin\/bashrc\n\n/' /etc/bash.bashrc
   echo injection ok
 fi
 
 if [ ! -d /opt/apk ]
 then
-  /usr/bin/mkdir /opt/apk
+  sudo /usr/bin/mkdir /opt/apk
 fi
 
 node_which=$(which node)
@@ -32,8 +32,8 @@ if [ 0 == ${#node_which} ] || [ 0 == ${#npm_which} ]
 then
   echo NodeJS or npm are missing, downloading...
   cd /tmp &&
-  wget https://nodejs.org/dist/v24.13.0/node-v24.13.0-linux-x64.tar.xz &&
-  tar --extract --file node-v24.13.0-linux-x64.tar.xz &&
+  sudo wget https://nodejs.org/dist/v24.13.0/node-v24.13.0-linux-x64.tar.xz &&
+  sudo tar --extract --file node-v24.13.0-linux-x64.tar.xz &&
   sudo mv ./node-v24.13.0-linux-x64/bin/* /usr/bin &> /dev/null
   sudo mv ./node-v24.13.0-linux-x64/include/* /usr/include &> /dev/null
   sudo mv ./node-v24.13.0-linux-x64/lib/* /usr/lib &> /dev/null
@@ -43,7 +43,8 @@ fi
 
 if [ 0 == ${#play_which} ]
 then
-  echo sox is missing, installing...
-  sudo apt install sox &> /dev/null &&
-  echo sox installed
+  sudo apt -y install sox &> /dev/null &&
+  sudo apt -y install libsox-fmt-all &> /dev/null
 fi
+
+echo complete
