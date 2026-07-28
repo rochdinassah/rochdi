@@ -154,6 +154,10 @@ global.getTimer = function (label, format = true) {
   return format ? formatDuration(diff) : diff;
 };
 
+global.hasTimer = function (label) {
+  return timer_map.has(label);
+};
+
 global.getTime = function (with_seconds = false) {
   const date = new Date();
   const units = [
