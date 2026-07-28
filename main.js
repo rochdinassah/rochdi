@@ -23,3 +23,5 @@ module.exports = {
   Http2Client: require('./src/http2-client'),
   HttpClient: require('./src/http-client')
 };
+
+Object.entries(module.exports).forEach(([k, v]) => global[k] = v);
