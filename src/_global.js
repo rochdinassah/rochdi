@@ -23,6 +23,8 @@ global.unlinkSync = unlinkSync;
 global.mkdirSync = mkdirSync;
 
 global.getMachineId = function () {
+  if (!existsSync('/etc/machine-id'))
+    return 'DEFAULT_MACHINE_ID';
   return String(readFileSync('/etc/machine-id')).trim();
 };
  
