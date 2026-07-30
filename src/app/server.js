@@ -125,6 +125,7 @@ class Server extends WebSocketServer {
 
     return discord.guild.ensureChannel(namespace_obj[machine_id], { category_name_id: client.namespace }).then(channel => {
       client.channel_id = channel.id;
+      client.channel_name_id = channel.name;
     });
   }
 
