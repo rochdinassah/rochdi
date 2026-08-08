@@ -44,7 +44,7 @@ class Http2Client extends Base {
 
     if (!session || session.closed || session.destroyed || cipher !== session.cipher) {
       this.updateCipher(cipher);
-      this.resetCipher(cipher, void(session = http2.connect(authority)));
+      this.resetCipher(cipher, void(session = http2.connect(authority, opts)));
 
       session.on('error', this.onSessionError.bind(this, session));
       session.on('close', this.onSessionClose.bind(this, session));
@@ -70,7 +70,7 @@ class Http2Client extends Base {
       }
 
       this.updateCipher(cipher);
-      this.resetCipher(cipher, void(session = http2.connect(authority)));
+      this.resetCipher(cipher, void(session = http2.connect(authority, opts)));
 
       session.on('error', noop);
       session.on('connect', this.onSessionConnect.bind(this, session));
@@ -107,7 +107,7 @@ class Http2Client extends Base {
       let headers = { ...opts.headers };
       
       this._parseUserAgent(headers);
-
+      
       this.ensureSession(url_string, { cipher }).then(session => {
         try {
           var stream = session.request({ ':method': method, ':path': path, ...headers });
