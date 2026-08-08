@@ -100,7 +100,7 @@ class Http2Client extends Base {
   _request(method, url_string, opts = {}) {
     return new Promise((resolve, reject) => {
       const { pathname, search } = new URL(url_string);
-      const { body, cipher } = opts;
+      const { body, cipher, localAddress } = opts;
 
       const path = pathname+search;
 
@@ -108,7 +108,7 @@ class Http2Client extends Base {
       
       this._parseUserAgent(headers);
       
-      this.ensureSession(url_string, { cipher }).then(session => {
+      this.ensureSession(url_string, { cipher, localAddress }).then(session => {
         try {
           var stream = session.request({ ':method': method, ':path': path, ...headers });
         } catch {
