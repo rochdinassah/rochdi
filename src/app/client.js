@@ -65,7 +65,7 @@ class Client extends StateManager {
       conn.on('close', this.onClose.bind(this));
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
-      
+
       conn.on('close', code => {
         this.removeListener('Open', resolve);
         if (![1000, 1001].includes(code) && this.reconnect)
@@ -75,7 +75,7 @@ class Client extends StateManager {
     });
   }
 
-  close() {
+  close(code = 1000) {
     const { connection, timer_manager } = this;
 
     timer_manager.close();
@@ -85,7 +85,7 @@ class Client extends StateManager {
 
     return new Promise(resolve => {
       connection.once('close', resolve);
-      connection.close(1000);
+      connection.close(code);
     });
   }
   
