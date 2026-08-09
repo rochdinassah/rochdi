@@ -65,8 +65,7 @@ class Client extends StateManager {
       conn.on('close', this.onClose.bind(this));
       conn.on('open', this.onOpen.bind(this));
       conn.on('message', this.onMessage.bind(this));
-
-
+      
       conn.on('close', code => {
         this.removeListener('Open', resolve);
         if (![1000, 1001].includes(code) && this.reconnect)
