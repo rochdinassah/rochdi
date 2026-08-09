@@ -35,7 +35,7 @@ class Server extends WebSocketServer {
     const logger = this.logger = opts.logger || new Logger({ prefix: 'server' });
     
     this.port = port;
-    this.ping_interval = ping_interval ?? 2**15;
+    this.ping_interval = ping_interval ?? 2**14;
     this.http_server = http_server;
     this.guild_id = guild_id;
     this.channel_id = channel_id;
