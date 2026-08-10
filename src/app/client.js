@@ -21,7 +21,7 @@ class Client extends StateManager {
     const logger = this.logger = opts.logger ?? new Logger({ prefix: 'client' });
     
     this.ready = false;
-    this.ping_interval = ping_interval ?? 2**16;
+    this.ping_interval = ping_interval ?? 2**14;
     this.reconnect = reconnect ?? true;
     this.address = address;
     this.namespace = namespace;
@@ -60,7 +60,7 @@ class Client extends StateManager {
       }
 
       const conn = this.connection = new WebSocket(this.address, opts);
-
+      
       conn.on('error', this.onError.bind(this));
       conn.on('close', this.onClose.bind(this));
       conn.on('open', this.onOpen.bind(this));
@@ -133,7 +133,7 @@ class Client extends StateManager {
 
   ping() {
     const { timer_manager, ping_interval } = this;
-    timer_manager.setTimeout('DeadConnection', this.close.bind(this, 1009, 'dead server'), Math.floor(ping_interval));
+    timer_manager.setTimeout('DeadConnection', this.close.bind(this, 1009, 'dead server'), Math.min(2**12, Math.max(2**10, ping_interval/2)));
     this.sendMessage('Ping', {}, timer_manager.cancel.bind(timer_manager, 'DeadConnection'));
   }
 
