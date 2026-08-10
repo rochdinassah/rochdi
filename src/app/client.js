@@ -133,7 +133,7 @@ class Client extends StateManager {
 
   ping() {
     const { timer_manager, ping_interval } = this;
-    timer_manager.setTimeout('DeadConnection', this.close.bind(this, 1009, 'dead server'), 2**11);
+    timer_manager.setTimeout('DeadConnection', () => this.close(1009, 'dead connection'), 1e3);
     this.sendMessage('Ping', {}, timer_manager.cancel.bind(timer_manager, 'DeadConnection'));
   }
 
