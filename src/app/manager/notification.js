@@ -115,6 +115,9 @@ class NotificationManager {
     const { timer_manager } = app;
     const { urgent } = opts;
 
+    if (urgent)
+      return this.notify(channel_id, content, { level: 'verbose', ...opts }), Promise.resolve();
+
     notification_triggering_count_map.set(content, 1+(notification_triggering_count_map.get(content) ?? 0));
 
     timer_manager.setTimeout('NotificationTriggering::'+content, () => {
@@ -123,7 +126,7 @@ class NotificationManager {
         ...opts.table,
       };
       this.notify(channel_id, content, opts);
-    }, urgent ? 2**10 : 2**12);
+    }, 2**12);
 
     return Promise.resolve();
   }
