@@ -136,14 +136,8 @@ class Server extends WebSocketServer {
   }
   
   async emitCommand(opts) {
-    const { args, channel_id, message } = opts;
+    const { cmd, args, channel_id, message } = opts;
     const { clients, command_manager, notification_manager, openai } = this;
-
-    const cmd = await new Promise(resolve => {
-      setTimeout(() => resolve(cmd), 3e3);
-      openai.sendMessage(format('normalize the given command if it was misspeled "%s" qickly \
-and return the word only because i will parse it directly into my app', opts.cmd)).then(reply => resolve(reply.content));
-    });
 
     for (const client of clients.values()) {
       if (channel_id === client.channel_id) {
