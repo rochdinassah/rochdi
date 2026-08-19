@@ -204,11 +204,7 @@ class NotificationManager {
         cb();
         // discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(cb);
       } else if (channel_id === app.channel_id && !/http(s?)\:\/\//i.test(content)) {
-        guild.getChannel(channel_id).sendMessage([
-          'https://static.klipy.com/ii/c3a19a0b747a76e98651f2b9a3cca5ff/16/ac/2xwVpTIi.webp?animated=true',
-          'https://media.tenor.com/LAKc6TKPhWcAAAA1/head-deformed.webp',
-          'https://static.klipy.com/ii/4e7bea9f7a3371424e6c16ebc93252fe/5f/0b/HABp3bKwzH3c5K11.webp'
-        ].rand(), { message_reference: { guild_id, channel_id, message_id: id }});
+        noop();
       }
     });
   }

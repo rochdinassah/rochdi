@@ -14,6 +14,7 @@ const Discord = require('../discord');
 const NotificationManager = require('./manager/notification');
 const TimerManager = require('../manager/timer');
 const NetworkManager = require('../manager/network');
+const Openai = require('../openai');
 
 const { WebSocketServer, WebSocket } = ws;
 const { ServerResponse } = http;
@@ -59,6 +60,7 @@ class Server extends WebSocketServer {
     this.notification_manager = new NotificationManager(this);
     this.timer_manager = new TimerManager();
     this.network_manager = new NetworkManager({ logger });
+    this.openai = new Openai();
 
     if (void 0 !== guild_id && void 0 !== channel_id)
       this.notification_manager.connect();
@@ -133,9 +135,15 @@ class Server extends WebSocketServer {
     client.reply(data.seq);
   }
   
-  emitCommand(opts) {
-    const { cmd, args, channel_id, message } = opts;
-    const { clients, command_manager, notification_manager } = this;
+  async emitCommand(opts) {
+    const { args, channel_id, message } = opts;
+    const { clients, command_manager, notification_manager, openai } = this;
+
+    const cmd = await new Promise(resolve => {
+      setTimeout(() => resolve(cmd), 3e3);
+      openai.sendMessage(format('normalize the given command if it was misspeled "%s" qickly \
+and return the word only because i will parse it directly into my app', cmd)).then(reply => resolve(reply.content));
+    });
 
     for (const client of clients.values()) {
       if (channel_id === client.channel_id) {
