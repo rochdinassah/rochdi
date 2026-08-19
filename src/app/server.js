@@ -137,7 +137,7 @@ class Server extends WebSocketServer {
   
   async emitCommand(opts) {
     const { cmd, args, channel_id, message } = opts;
-    const { clients, command_manager, notification_manager, openai } = this;
+    const { clients, command_manager, notification_manager } = this;
 
     for (const client of clients.values()) {
       if (channel_id === client.channel_id) {

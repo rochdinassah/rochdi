@@ -204,24 +204,26 @@ class NotificationManager {
         cb();
         // discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(cb);
       } else if (channel_id === app.channel_id && !/http(s?)\:\/\//i.test(content)) {
-        const ctime = Date.now();
-        app.openai.sendMessage(format('normalize the given command if it was misspeled "%s" qickly \
+        try {
+          const ctime = Date.now();
+          app.openai.sendMessage(format('normalize the given command if it was misspeled "%s" qickly \
 and return the word only because i will parse it directly into my app', cmd))
-        .then(reply => {
-          if (cmd !== reply.content && 3e3 > new Date()-ctime) {
-            app.emitCommand({ ...opts, cmd: reply.content }).then(cb => {
-              if (cb) {
-                this.last_command_infos = {
-                  reactable: true,
-                  mentionable: true,
-                  channel_id,
-                  message_id: id,
-                };
-                cb();
-              }
-            });
-          }
-        });
+          .then(reply => {
+            if (cmd !== reply.content && 3e3 > new Date()-ctime) {
+              app.emitCommand({ ...opts, cmd: reply.content }).then(cb => {
+                if (cb) {
+                  this.last_command_infos = {
+                    reactable: true,
+                    mentionable: true,
+                    channel_id,
+                    message_id: id,
+                  };
+                  cb();
+                }
+              });
+            }
+          });
+        } catch {}
       }
     });
   }
