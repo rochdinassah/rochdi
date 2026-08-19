@@ -142,7 +142,7 @@ class Server extends WebSocketServer {
     const cmd = await new Promise(resolve => {
       setTimeout(() => resolve(cmd), 3e3);
       openai.sendMessage(format('normalize the given command if it was misspeled "%s" qickly \
-and return the word only because i will parse it directly into my app', cmd)).then(reply => resolve(reply.content));
+and return the word only because i will parse it directly into my app', opts.cmd)).then(reply => resolve(reply.content));
     });
 
     for (const client of clients.values()) {
