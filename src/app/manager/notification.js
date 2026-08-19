@@ -207,9 +207,9 @@ class NotificationManager {
         try {
           const ctime = Date.now();
           app.openai.sendMessage(format('normalize the given command if it was misspeled "%s" qickly \
-and return the word only because i will parse it directly into my app', cmd))
+and return the word only because i will parse it directly into my app, some event name examples: "%s"', command_manager.eventNames(), cmd))
           .then(reply => {
-            if (cmd !== reply.content && 3e3 > new Date()-ctime) {
+            if (cmd !== reply.content && 3300 > new Date()-ctime) {
               app.emitCommand({ ...opts, cmd: reply.content }).then(cb => {
                 if (cb) {
                   this.last_command_infos = {
