@@ -22,6 +22,10 @@ global.existsSync = existsSync;
 global.unlinkSync = unlinkSync;
 global.mkdirSync = mkdirSync;
 
+global.round = Math.round;
+global.floor = Math.floor;
+global.ceil = Math.ceil;
+
 global.getMachineId = function () {
   if (!existsSync('/etc/machine-id'))
     return 'DEFAULT_MACHINE_ID';
