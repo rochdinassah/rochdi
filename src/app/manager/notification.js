@@ -206,7 +206,7 @@ class NotificationManager {
       } else if (channel_id === app.channel_id && !/http(s?)\:\/\//i.test(content)) {
         try {
           const ctime = Date.now();
-          app.openai.sendMessage(format('normalize the given command if it was misspeled "%s" qickly \
+          app.openai.sendMessage(format('qickly normalize the given command if it was misspelled "%s" \
 and return the word only because i will parse it directly into my app, some event name examples: "%s"', cmd, command_manager.eventNames()))
           .then(reply => {
             if (cmd !== reply.content && 2**12 > new Date()-ctime) {
