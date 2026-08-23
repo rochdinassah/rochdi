@@ -12,11 +12,12 @@ const os = require('node:os');
 const fs = require('node:fs');
 
 const { exec, execSync } = child_process;
-const { writeFileSync, readFileSync, existsSync, unlinkSync, mkdirSync } = fs;
+const { writeFileSync, appendFileSync, readFileSync, existsSync, unlinkSync, mkdirSync } = fs;
 
 global.exec = child_process.exec;
 global.execSync = child_process.execSync;
 global.writeFileSync = writeFileSync;
+global.appendFileSync = appendFileSync;
 global.readFileSync = readFileSync;
 global.existsSync = existsSync;
 global.unlinkSync = unlinkSync;
