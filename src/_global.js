@@ -25,6 +25,8 @@ global.existsSync = existsSync;
 global.unlinkSync = unlinkSync;
 global.mkdirSync = mkdirSync;
 
+global.min = Math.min;
+global.max = Math.max;
 global.round = Math.round;
 global.floor = Math.floor;
 global.ceil = Math.ceil;
