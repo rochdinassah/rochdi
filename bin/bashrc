@@ -4,8 +4,8 @@
 
 export PATH=/opt/lumino/bin:$PATH
 
-export HOST_ADDR='lumino.ddns.net'
-export HOST_PORT=80
+export HOST_ADDR='rochdi.sytes.net'
+export HOST_PORT=7000
 
 # aliases start
 alias open='xdg-open $(pwd)'

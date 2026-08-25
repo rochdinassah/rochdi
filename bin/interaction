@@ -1,3 +1,3 @@
 #!/bin/bash
 
-curl -X POST -d "$1" http://rochdi.ddns.net/Interaction
+curl -X POST -d "$1" http://rochdi.sytes.net:7000/Interaction

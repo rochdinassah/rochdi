@@ -9,13 +9,15 @@ const http_client = new HttpClient({ logger });
 
 const { HOST_ADDR, HOST_PORT } = process.env;
 
-http_client.get('http://lumino.ddns.net/GetInteraction').then(res => {
+http_client.get('http://rochdi.sytes.net:7000/GetInteraction').then(res => {
   const { status_code, data } = res;
   
   if (200 !== status_code)
     return logger.verbose('no interaction');
 
   const { ip, time, payload } = data;
+
+  return log(data);
 
   logger.verbose('from: %s', ip);
   logger.verbose('time: %s', time);
