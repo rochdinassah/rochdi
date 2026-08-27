@@ -25,6 +25,10 @@ global.existsSync = existsSync;
 global.unlinkSync = unlinkSync;
 global.mkdirSync = mkdirSync;
 
+global.keys = Object.keys;
+global.values = Object.values;
+global.entries = Object.entries;
+
 global.min = Math.min;
 global.max = Math.max;
 global.round = Math.round;
