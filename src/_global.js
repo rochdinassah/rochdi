@@ -32,6 +32,8 @@ global.keys = Object.keys;
 global.values = Object.values;
 global.entries = Object.entries;
 
+global.sqrt = Math.sqrt;
+global.abs = Math.abs;
 global.min = Math.min;
 global.max = Math.max;
 global.round = Math.round;
