@@ -4,7 +4,7 @@
 
 // ::map
 Map.prototype.stringify = function () {
-  return stringify(this.toObject());
+  return stringify(this.toObject(), void 0, 2);
 };
 
 Map.prototype.toObject = function () {
