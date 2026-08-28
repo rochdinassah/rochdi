@@ -3,6 +3,12 @@
 'use strict';
 
 // ::map
+Map.prototype.toObject = function () {
+  const obj = {};
+  this.keys(this).forEach(k => obj[k] = this.get(k));
+  return JSON.parse(JSON.stringify(obj));
+};
+
 Map.prototype.update = function (key, value) {
   const val = this.get(key);
   if (value === val)
