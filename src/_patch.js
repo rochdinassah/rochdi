@@ -3,6 +3,10 @@
 'use strict';
 
 // ::map
+Map.prototype.stringify = function () {
+  return stringify(this.toObject());
+};
+
 Map.prototype.toObject = function () {
   const obj = {};
   this.keys(this).forEach(k => obj[k] = this.get(k));

@@ -15,6 +15,9 @@ const { exec, execSync } = child_process;
 const { writeFileSync, appendFileSync, readFileSync, existsSync, unlinkSync, mkdirSync } = fs;
 const { readdirSync } = fs;
 
+global.stringify = JSON.stringify;
+global.parse = JSON.parse;
+
 global.exec = child_process.exec;
 global.execSync = child_process.execSync;
 global.writeFileSync = writeFileSync;
