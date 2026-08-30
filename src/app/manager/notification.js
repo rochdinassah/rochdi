@@ -202,7 +202,6 @@ class NotificationManager {
           message_id: id,
         };
         cb();
-        // discord.api_manager.post(format('/channels/%s/typing', channel_id)).then(cb);
       } else if (channel_id === app.channel_id && !/http(s?)\:\/\//i.test(content)) {
 //         try {
 //           const ctime = Date.now();

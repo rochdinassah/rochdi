@@ -36,7 +36,6 @@ class Client extends StateManager {
     this.on('Ping', this.onPing);
     this.on('RestartRequestMessage', this.onRestartRequestMessage);
     this.on('StopRequestMessage', this.onStopRequestMessage);
-    this.on('LookupCommandMessage', this.onLookupCommandMessage);
     this.on('CommandMessage', this.onCommandMessage);
 
     if (false === manual)
@@ -163,11 +162,7 @@ class Client extends StateManager {
   onStopRequestMessage(data) {
     this.stop(data.reason, data.delay);
   }
-
-  onLookupCommandMessage(data) {
-    this.reply(data.seq, { ok: this.command_manager.eventNames().includes(data.cmd) });
-  }
-
+  
   onCommandMessage(data) {
     const { cmd, args, message, seq } = data;
     const { command_manager } = this;

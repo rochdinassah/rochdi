@@ -140,11 +140,8 @@ class Server extends WebSocketServer {
     const { clients, command_manager, notification_manager } = this;
 
     for (const client of clients.values()) {
-      if (channel_id === client.channel_id) {
-        return new Promise(resolve => client.sendMessage('LookupCommandMessage', { cmd }, reply => {
-          resolve(!0 || reply.ok ? () => client.sendMessage('CommandMessage', { cmd, args }) : void 0);
-        }));
-      }
+      if (channel_id === client.channel_id)
+        return client.sendMessage('CommandMessage', { cmd, args }), Promise.resolve();
     }
 
     return Promise.resolve(
