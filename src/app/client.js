@@ -108,6 +108,7 @@ class Client extends StateManager {
 
   onMessage(msg) {
     const { t, d } = JSON.parse(msg);
+    this.emit('Message', t, d);
     this.emit(t, d);
   }
   
