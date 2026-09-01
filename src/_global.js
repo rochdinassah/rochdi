@@ -40,6 +40,10 @@ global.round = Math.round;
 global.floor = Math.floor;
 global.ceil = Math.ceil;
 
+global.isFloat = function (number) {
+  return 0 !== number%1;
+};
+
 global.getMachineId = function () {
   if (!existsSync('/etc/machine-id'))
     return 'DEFAULT_MACHINE_ID';
