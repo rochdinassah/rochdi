@@ -280,18 +280,21 @@ Server.prototype[Symbol.for('onDisconnection')] = function (client, code, buff) 
   if (!buff.length)
     buff = 'DISCONNECTION';
 
+  if (client.namespace) {
+    this.notify(format('detach client (%s)', buff), {
+      table: {
+        namespace: client.namespace,
+        channel: client.channel_name_id
+      }
+    });
+  }
+
   client.alive = false;
   client.emit('Detach');
 
   clients.delete(client.id);
 
   this.emit('Detach', client);
-  this.notify(format('detach client (%s)', buff), {
-    table: {
-      namespace: client.namespace,
-      channel: client.channel_name_id
-    }
-  });
 };
 
 Server.prototype[Symbol.for('onConnectionMessage')] = function (client, data) {
