@@ -21,7 +21,7 @@ class Client extends StateManager {
     const logger = this.logger = opts.logger ?? new Logger({ prefix: 'client' });
     
     this.ready = false;
-    this.ping_interval = ping_interval ?? 2**14;
+    this.ping_interval = ping_interval;
     this.reconnect = reconnect ?? true;
     this.address = address;
     this.namespace = namespace;
@@ -37,6 +37,7 @@ class Client extends StateManager {
     this.on('RestartRequestMessage', this.onRestartRequestMessage);
     this.on('StopRequestMessage', this.onStopRequestMessage);
     this.on('CommandMessage', this.onCommandMessage);
+    this.on('HelloMessage', this.onHelloMessage);
 
     if (false === manual)
       this.run();
@@ -95,16 +96,11 @@ class Client extends StateManager {
 
   onClose(code, buff) {
     this.ready = false;
-    this.logger.debug('connection close, code: %d, buff: %s', code, !buff.length ? 'unknown' : buff);
+    this.logger.debug('connection close, code: %d, buff: %s', code, !buff.length ? 'UNKNOWN_REASON' : buff);
     this.emit('Close', code, buff);
   }
 
-  onOpen() {
-    const { logger, timer_manager, ping_interval } = this;
-    timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
-    logger.debug('app connection open');
-    this.emit('Open');
-  }
+  onOpen() {}
 
   onMessage(msg) {
     const { t, d } = JSON.parse(msg);
@@ -133,10 +129,11 @@ class Client extends StateManager {
 
   ping() {
     const { timer_manager, ping_interval } = this;
-    timer_manager.setTimeout('DeadConnection', this.close.bind(this, 1009, 'dead connection'), Math.min(2**12, Math.max(2**10, ping_interval/2)));
+    const timeout = max(1, min(ping_interval-1, 2**12));
+    timer_manager.setTimeout('DeadConnection', this.close.bind(this, 1009, 'PING_TIMEOUT'), timeout);
     this.sendMessage('Ping', {}, timer_manager.cancel.bind(timer_manager, 'DeadConnection'));
   }
-
+  
   stop(reason, delay) {
     this._stop(1000, reason, delay);
   }
@@ -169,6 +166,18 @@ class Client extends StateManager {
     const { command_manager } = this;
     this.emit('Command', cmd, args);
     command_manager.emit(cmd, ...args);
+  }
+
+  onHelloMessage(data) {
+    const { logger, timer_manager } = this;
+    const { ping_interval } = data;
+
+    if (void 0 === this.ping_interval)
+      this.ping_interval = ping_interval;
+
+    timer_manager.setInterval('PingServer', this.ping.bind(this), ping_interval);
+    logger.debug('app connection open');
+    this.emit('Open');
   }
 
   notify(content, opts = {}) {

@@ -24,6 +24,7 @@ const { DISCORD_BOT_TOKEN } = process.env;
 const CACHE_DIR_PATH = process.cwd()+'/cache';
 const CACHE_FILE_PATH = CACHE_DIR_PATH+'/backup.json';
 const CACHE_GITIGNORE_FILE_PATH = CACHE_DIR_PATH+'/.gitignore';
+const DEFAULT_PING_INTERVAL = 2**14;
 
 class Server extends WebSocketServer {
   constructor(opts = {}) {
@@ -36,7 +37,7 @@ class Server extends WebSocketServer {
     const logger = this.logger = opts.logger || new Logger({ prefix: 'server' });
     
     this.port = port;
-    this.ping_interval = ping_interval ?? 2**14;
+    this.ping_interval = ping_interval ?? DEFAULT_PING_INTERVAL;
     this.http_server = http_server;
     this.guild_id = guild_id;
     this.channel_id = channel_id;
@@ -128,6 +129,14 @@ class Server extends WebSocketServer {
     return discord.guild.ensureChannel(namespace_obj[machine_id], { category_name_id: client.namespace }).then(channel => {
       client.channel_id = channel.id;
       client.channel_name_id = channel.name;
+      client.sendMessage('HelloMessage', { ping_interval: this.ping_interval });
+      
+      this.notify('attach client', {
+        table: {
+          namespace: client.namespace,
+          channel: client.channel_name_id
+        }
+      });
     });
   }
 
@@ -181,12 +190,10 @@ Server.prototype.close = function () {
 
 Server.prototype.pingClients = function () {
   const { clients, timer_manager, ping_interval } = this;
+  const timeout = max(1, min(ping_interval-1, 2**12));
+
   clients.forEach(client => {
-    timer_manager.setTimeout(
-      'DeadConnection::'+client.id,
-      client.close.bind(client, 1009, 'dead client'),
-      Math.floor(ping_interval)
-    );
+    timer_manager.setTimeout('DeadConnection::'+client.id, client.close.bind(client, 1009, 'PING_TIMEOUT'), timeout);
     client.ping().then(timer_manager.cancel.bind(timer_manager, 'DeadConnection::'+client.id));
   });
 };
@@ -264,12 +271,21 @@ Server.prototype[Symbol.for('onConnection')] = function (client, req) {
 Server.prototype[Symbol.for('onDisconnection')] = function (client, code, buff) {
   const { clients, logger } = this;
 
+  if (!buff.length)
+    buff = 'DISCONNECTION';
+
   client.alive = false;
   client.emit('Detach');
 
   clients.delete(client.id);
 
   this.emit('Detach', client);
+  this.notify(format('detach client (%s)', buff), {
+    table: {
+      namespace: client.namespace,
+      channel: client.channel_name_id
+    }
+  });
 };
 
 Server.prototype[Symbol.for('onConnectionMessage')] = function (client, data) {
