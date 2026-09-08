@@ -158,6 +158,13 @@ class NotificationManager {
     if (!guild)
       exit('NotificationManager.onDiscordReady: "%s" guild missing', guild_id);
 
+    // asyncDelay(2**12).then(() => {
+    //   guild.channels.forEach(channel => {
+    //     if (!['voice', 'chat', 'LUMINO 🚨', 'master'].includes(channel.name))
+    //       channel.delete();
+    //   });
+    // });
+
     discord.guild = guild;
     guild.on('Message', this.onDiscordMessage.bind(this));
     
@@ -203,26 +210,7 @@ class NotificationManager {
         };
         cb();
       } else if (channel_id === app.channel_id && !/http(s?)\:\/\//i.test(content)) {
-//         try {
-//           const ctime = Date.now();
-//           app.openai.sendMessage(format('qickly normalize the given command if it was misspelled "%s" \
-// and return the word only because i will parse it directly into my app, some event name examples: "%s"', cmd, command_manager.eventNames()))
-//           .then(reply => {
-//             if (cmd !== reply.content && 2**13 > new Date()-ctime) {
-//               app.emitCommand({ ...opts, cmd: reply.content }).then(cb => {
-//                 if (cb) {
-//                   this.last_command_infos = {
-//                     reactable: true,
-//                     mentionable: true,
-//                     channel_id,
-//                     message_id: id,
-//                   };
-//                   cb();
-//                 }
-//               });
-//             }
-//           });
-//         } catch {}
+        noop();
       }
     });
   }

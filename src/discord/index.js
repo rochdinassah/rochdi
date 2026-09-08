@@ -128,7 +128,7 @@ class Discord extends EventEmitter {
       }
       this.ready = true;
       this.emit('AuthComplete', true);
-      this.emit('Ready')
+      this.emit('Ready');
     });
   }
 

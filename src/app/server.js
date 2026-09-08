@@ -107,8 +107,8 @@ class Server extends WebSocketServer {
     });
   }
 
-  processClientNamespace(client, namespace, machine_id) {
-    const { discord, cache } = this;
+  async processClientNamespace(client, namespace, machine_id) {
+    const { discord, cache, timer_manager } = this;
     const { namespaces } = cache;
 
     client.namespace = namespace.toUpperCase()+' 🚨';
@@ -126,7 +126,13 @@ class Server extends WebSocketServer {
     if (void 0 === discord.guild)
       return;
 
+    await this.acquire();
+    timer_manager.setTimeout('ClientNamespaceProcessingTimeout', this.release.bind(this), 2**13);
+
     return discord.guild.ensureChannel(namespace_obj[machine_id], { category_name_id: client.namespace }).then(channel => {
+      timer_manager.cancel('ClientNamespaceProcessingTimeout');
+      this.release();
+
       client.channel_id = channel.id;
       client.channel_name_id = channel.name;
       client.sendMessage('HelloMessage', { ping_interval: this.ping_interval });
