@@ -135,8 +135,7 @@ class Server extends WebSocketServer {
 
       client.channel_id = channel.id;
       client.channel_name_id = channel.name;
-      client.sendMessage('HelloMessage', { ping_interval: this.ping_interval });
-      
+
       this.notify('attach client', {
         table: {
           namespace: client.namespace,
@@ -255,12 +254,14 @@ Server.prototype[Symbol.for('onRequest')] = function (req, res) {
 };
 
 Server.prototype[Symbol.for('onConnection')] = function (client, req) {
-  const { clients, logger } = this;
+  const { clients, logger, ping_interval } = this;
   const { headers } = req;
   const { namespace, machine_id } = headers;
 
   if (namespace)
     this.processClientNamespace(client, namespace, machine_id);
+
+  client.sendMessage('HelloMessage', { ping_interval });
 
   client.id = this.clients_counter++;
   client.alive = true;
