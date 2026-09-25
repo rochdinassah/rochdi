@@ -8,6 +8,7 @@ export HOST_ADDR='rochdi.sytes.net'
 export HOST_PORT=7000
 
 # aliases start
+alias server='ssh rochdi.ddns.net'
 alias open='xdg-open $(pwd)'
 alias root='sudo -s'
 alias update='npm update'
