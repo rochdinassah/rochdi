@@ -32,7 +32,7 @@ class Server extends WebSocketServer {
 
     super({ server: http_server, clientTracking: false });
 
-    const { port, cache_template, ping_interval, states, guild_id, channel_id } = opts;
+    const { port, cache_template, ping_interval, states, guild_id, notification_channel_id } = opts;
 
     const logger = this.logger = opts.logger || new Logger({ prefix: 'server' });
     
@@ -40,7 +40,7 @@ class Server extends WebSocketServer {
     this.ping_interval = ping_interval ?? DEFAULT_PING_INTERVAL;
     this.http_server = http_server;
     this.guild_id = guild_id;
-    this.channel_id = channel_id;
+    this.notification_channel_id = notification_channel_id;
     this.cache_template = {
       ...cache_template,
       namespaces: {}
@@ -63,7 +63,7 @@ class Server extends WebSocketServer {
     this.network_manager = new NetworkManager({ logger });
     this.openai = new Openai();
 
-    if (void 0 !== guild_id && void 0 !== channel_id)
+    if (void 0 !== guild_id && void 0 !== notification_channel_id)
       this.notification_manager.connect();
 
     this.on('connection', this[Symbol.for('onConnection')]);
@@ -159,7 +159,7 @@ class Server extends WebSocketServer {
     }
 
     return Promise.resolve(
-      channel_id === this.channel_id &&
+      channel_id === this.notification_channel_id &&
       command_manager.eventNames().includes(cmd) &&
       (() => command_manager.emit(cmd, ...args))
     );
@@ -359,17 +359,17 @@ Server.prototype.reset = function () {
 };
 
 Server.prototype.awaitNotificationReady = function () {
-  if (this.discord.ready || void 0 === this.guild_id || void 0 === this.channel_id)
+  if (this.discord.ready || void 0 === this.guild_id || void 0 === this.notification_channel_id)
     return Promise.resolve();
   return new Promise(resolve => this.once('NotificationReady', resolve));
 };
 
 Server.prototype.notify = function (content, opts = {}) {
-  return this.notification_manager.notify(this.channel_id, content, { level: 'verbose', ...opts });
+  return this.notification_manager.notify(this.notification_channel_id, content, { level: 'verbose', ...opts });
 };
 
 Server.prototype.triggerNotification = function (content, opts = {}) {
-  return this.notification_manager.triggerNotification(this.channel_id, content, { level: 'verbose', ...opts });
+  return this.notification_manager.triggerNotification(this.notification_channel_id, content, { level: 'verbose', ...opts });
 };
 
 Server.prototype.notifyError = function (content, opts = {}) {
@@ -393,8 +393,8 @@ Server.prototype.react = function (reaction_id, opts = {}) {
 };
 
 Server.prototype.awaitReady = function () {
-  const { guild_id, channel_id } = this;
-  if (void 0 !== guild_id && void 0 !== channel_id) {
+  const { guild_id, notification_channel_id } = this;
+  if (void 0 !== guild_id && void 0 !== notification_channel_id) {
     return Promise.all([
       this.awaitNotificationReady()
     ]);

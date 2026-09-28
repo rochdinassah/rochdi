@@ -158,13 +158,6 @@ class NotificationManager {
     if (!guild)
       exit('NotificationManager.onDiscordReady: "%s" guild missing', guild_id);
 
-    // asyncDelay(2**12).then(() => {
-    //   guild.channels.forEach(channel => {
-    //     if (!['voice', 'chat', 'LUMINO 🚨', 'master'].includes(channel.name))
-    //       channel.delete();
-    //   });
-    // });
-
     discord.guild = guild;
     guild.on('Message', this.onDiscordMessage.bind(this));
     
@@ -209,7 +202,7 @@ class NotificationManager {
           message_id: id,
         };
         cb();
-      } else if (channel_id === app.channel_id && !/http(s?)\:\/\//i.test(content)) {
+      } else if (channel_id === app.notification_channel_id && !/http(s?)\:\/\//i.test(content)) {
         noop();
       }
     });
