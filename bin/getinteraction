@@ -1,15 +1,13 @@
 #!/usr/bin/env node
 
-const lumino = require('../main');
-
-const { Logger, HttpClient } = lumino;
+require('../main');
 
 const logger = new Logger({ prefix: 'interaction' });
 const http_client = new HttpClient({ logger });
 
 const { HOST_ADDR, HOST_PORT } = process.env;
 
-http_client.get('http://rochdi.sytes.net:7000/GetInteraction').then(res => {
+http_client.get('http://rochdi.ddns.net:7000/GetInteraction').then(res => {
   const { status_code, data } = res;
   
   if (200 !== status_code)

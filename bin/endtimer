@@ -1,10 +1,6 @@
 #!/usr/bin/env node
 
-const lumino = require('../');
-const fs = require('node:fs');
-
-const { Logger } = lumino;
-const { readFileSync, unlinkSync, existsSync } = fs;
+require('../');
 
 const logger = new Logger({ prefix: 'timer' });
 

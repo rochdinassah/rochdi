@@ -4,9 +4,8 @@
 
 'use strict';
 
-const lumino = require('../main');
+require('../main');
 
-const { Http2Client, HttpClient, Logger } = lumino;
 const { env } = process;
 
 const logger = new Logger({ prefix: 'restart-wifi', errcb: (err) => process.exit(1)});

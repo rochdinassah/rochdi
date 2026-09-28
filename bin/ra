@@ -4,9 +4,7 @@
 
 'use strict';
 
-const lumino = require('../main');
-
-const { Logger } = lumino;
+require('../main');
 
 const logger = new Logger({ prefix: 'ra' });
 

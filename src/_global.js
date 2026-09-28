@@ -79,7 +79,7 @@ global.siren = function (name_id = 'warn', volume) {
   if (volume && !Number.isNaN(parseInt(volume)))
     execSync('pactl set-sink-volume 0 '+parseInt(volume)+'%');
 
-  return new Promise(resolve => exec('play /opt/lumino/bin/'+name_id+'.mp3', () => {
+  return new Promise(resolve => exec('play /opt/rochdi/bin/'+name_id+'.mp3', () => {
     execSync('pactl set-sink-volume 0 '+curr_volume);
     resolve();
   }));
