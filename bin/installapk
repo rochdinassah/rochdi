@@ -4,8 +4,8 @@
 
 cd /opt/apk/$1
 
-apktool b source
-zipalign 4 source/dist/base.apk base.apk -f
+apktool b -f source
+zipalign -f 4 source/dist/base.apk base.apk
 
 rm -rf /tmp/keystore
 echo "
