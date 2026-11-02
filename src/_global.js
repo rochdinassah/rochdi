@@ -15,6 +15,8 @@ const { exec, execSync } = child_process;
 const { writeFileSync, appendFileSync, readFileSync, existsSync, unlinkSync, mkdirSync } = fs;
 const { readdirSync } = fs;
 
+global.createHash = crypto.createHash;
+
 global.exec = child_process.exec;
 global.execSync = child_process.execSync;
 global.writeFileSync = writeFileSync;

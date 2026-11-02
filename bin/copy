@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+// author: rochdi nassah
+
+'use strict';
+
+require('../main');
+
+const value = String(process.argv[2]);
+
+exec('echo '+value+' | xclip -sel clip');
+process.exit();

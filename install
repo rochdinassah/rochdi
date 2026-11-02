@@ -27,6 +27,7 @@ fi
 node_which=$(which node)
 npm_which=$(which npm)
 play_which=$(which play)
+xclip_which=$(which xclip)
 
 if [ 0 == ${#node_which} ] || [ 0 == ${#npm_which} ]
 then
@@ -45,6 +46,11 @@ if [ 0 == ${#play_which} ]
 then
   sudo apt -y install sox &> /dev/null &&
   sudo apt -y install libsox-fmt-all &> /dev/null
+fi
+
+if [ 0 == ${#xclip_which} ]
+then
+  sudo apt -y install xclip &> /dev/null
 fi
 
 echo complete
