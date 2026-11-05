@@ -280,7 +280,7 @@ global.getIp = function () {
     function cb(err, ip) {
       resolve(err ? false : ip);
     }
-    const http2_client = new(require('./http-client'))({ retry_on_error: true });
+    const http2_client = new(require('./http2-client'))({ retry_on_error: true });
     return http2_client.get('https://checkip.amazonaws.com').then(res => {
       const { status_code, data } = res;
       if (200 !== status_code)

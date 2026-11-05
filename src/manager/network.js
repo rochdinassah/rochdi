@@ -133,23 +133,21 @@ class NetworkManager extends StateManager {
     startTimer('Rotation');
     logger.verbose('rotating android...');
 
-    // return this.connect('ethernet').then(() => {
-      return this.exec('adb shell cmd connectivity airplane-mode').then(async enabled => {
-        if (Boolean(Number(enabled)))
-          await this.exec('adb shell cmd connectivity airplane-mode disable');
-        return this.exec('adb shell settings get global mobile_data').then(async enabled => {
-          if (!Boolean(Number(enabled)))
-            await this.exec('adb shell settings put global mobile_data 1');
-          return this.exec('adb shell cmd connectivity airplane-mode enable').then(() => {
-            return this.exec('adb shell cmd connectivity airplane-mode disable').then(() => {
-              return asyncDelay(2**11).then(awaitInternet).then(() => {
-                logger.info('android rotation ok | %s', endTimer('Rotation'));
-              });
+    return this.exec('adb shell cmd connectivity airplane-mode').then(async enabled => {
+      if (Boolean(Number(enabled)))
+        await this.exec('adb shell cmd connectivity airplane-mode disable');
+      return this.exec('adb shell settings get global mobile_data').then(async enabled => {
+        if (!Boolean(Number(enabled)))
+          await this.exec('adb shell settings put global mobile_data 1');
+        return this.exec('adb shell cmd connectivity airplane-mode enable').then(() => {
+          return this.exec('adb shell cmd connectivity airplane-mode disable').then(() => {
+            return asyncDelay(2**11).then(awaitInternet).then(() => {
+              logger.info('android rotation ok | %s', endTimer('Rotation'));
             });
           });
         });
       });
-    // });
+    });
   }
 }
 
